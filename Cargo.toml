@@ -1,0 +1,20 @@
+[workspace]
+resolver = "2"
+members = ["crates/*"]
+
+[workspace.package]
+authors = ["rzvxa <rzvxa@protonmail.com>"]
+description = "Fuse Compiler"
+categories = ["compilers"]
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/fuse-lang/fusec"
+
+[workspace.dependencies]
+# fusec = { version = "0.1.0", path = "crates/fusec" }
+fuse_ast = { version = "0.1.0", path = "crates/fuse-ast" }
+fuse_parser = { version = "0.1.0", path = "crates/fuse-parser" }
+# fuse_syntax = { version = "0.1.0", path = "crates/fuse-syntax" }
+
+paste = { version = "1.0" }
+serde = { version = "1.0", features = ["derive"] }

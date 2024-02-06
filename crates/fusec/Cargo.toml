@@ -1,0 +1,11 @@
+[package]
+name = "fusec"
+version = "0.1.0"
+description.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+edition.workspace = true
+
+[dependencies]
+fuse_parser = { workspace = true }

@@ -1,3 +1,5 @@
+use fuse_common::Span;
+
 pub struct Chunk {}
 
 pub struct Block {
@@ -11,11 +13,24 @@ impl Block {
 }
 
 pub struct Statement {
-    statement: StatementVariant,
-    semicolon: Option<Semicolon>,
+    pub(crate) statement: StatementVariant,
+    pub(crate) semicolon: Option<Semicolon>,
+}
+
+impl Statement {
+    pub fn statement(&self) -> &StatementVariant {
+        &self.statement
+    }
+
+    pub fn semicolon(&self) -> Option<&Semicolon> {
+        self.semicolon.as_ref()
+    }
 }
 
 pub enum StatementVariant {
+    None,
 }
 
-pub struct Semicolon {}
+pub struct Semicolon {
+    pub(crate) span: Span,
+}

@@ -11,10 +11,9 @@ impl Parser {
         let mut statements = Vec::new();
 
         loop {
-            match parse_stmt(self) {
+            match self.parse_statement() {
                 ParserResult::Ok(stmt) => {
-                    let semicolon = self.consume_if(Symbol::Semicolon);
-                    statements.push((stmt, semicolon));
+                    statements.push(stmt);
                 }
                 ParserResult::NotFound => break,
                 ParserResult::Err => {
@@ -29,8 +28,10 @@ impl Parser {
 
         ParserResult::Ok(ast_builder::block(statements))
     }
-}
 
-fn parse_stmt(parser: &mut Parser) -> ParserResult<Statement> {
-    ParserResult::NotFound
+    fn parse_statement(&mut self) -> ParserResult<Statement> {
+        let statement = ast_builder::statement();
+        let semicolon = self.consume_if(Symbol::Semicolon);
+        ParserResult::Ok(statement)
+    }
 }

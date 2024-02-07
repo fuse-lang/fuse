@@ -7,5 +7,7 @@ repository.workspace = true
 edition.workspace = true
 
 [dependencies]
+fuse_common = { workspace = true }
+
 paste = { workspace = true }
 serde = { workspace = true }

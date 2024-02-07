@@ -1,4 +1,5 @@
 use super::Symbol;
+use fuse_common::Position;
 
 pub struct Token {
     start_position: Position,
@@ -50,33 +51,4 @@ pub enum TokenKind {
     StringLiteral,
     NumberLiteral,
     Eof,
-}
-
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-pub struct Position {
-    pub(crate) bytes: usize,
-    pub(crate) line: usize,
-    pub(crate) character: usize,
-}
-
-impl Position {
-    pub fn new(bytes: usize, line: usize, character: usize) -> Self {
-        Self {
-            bytes,
-            line,
-            character,
-        }
-    }
-
-    pub fn bytes(self) -> usize {
-        self.bytes
-    }
-
-    pub fn line(self) -> usize {
-        self.line
-    }
-
-    pub fn character(self) -> usize {
-        self.character
-    }
 }

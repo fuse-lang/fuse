@@ -1,4 +1,4 @@
-use super::token::Position;
+use fuse_common::Position;
 
 pub struct Source {
     source: Vec<char>,

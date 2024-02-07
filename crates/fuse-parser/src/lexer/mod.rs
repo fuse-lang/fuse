@@ -5,6 +5,8 @@ mod token;
 pub use symbol::*;
 pub use token::*;
 
+use fuse_common::Position;
+
 use source::Source;
 
 pub struct Lexer {

@@ -1,6 +1,4 @@
-pub struct Chunk {
-
-}
+pub struct Chunk {}
 
 pub struct Block {
     pub(crate) statements: Vec<Statement>,
@@ -12,6 +10,12 @@ impl Block {
     }
 }
 
-pub enum Statement {}
+pub struct Statement {
+    statement: StatementVariant,
+    semicolon: Option<Semicolon>,
+}
+
+pub enum StatementVariant {
+}
 
 pub struct Semicolon {}

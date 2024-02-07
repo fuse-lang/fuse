@@ -5,7 +5,7 @@ mod token;
 pub use symbol::*;
 pub use token::*;
 
-use fuse_common::Position;
+use fuse_common::{Position, Span};
 
 use source::Source;
 
@@ -59,8 +59,10 @@ impl Lexer {
         token_kind: TokenKind,
     ) -> Option<LexerResult<Token>> {
         Some(LexerResult::Ok(Token::new(
-            start_position,
-            self.source.position(),
+            Span {
+                start: start_position,
+                end: self.source.position(),
+            },
             token_kind,
         )))
     }

@@ -1,27 +1,22 @@
 use super::Symbol;
-use fuse_common::Position;
+use fuse_common::{Position, Span};
 
 pub struct Token {
-    start_position: Position,
-    end_position: Position,
+    span: Span,
     token_kind: TokenKind,
 }
 
 impl Token {
-    pub fn new(start_position: Position, end_position: Position, token_kind: TokenKind) -> Self {
-        Self {
-            start_position,
-            end_position,
-            token_kind,
-        }
+    pub fn new(span: Span, token_kind: TokenKind) -> Self {
+        Self { span, token_kind }
     }
 
     pub fn start_position(&self) -> Position {
-        self.start_position
+        self.span.start
     }
 
     pub fn end_position(&self) -> Position {
-        self.end_position
+        self.span.end
     }
 }
 

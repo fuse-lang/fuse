@@ -3,7 +3,7 @@ use super::token::Position;
 pub struct Source {
     source: Vec<char>,
     position: Position,
-    cursor: usize,
+    index: usize,
 }
 
 impl Source {
@@ -11,7 +11,7 @@ impl Source {
         Self {
             source: src.chars().collect(),
             position: Position::new(1, 1, 0),
-            cursor: 0,
+            index: 0,
         }
     }
 
@@ -20,7 +20,7 @@ impl Source {
     }
 
     fn current(&self) -> Option<char> {
-        self.source.get(self.cursor + 1).copied()
+        self.source.get(self.index + 1).copied()
     }
 
     pub(crate) fn next(&mut self) -> Option<char> {
@@ -34,7 +34,7 @@ impl Source {
         }
 
         self.position.bytes += next.len_utf8();
-        self.cursor += 1;
+        self.index += 1;
 
         Some(next)
     }

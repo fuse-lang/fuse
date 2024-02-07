@@ -1,3 +1,5 @@
+use super::Symbol;
+
 pub struct Token {
     start_position: Position,
     end_position: Position,
@@ -28,6 +30,20 @@ pub struct TokenReference {
     trailing_trivia: Vec<Token>,
 }
 
+impl TokenReference {
+    pub fn new(leading_trivia: Vec<Token>, token: Token, trailing_trivia: Vec<Token>) -> Self {
+        Self {
+            leading_trivia,
+            token,
+            trailing_trivia,
+        }
+    }
+
+    pub fn is_symbol(&self, symbol: Symbol) -> bool {
+        self.token.token_kind == TokenKind::Symbol
+    }
+}
+#[derive(Debug, PartialEq, Eq)]
 pub enum TokenKind {
     Symbol,
     Identifier,

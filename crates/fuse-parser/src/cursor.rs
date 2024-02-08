@@ -3,7 +3,7 @@ use crate::{
     Parser, ParserResult,
 };
 
-impl Parser {
+impl<'a> Parser<'a> {
     pub(crate) fn cur_token(&self) -> Option<&TokenReference> {
         match self.lexer.current() {
             Some(LexerResult::Ok(token) | LexerResult::Recovered(token, _)) => Some(token),

@@ -2,7 +2,7 @@ use fuse_ast::{ast_builder, Block, Statement};
 
 use crate::{lexer::Symbol, Parser, ParserResult};
 
-impl Parser {
+impl<'a> Parser<'a> {
     pub(crate) fn parse_chunk(&mut self) -> ParserResult<Block> {
         ParserResult::NotFound
     }

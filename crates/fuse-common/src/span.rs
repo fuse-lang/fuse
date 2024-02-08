@@ -1,6 +1,5 @@
-use crate::Position;
-
+#[derive(Debug, Clone, Copy)]
 pub struct Span {
-    pub start: Position,
-    pub end: Position,
+    pub start: u32,
+    pub end: u32,
 }

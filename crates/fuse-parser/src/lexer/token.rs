@@ -1,5 +1,5 @@
 use super::Symbol;
-use fuse_common::{Position, Span};
+use fuse_common::Span;
 
 pub struct Token {
     span: Span,
@@ -11,11 +11,15 @@ impl Token {
         Self { span, token_kind }
     }
 
-    pub fn start_position(&self) -> Position {
+    pub fn span(&self) -> Span {
+        self.span
+    }
+
+    pub fn start(&self) -> u32 {
         self.span.start
     }
 
-    pub fn end_position(&self) -> Position {
+    pub fn end(&self) -> u32 {
         self.span.end
     }
 }
@@ -36,7 +40,7 @@ impl TokenReference {
     }
 
     pub fn is_symbol(&self, symbol: Symbol) -> bool {
-        self.token.token_kind == TokenKind::Symbol
+        self.token.token_kind == TokenKind::Symbol && todo!()
     }
 }
 #[derive(Debug, PartialEq, Eq)]

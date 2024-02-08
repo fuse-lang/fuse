@@ -53,8 +53,7 @@ impl<'a> Parser<'a> {
     }
 
     pub fn parse(mut self) -> ParserResult<fuse_ast::Chunk> {
-        let block = self.parse_block();
-        let span = fuse_common::Span::new(0, self.source.len() as u32);
+        let chunk = self.parse_chunk();
         ParserResult::NotFound
     }
 }

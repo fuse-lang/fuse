@@ -15,7 +15,13 @@ impl AstFactory {
         Chunk { span, body }
     }
 
-    pub fn block(&self, statements: Vec<Statement>) -> Block {
+    pub fn block(&self) -> Block {
+        Block {
+            statements: Vec::default(),
+        }
+    }
+
+    pub fn block_with_statements(&self, statements: Vec<Statement>) -> Block {
         Block { statements }
     }
 

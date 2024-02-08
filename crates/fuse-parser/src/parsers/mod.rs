@@ -1,10 +1,20 @@
-use fuse_ast::{Block, Statement};
+use fuse_ast::{Block, Chunk, Statement};
 
-use crate::{lexer::Symbol, Parser, ParserResult};
+use crate::{
+    lexer::{Symbol, TokenKind},
+    Parser, ParserResult,
+};
 
 impl<'a> Parser<'a> {
-    pub(crate) fn parse_chunk(&mut self) -> ParserResult<Block> {
-        ParserResult::NotFound
+    pub(crate) fn parse_chunk(&mut self) -> ParserResult<Chunk> {
+        let span = fuse_common::Span::new(0, self.source.len() as u32);
+        let body = match self.parse_block() {
+            ParserResult::Ok(block) => block,
+            _ => self.factory.block(),
+        };
+
+        let chunk = self.factory.chunk(span, body);
+        ParserResult::Ok(chunk)
     }
 
     pub(crate) fn parse_block(&mut self) -> ParserResult<Block> {
@@ -26,10 +36,28 @@ impl<'a> Parser<'a> {
             }
         }
 
-        ParserResult::Ok(self.factory.block(statements))
+        ParserResult::Ok(self.factory.block_with_statements(statements))
     }
 
     fn parse_statement(&mut self) -> ParserResult<Statement> {
+        let Some(current) = self.cur_token() else {
+            return ParserResult::NotFound;
+        };
+
+        match current.kind() {
+            TokenKind::Symbol => {
+                // symbol: Symbol::Const,
+                // let const_token = self.consume().unwrap();
+                // let next_token = match self.cur_token() {
+                //     Some(tk) => tk,
+                //     None => return ParserResult::Err,
+                // };
+
+                // match next_token.kind() {
+                // }
+            }
+            _ => {}
+        }
         let statement = self.factory.statement();
         let semicolon = self.consume_if(Symbol::Semicolon);
         ParserResult::Ok(statement)

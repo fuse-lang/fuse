@@ -25,6 +25,14 @@ impl<'a> Source<'a> {
         }
     }
 
+    pub(super) fn as_str(&self) -> &'a str {
+        unsafe {
+            let len = self.end as usize - self.start as usize;
+            let slice = slice::from_raw_parts(self.start, len);
+            std::str::from_utf8_unchecked(slice)
+        }
+    }
+
     /// Get the remaining source.
     pub(super) fn remaining(&self) -> &'a str {
         // SAFETY: the `ptr` is always >= `start` and <=`end` so a slice

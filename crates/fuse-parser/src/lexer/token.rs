@@ -3,12 +3,12 @@ use fuse_common::Span;
 
 pub struct Token {
     span: Span,
-    token_kind: TokenKind,
+    kind: TokenKind,
 }
 
 impl Token {
-    pub fn new(span: Span, token_kind: TokenKind) -> Self {
-        Self { span, token_kind }
+    pub fn new(span: Span, kind: TokenKind) -> Self {
+        Self { span, kind }
     }
 
     pub fn span(&self) -> Span {
@@ -21,6 +21,11 @@ impl Token {
 
     pub fn end(&self) -> u32 {
         self.span.end
+    }
+
+    #[inline]
+    pub fn kind(&self) -> TokenKind {
+        self.kind
     }
 }
 
@@ -40,10 +45,19 @@ impl TokenReference {
     }
 
     pub fn is_symbol(&self, symbol: Symbol) -> bool {
-        self.token.token_kind == TokenKind::Symbol && todo!()
+        self.token.kind == TokenKind::Symbol && todo!("check the value with {symbol}")
     }
 }
-#[derive(Debug, PartialEq, Eq)]
+
+impl std::ops::Deref for TokenReference {
+    type Target = Token;
+
+    fn deref(&self) -> &Self::Target {
+        &self.token
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TokenKind {
     Symbol,
     Identifier,

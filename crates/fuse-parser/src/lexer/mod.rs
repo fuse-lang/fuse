@@ -5,7 +5,7 @@ mod token;
 pub use symbol::*;
 pub use token::*;
 
-use fuse_common::Span;
+use fuse_common::{Span, SpanView};
 
 use source::Source;
 
@@ -65,6 +65,10 @@ impl<'a> Lexer<'a> {
             },
             token_kind,
         )))
+    }
+
+    fn view_token(&self, token: TokenReference) -> &'a str {
+        self.source.as_str().view(&token.span())
     }
 }
 

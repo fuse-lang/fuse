@@ -1,9 +1,12 @@
 use fuse_common::Span;
 
-pub struct Chunk {}
+pub struct Chunk {
+    pub span: Span,
+    pub body: Block,
+}
 
 pub struct Block {
-    pub(crate) statements: Vec<Statement>,
+    pub statements: Vec<Statement>,
 }
 
 impl Block {
@@ -13,8 +16,8 @@ impl Block {
 }
 
 pub struct Statement {
-    pub(crate) statement: StatementVariant,
-    pub(crate) semicolon: Option<Semicolon>,
+    pub statement: StatementVariant,
+    pub semicolon: Option<Semicolon>,
 }
 
 impl Statement {
@@ -32,5 +35,5 @@ pub enum StatementVariant {
 }
 
 pub struct Semicolon {
-    pub(crate) span: Span,
+    pub span: Span,
 }

@@ -1,4 +1,4 @@
-use fuse_ast::{ast_builder, Block, Statement};
+use fuse_ast::{Block, Statement};
 
 use crate::{lexer::Symbol, Parser, ParserResult};
 
@@ -26,11 +26,11 @@ impl<'a> Parser<'a> {
             }
         }
 
-        ParserResult::Ok(ast_builder::block(statements))
+        ParserResult::Ok(self.factory.block(statements))
     }
 
     fn parse_statement(&mut self) -> ParserResult<Statement> {
-        let statement = ast_builder::statement();
+        let statement = self.factory.statement();
         let semicolon = self.consume_if(Symbol::Semicolon);
         ParserResult::Ok(statement)
     }

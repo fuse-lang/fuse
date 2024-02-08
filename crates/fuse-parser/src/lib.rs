@@ -39,6 +39,7 @@ pub struct Parser<'a> {
     lexer: lexer::Lexer<'a>,
     errors: Vec<Error>,
     source: &'a str,
+    factory: fuse_ast::AstFactory,
 }
 
 impl<'a> Parser<'a> {
@@ -47,11 +48,13 @@ impl<'a> Parser<'a> {
             lexer: lexer::Lexer::new(source),
             errors: Vec::new(),
             source,
+            factory: fuse_ast::AstFactory()
         }
     }
 
-    pub fn parse(mut self) -> ParserResult<fuse_ast::Block> {
+    pub fn parse(mut self) -> ParserResult<fuse_ast::Chunk> {
         let block = self.parse_block();
+        let span = fuse_common::Span::new(0, self.source.len() as u32);
         ParserResult::NotFound
     }
 }

@@ -1,5 +1,14 @@
 use std::{marker::PhantomData, slice};
 
+macro_rules! debug_assert_char_byte {
+    ($byte:expr) => {
+        debug_assert!(
+            !is_utf8_continuation_byte($byte),
+            "Invalid UTF-8 character boundary, Lexer is in an invalid state."
+        );
+    };
+}
+
 pub struct Source<'a> {
     start: SourcePointer,
     end: SourcePointer,
@@ -72,22 +81,53 @@ impl<'a> Source<'a> {
             return Some(byte as char);
         }
 
-        debug_assert!(
-            !is_utf8_continuation_byte(byte),
-            "Invalid UTF-8 character boundary, Lexer is in an invalid state."
-        );
+        debug_assert_char_byte!(byte);
 
-        // get the iterator for remaining of source code.
+        // create an iterator for remaining of source code.
         let mut chars = self.remaining().chars();
-        // pop the current character and iterate to the next character.
+        // get the current character and iterate to the next character.
         let current = unsafe { chars.next().unwrap_unchecked() };
         // point to the next character.
         self.ptr = chars.as_str().as_ptr();
         Some(current)
     }
 
+    /// Peek the next char without consuming it.
+    #[inline]
+    pub(super) fn peek_char(&self) -> Option<char> {
+        let byte = self.peek_byte()?;
+        if byte.is_ascii() {
+            return Some(byte as char);
+        }
+
+        debug_assert_char_byte!(byte);
+
+        // create an iterator for remaining of source code.
+        let mut chars = self.remaining().chars();
+        // get the current character.
+        let current = unsafe { chars.next().unwrap_unchecked() };
+        Some(current)
+    }
+
+    /// Peek the second next char without consuming it.
+    #[inline]
+    pub(super) fn peek_char2(&self) -> Option<char> {
+        if self.is_eof() {
+            return None;
+        }
+
+        debug_assert_char_byte!(self.peek_byte().unwrap());
+
+        // create an iterator for remaining of source code.
+        let mut chars = self.remaining().chars();
+        // SAFETY: since we are not at EOF there should be a next char.
+        unsafe { chars.next().unwrap_unchecked() };
+        chars.next()
+    }
+
     /// Peek the next byte without consuming it.
     /// It would return `None` if pointer is at EOF.
+    #[inline]
     pub(super) fn peek_byte(&self) -> Option<u8> {
         if self.is_eof() {
             None
@@ -96,7 +136,7 @@ impl<'a> Source<'a> {
         }
     }
 
-    /// Peek next byte of the source without consuming it.
+    /// Peek the next byte of the source without consuming it.
     /// caller should do the EOF bounds-check.
     #[inline]
     pub(super) unsafe fn peek_byte_unchecked(&self) -> u8 {
@@ -144,7 +184,7 @@ impl SourceView for SourcePointer {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct SourcePosition<'a> {
     ptr: SourcePointer,
     marker: PhantomData<&'a u8>,

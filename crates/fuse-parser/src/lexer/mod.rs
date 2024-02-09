@@ -1,18 +1,22 @@
 mod source;
 mod symbol;
 mod token;
+mod whitespace;
 
 pub use symbol::*;
 pub use token::*;
 
 use fuse_common::{Span, SpanView};
 
-use source::Source;
+use source::{Source, SourcePosition};
+
+use std::collections::VecDeque;
 
 pub struct Lexer<'a> {
     source: Source<'a>,
     current_token: Option<LexerResult<TokenReference>>,
     next_token: Option<LexerResult<TokenReference>>,
+    lookahead: VecDeque<Lookahead<'a>>,
 }
 
 impl<'a> Lexer<'a> {
@@ -21,6 +25,7 @@ impl<'a> Lexer<'a> {
             source: Source::new(src),
             current_token: None,
             next_token: None,
+            lookahead: VecDeque::with_capacity(1),
         }
     }
 
@@ -49,12 +54,14 @@ impl<'a> Lexer<'a> {
     fn next(&mut self) -> Option<LexerResult<Token>> {
         let start = self.source.offset();
 
-        let Some(next) = self.source.next_char() else {
+        let Some(first) = self.source.next_char() else {
             return self.create(start, TokenKind::Eof);
         };
 
-        todo!()
-        // match next {}
+        match first {
+            ' ' | '\t' | '\r' => self.whitespace(start, first),
+            _ => None,
+        }
     }
 
     fn create(&self, start: u32, token_kind: TokenKind) -> Option<LexerResult<Token>> {
@@ -78,4 +85,10 @@ pub enum LexerResult<T> {
     Ok(T),
     Fatal(Vec<LexerError>),
     Recovered(T, Vec<LexerError>),
+}
+
+#[derive(Debug, Clone, Copy)]
+struct Lookahead<'a> {
+    position: SourcePosition<'a>,
+    token: Token,
 }

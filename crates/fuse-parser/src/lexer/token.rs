@@ -1,6 +1,7 @@
 use super::Symbol;
 use fuse_common::Span;
 
+#[derive(Debug, Clone, Copy)]
 pub struct Token {
     span: Span,
     kind: TokenKind,
@@ -63,5 +64,6 @@ pub enum TokenKind {
     Identifier,
     StringLiteral,
     NumberLiteral,
+    Whitespace,
     Eof,
 }

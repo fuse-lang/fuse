@@ -95,6 +95,16 @@ impl<'a> Lexer<'a> {
         }
     }
 
+    fn collect_trailing_trivia(&mut self) -> Vec<Token> {
+        let mut trailing_trivia = Vec::new();
+
+        todo!();
+        trailing_trivia
+        // loop {
+        //     let 
+        // }
+    }
+
     fn create(&self, start: u32, token_kind: TokenKind) -> Option<LexerResult<Token>> {
         Some(LexerResult::Ok(Token::new(
             Span {

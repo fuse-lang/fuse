@@ -1,5 +1,5 @@
 [package]
-name = "fusec"
+name = "fuse"
 version = "0.0.0"
 description.workspace = true
 authors.workspace = true

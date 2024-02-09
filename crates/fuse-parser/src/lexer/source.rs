@@ -2,8 +2,11 @@ use std::{marker::PhantomData, slice};
 
 macro_rules! debug_assert_char_byte {
     ($byte:expr) => {
+        debug_assert_char_byte!($byte, true);
+    };
+    ($byte:expr, $extra_check:expr) => {
         debug_assert!(
-            !is_utf8_continuation_byte($byte),
+            !is_utf8_continuation_byte($byte) || $extra_check,
             "Invalid UTF-8 character boundary, Lexer is in an invalid state."
         );
     };
@@ -12,7 +15,7 @@ macro_rules! debug_assert_char_byte {
 pub struct Source<'a> {
     start: SourcePointer,
     end: SourcePointer,
-    ptr: SourcePointer,
+    ptr: *const u8,
     marker: PhantomData<&'a str>,
 }
 
@@ -57,11 +60,27 @@ impl<'a> Source<'a> {
 
     /// Get current position.
     #[inline]
-    pub(super) fn position(&self) -> SourcePosition {
+    pub(super) fn position(&self) -> SourcePosition<'a> {
         SourcePosition {
             ptr: self.ptr,
             marker: PhantomData,
         }
+    }
+
+    /// Set current position.
+    ///  
+    ///  # SAFETY
+    ///  `pos` must be created from this `Source`, Since position is
+    ///  is just a raw pointer we can only use a `SourcePosition` only with
+    ///  its own `Source`.
+    #[inline]
+    pub(super) unsafe fn set_position(&mut self, pos: SourcePosition) {
+        debug_assert_char_byte!(pos.ptr.read_u8(), pos.ptr == self.end);
+        debug_assert!(
+            pos.ptr >= self.start && pos.ptr <= self.end,
+            "Position out of bound."
+        );
+        self.ptr = pos.ptr;
     }
 
     /// Get offset from start of source.

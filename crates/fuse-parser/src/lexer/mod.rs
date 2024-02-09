@@ -73,7 +73,7 @@ impl<'a> Lexer<'a> {
             }
         };
 
-        let trailing_trivia = Vec::new();
+        let trailing_trivia = self.collect_trailing_trivia();
         let token = TokenReference::with_trivia(token, leading_trivia, trailing_trivia);
 
         match errors {
@@ -98,11 +98,28 @@ impl<'a> Lexer<'a> {
     fn collect_trailing_trivia(&mut self) -> Vec<Token> {
         let mut trailing_trivia = Vec::new();
 
-        todo!();
+        loop {
+            let start = self.source.position();
+
+            match self.next() {
+                Some(LexerResult::Ok(token)) if token.kind().is_trivial() => {
+                    let view = self.view_token(token);
+                    trailing_trivia.push(token);
+                    if token.kind() == TokenKind::Whitespace && view.contains('\n') {
+                        break;
+                    }
+                }
+
+                _ => {
+                    // SAFETY: `start` position is created by `source`,
+                    // and it is unchanged from the moment of creation.
+                    unsafe { self.source.set_position(start) }
+                    break;
+                }
+            }
+        }
+
         trailing_trivia
-        // loop {
-        //     let 
-        // }
     }
 
     fn create(&self, start: u32, token_kind: TokenKind) -> Option<LexerResult<Token>> {
@@ -115,7 +132,7 @@ impl<'a> Lexer<'a> {
         )))
     }
 
-    fn view_token(&self, token: TokenReference) -> &'a str {
+    fn view_token(&self, token: Token) -> &'a str {
         self.source.as_str().view(&token.span())
     }
 }

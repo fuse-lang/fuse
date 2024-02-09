@@ -11,10 +11,10 @@ license = "MIT"
 repository = "https://github.com/fuse-lang/fusec"
 
 [workspace.dependencies]
-fuse_ast = { version = "0.1.0", path = "crates/fuse-ast" }
-fuse_common = { version = "0.1.0", path = "crates/fuse-common" }
-fuse_parser = { version = "0.1.0", path = "crates/fuse-parser" }
-# fusec = { version = "0.1.0", path = "crates/fusec" }
+fuse_ast = { version = "0.0.0", path = "crates/fuse-ast" }
+fuse_common = { version = "0.0.0", path = "crates/fuse-common" }
+fuse_parser = { version = "0.0.0", path = "crates/fuse-parser" }
+# fusec = { version = "0.0.0", path = "crates/fusec" }
 
 paste = { version = "1.0" }
 serde = { version = "1.0", features = ["derive"] }

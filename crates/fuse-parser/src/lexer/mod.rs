@@ -46,9 +46,40 @@ impl<'a> Lexer<'a> {
     }
 
     fn next_with_trivia(&mut self) -> Option<LexerResult<TokenReference>> {
-        // let mut leading_trivia = Vec::new();
-        // let mut errors: Option<Vec<TokenReference>> = None;
-        todo!()
+        let mut leading_trivia = Vec::new();
+        let mut errors: Option<Vec<LexerError>> = None;
+
+        let token = loop {
+            match self.next()? {
+                LexerResult::Ok(token) if token.kind().is_trivial() => {
+                    leading_trivia.push(token);
+                }
+                LexerResult::Ok(token) => {
+                    break token;
+                }
+                LexerResult::Fatal(error) => return Some(LexerResult::Fatal(error)),
+                LexerResult::Recovered(token, mut token_errors) => {
+                    match errors.as_mut() {
+                        Some(errors) => errors.append(&mut token_errors),
+                        _ => errors = Some(token_errors),
+                    }
+
+                    if token.kind().is_trivial() {
+                        leading_trivia.push(token);
+                    } else {
+                        break token;
+                    }
+                }
+            }
+        };
+
+        let trailing_trivia = Vec::new();
+        let token = TokenReference::with_trivia(token, leading_trivia, trailing_trivia);
+
+        match errors {
+            Some(errors) => Some(LexerResult::Recovered(token, errors)),
+            None => Some(LexerResult::Ok(token)),
+        }
     }
 
     fn next(&mut self) -> Option<LexerResult<Token>> {

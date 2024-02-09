@@ -31,16 +31,20 @@ impl Token {
 }
 
 pub struct TokenReference {
-    leading_trivia: Vec<Token>,
     token: Token,
+    leading_trivia: Vec<Token>,
     trailing_trivia: Vec<Token>,
 }
 
 impl TokenReference {
-    pub fn new(leading_trivia: Vec<Token>, token: Token, trailing_trivia: Vec<Token>) -> Self {
+    pub fn with_trivia(
+        token: Token,
+        leading_trivia: Vec<Token>,
+        trailing_trivia: Vec<Token>,
+    ) -> Self {
         Self {
-            leading_trivia,
             token,
+            leading_trivia,
             trailing_trivia,
         }
     }
@@ -49,6 +53,12 @@ impl TokenReference {
         self.token.kind == TokenKind::Symbol && todo!("check the value with {symbol}")
     }
 }
+
+// impl std::borrow::Borrow<Token> for &TokenReference {
+//     fn borrow(&self) -> &Token {
+//         self
+//     }
+// }
 
 impl std::ops::Deref for TokenReference {
     type Target = Token;
@@ -66,4 +76,13 @@ pub enum TokenKind {
     NumberLiteral,
     Whitespace,
     Eof,
+}
+
+impl TokenKind {
+    pub fn is_trivial(&self) -> bool {
+        matches! {
+            self,
+            TokenKind::Whitespace
+        }
+    }
 }

@@ -27,8 +27,15 @@ impl AstFactory {
 
     pub fn statement(&self) -> Statement {
         Statement {
-            statement: StatementVariant::None,
+            statement: StatementVariant::Empty,
             semicolon: None,
+        }
+    }
+
+    pub fn statement_with_semicolon(&self, semicolon: Semicolon) -> Statement {
+        Statement {
+            statement: StatementVariant::Empty,
+            semicolon: Some(semicolon),
         }
     }
 }

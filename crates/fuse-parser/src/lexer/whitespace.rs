@@ -2,7 +2,7 @@ use super::{Lexer, LexerResult, Token, TokenKind};
 use fuse_common::Span;
 
 impl<'a> Lexer<'a> {
-    pub(super) fn whitespace(&mut self, start: u32, first: char) -> Option<LexerResult<Token>> {
+    pub(super) fn whitespace(&mut self, start: u32, first: char) -> LexerResult<Token> {
         let mut end = start + first.len_utf8() as u32;
         while let Some(next) = self.source.peek_char() {
             if next == ' ' || next == '\t' {
@@ -32,9 +32,6 @@ impl<'a> Lexer<'a> {
             }
         }
 
-        Some(LexerResult::Ok(Token::new(
-            Span::new(start, end),
-            TokenKind::Whitespace,
-        )))
+        LexerResult::Ok(Token::new(Span::new(start, end), TokenKind::Whitespace))
     }
 }

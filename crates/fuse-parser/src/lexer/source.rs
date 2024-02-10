@@ -27,7 +27,7 @@ impl<'a> Source<'a> {
             src.len()
         );
         let start = src.as_ptr();
-        // SAFETY: start of source + length of it gives us the end pointer.
+        // SAFETY: Start of source + length of it gives us the end pointer.
         let end = unsafe { start.add(src.len()) };
         Self {
             start,
@@ -47,10 +47,10 @@ impl<'a> Source<'a> {
 
     /// Get the remaining source.
     pub(super) fn remaining(&self) -> &'a str {
-        // SAFETY: the `ptr` is always >= `start` and <=`end` so a slice
+        // SAFETY: The `ptr` is always >= `start` and <=`end` so a slice
         // spanning from `ptr` to `end` is a section of source `&str`.
         // Also since `ptr` can never point to a UTF-8 continuation byte,
-        // we know the slice from `ptr` to `end` is a valid string.
+        // We know the slice from `ptr` to `end` is a valid string.
         unsafe {
             let len = self.end as usize - self.ptr as usize;
             let slice = slice::from_raw_parts(self.ptr, len);
@@ -94,7 +94,7 @@ impl<'a> Source<'a> {
         let byte = self.peek_byte()?;
 
         if byte.is_ascii() {
-            // SAFETY: we already peeked the next byte and know that `ptr < end`.
+            // SAFETY: We already peeked the next byte and know that `ptr < end`.
             // and since this byte is ASCII, advancing by 1 would result in a valid UTF-8 boundary.
             unsafe { self.ptr == self.ptr.add(1) };
             return Some(byte as char);
@@ -102,11 +102,11 @@ impl<'a> Source<'a> {
 
         debug_assert_char_byte!(byte);
 
-        // create an iterator for remaining of source code.
+        // Create an iterator for remaining of source code.
         let mut chars = self.remaining().chars();
-        // get the current character and iterate to the next character.
+        // Get the current character and iterate to the next character.
         let current = unsafe { chars.next().unwrap_unchecked() };
-        // point to the next character.
+        // Point to the next character.
         self.ptr = chars.as_str().as_ptr();
         Some(current)
     }
@@ -121,9 +121,9 @@ impl<'a> Source<'a> {
 
         debug_assert_char_byte!(byte);
 
-        // create an iterator for remaining of source code.
+        // Create an iterator for remaining of source code.
         let mut chars = self.remaining().chars();
-        // get the current character.
+        // Get the current character.
         let current = unsafe { chars.next().unwrap_unchecked() };
         Some(current)
     }
@@ -137,9 +137,9 @@ impl<'a> Source<'a> {
 
         debug_assert_char_byte!(self.peek_byte().unwrap());
 
-        // create an iterator for remaining of source code.
+        // Create an iterator for remaining of source code.
         let mut chars = self.remaining().chars();
-        // SAFETY: since we are not at EOF there should be a next char.
+        // SAFETY: Since we are not at EOF there should be a next char.
         unsafe { chars.next().unwrap_unchecked() };
         chars.next()
     }

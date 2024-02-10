@@ -1,6 +1,7 @@
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq)]
 pub enum TokenKind {
     // Special Tokens
+    #[default]
     Eof,
     Undetermined,
     Whitespace,

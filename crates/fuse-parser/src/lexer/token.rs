@@ -1,7 +1,7 @@
 use super::TokenKind;
 use fuse_common::Span;
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Default, Clone, Copy)]
 pub struct Token {
     pub span: Span,
     pub kind: TokenKind,
@@ -30,6 +30,7 @@ impl Token {
     }
 }
 
+#[derive(Debug)]
 pub struct TokenReference {
     token: Token,
     leading_trivia: Vec<Token>,
@@ -37,6 +38,10 @@ pub struct TokenReference {
 }
 
 impl TokenReference {
+    pub(crate) fn new(token: Token) -> Self {
+        Self::with_trivia(token, Vec::default(), Vec::default())
+    }
+
     pub fn with_trivia(
         token: Token,
         leading_trivia: Vec<Token>,

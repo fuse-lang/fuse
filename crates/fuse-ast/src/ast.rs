@@ -31,7 +31,7 @@ impl Statement {
 }
 
 pub enum StatementVariant {
-    None,
+    Empty,
 }
 
 pub struct Semicolon {

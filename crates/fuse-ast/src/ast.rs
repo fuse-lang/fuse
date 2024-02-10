@@ -15,25 +15,6 @@ impl Block {
     }
 }
 
-pub struct Statement {
-    pub statement: StatementVariant,
-    pub semicolon: Option<Semicolon>,
-}
-
-impl Statement {
-    pub fn statement(&self) -> &StatementVariant {
-        &self.statement
-    }
-
-    pub fn semicolon(&self) -> Option<&Semicolon> {
-        self.semicolon.as_ref()
-    }
-}
-
-pub enum StatementVariant {
+pub enum Statement {
     Empty,
-}
-
-pub struct Semicolon {
-    pub span: Span,
 }

@@ -98,11 +98,21 @@ pub enum ParserResult<T> {
 }
 
 impl<T> ParserResult<T> {
+    #[inline]
     pub fn unwrap(self) -> T {
         match self {
             ParserResult::Ok(result) => result,
             ParserResult::Err => panic!("Attempt to unwrap a ParserResult::Err."),
             ParserResult::NotFound => panic!("Attempt to unwrap a ParserResult::NotFound."),
+        }
+    }
+
+    #[inline]
+    pub fn map<U, F: FnOnce(T) -> U>(self, op: F) -> ParserResult<U> {
+        match self {
+            ParserResult::Ok(res) => ParserResult::Ok(op(res)),
+            ParserResult::Err => ParserResult::Err,
+            ParserResult::NotFound => ParserResult::NotFound,
         }
     }
 }

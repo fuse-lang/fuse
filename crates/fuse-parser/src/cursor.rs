@@ -3,43 +3,54 @@ use crate::{
     Parser, ParserResult,
 };
 
+type Result<R> = std::result::Result<R, ()>;
+
+impl<R> Into<ParserResult<R>> for Result<R> {
+    fn into(self) -> ParserResult<R> {
+        match self {
+            Ok(value) => ParserResult::Ok(value),
+            Err(_) => ParserResult::Err,
+        }
+    }
+}
+
 impl<'a> Parser<'a> {
-    pub(crate) fn cur_token(&self) -> Option<&TokenReference> {
+    pub(crate) fn cur_token(&self) -> Result<&TokenReference> {
         match self.lexer.current() {
-            LexerResult::Ok(token) | LexerResult::Recovered(token, _) => Some(token),
-            _ => None,
+            LexerResult::Ok(token) | LexerResult::Recovered(token, _) => Ok(token),
+            LexerResult::Fatal(_) => Err(()),
         }
     }
 
-    pub(crate) fn cur_kind(&self) -> Option<TokenKind> {
+    pub(crate) fn cur_kind(&self) -> Result<TokenKind> {
         self.cur_token().map(|token| token.kind)
     }
 
-    pub(crate) fn consume(&mut self) -> ParserResult<TokenReference> {
+    pub(crate) fn consume(&mut self) -> Result<TokenReference> {
         let token = self.lexer.consume();
 
         match token {
-            LexerResult::Ok(token) => ParserResult::Ok(token),
+            LexerResult::Ok(token) => Ok(token),
             LexerResult::Recovered(token, errors) => {
                 self.push_errors(errors);
-                ParserResult::Ok(token)
+                Ok(token)
             }
             LexerResult::Fatal(errors) => {
                 self.push_errors(errors);
-                ParserResult::Err
+                Err(())
             }
         }
     }
 
     pub fn consume_if(&mut self, kind: TokenKind) -> ParserResult<TokenReference> {
         if self.at(kind) {
-            self.consume()
+            self.consume().into()
         } else {
             ParserResult::NotFound
         }
     }
 
     pub fn at(&self, kind: TokenKind) -> bool {
-        matches!(self.cur_token(), Some(token) if token.kind == kind)
+        matches!(self.cur_token(), Ok(token) if token.kind == kind)
     }
 }

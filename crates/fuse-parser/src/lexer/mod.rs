@@ -65,7 +65,7 @@ impl<'a> Lexer<'a> {
             current
         };
 
-        // ensure existence of at least one lookahead.
+        // ensure the existence of at least one lookahead.
         self.ensure_lookahead(1);
 
         current

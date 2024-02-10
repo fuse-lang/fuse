@@ -15,27 +15,17 @@ impl AstFactory {
         Chunk { span, body }
     }
 
-    pub fn block(&self) -> Block {
+    pub fn empty_block(&self) -> Block {
         Block {
             statements: Vec::default(),
         }
     }
 
-    pub fn block_with_statements(&self, statements: Vec<Statement>) -> Block {
+    pub fn block(&self, statements: Vec<Statement>) -> Block {
         Block { statements }
     }
 
-    pub fn statement(&self) -> Statement {
-        Statement {
-            statement: StatementVariant::Empty,
-            semicolon: None,
-        }
-    }
-
-    pub fn statement_with_semicolon(&self, semicolon: Semicolon) -> Statement {
-        Statement {
-            statement: StatementVariant::Empty,
-            semicolon: Some(semicolon),
-        }
+    pub fn empty_statement(&self) -> Statement {
+        Statement::Empty
     }
 }

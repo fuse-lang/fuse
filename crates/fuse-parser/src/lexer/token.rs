@@ -1,10 +1,10 @@
-use super::Symbol;
+use super::TokenKind;
 use fuse_common::Span;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Token {
-    span: Span,
-    kind: TokenKind,
+    pub span: Span,
+    pub kind: TokenKind,
 }
 
 impl Token {
@@ -48,10 +48,6 @@ impl TokenReference {
             trailing_trivia,
         }
     }
-
-    pub fn is_symbol(&self, symbol: Symbol) -> bool {
-        self.token.kind == TokenKind::Symbol && todo!("check the value with {symbol}")
-    }
 }
 
 // impl std::borrow::Borrow<Token> for &TokenReference {
@@ -65,24 +61,5 @@ impl std::ops::Deref for TokenReference {
 
     fn deref(&self) -> &Self::Target {
         &self.token
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum TokenKind {
-    Symbol,
-    Identifier,
-    StringLiteral,
-    NumberLiteral,
-    Whitespace,
-    Eof,
-}
-
-impl TokenKind {
-    pub fn is_trivial(&self) -> bool {
-        matches! {
-            self,
-            TokenKind::Whitespace
-        }
     }
 }

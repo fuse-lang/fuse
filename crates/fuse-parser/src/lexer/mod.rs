@@ -1,10 +1,10 @@
 mod source;
-mod symbol;
 mod token;
+mod token_kind;
 mod whitespace;
 
-pub use symbol::*;
 pub use token::*;
+pub use token_kind::*;
 
 use fuse_common::{Span, SpanView};
 
@@ -145,7 +145,7 @@ pub enum LexerResult<T> {
     Recovered(T, Vec<LexerError>),
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 struct Lookahead<'a> {
     position: SourcePosition<'a>,
     token: Token,

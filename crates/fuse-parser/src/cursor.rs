@@ -1,5 +1,5 @@
 use crate::{
-    lexer::{LexerResult, Symbol, TokenReference},
+    lexer::{LexerResult, TokenKind, TokenReference},
     Parser, ParserResult,
 };
 
@@ -35,10 +35,10 @@ impl<'a> Parser<'a> {
         }
     }
 
-    pub fn consume_if(&mut self, symbol: Symbol) -> Option<TokenReference> {
+    pub fn consume_if(&mut self, kind: TokenKind) -> Option<TokenReference> {
         match self.cur_token() {
             Some(token) => {
-                if token.is_symbol(symbol) {
+                if token.kind == kind {
                     Some(self.consume().unwrap())
                 } else {
                     None

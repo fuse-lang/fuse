@@ -1,9 +1,6 @@
 use fuse_ast::{Block, Chunk, Statement};
 
-use crate::{
-    lexer::{Symbol, TokenKind},
-    Parser, ParserResult,
-};
+use crate::{lexer::TokenKind, Parser, ParserResult};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_chunk(&mut self) -> ParserResult<Chunk> {
@@ -45,21 +42,21 @@ impl<'a> Parser<'a> {
         };
 
         match current.kind() {
-            TokenKind::Symbol => {
-                // symbol: Symbol::Const,
-                // let const_token = self.consume().unwrap();
-                // let next_token = match self.cur_token() {
-                //     Some(tk) => tk,
-                //     None => return ParserResult::Err,
-                // };
+            TokenKind::Const => {
+                let const_token = self.consume().unwrap();
+                let next_token = match self.cur_token() {
+                    Some(token) => token,
+                    None => return ParserResult::Err,
+                };
 
                 // match next_token.kind() {
+                //     TokenKind::Identifier => ParserResult<self.factory.const_assignment(match)
                 // }
             }
             _ => {}
         }
         let statement = self.factory.statement();
-        let semicolon = self.consume_if(Symbol::Semicolon);
+        let semicolon = self.consume_if(TokenKind::Semicolon);
         ParserResult::Ok(statement)
     }
 }

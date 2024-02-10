@@ -15,8 +15,57 @@ pub const MAX_SOURCE_SIZE: usize = if std::mem::size_of::<usize>() >= 8 {
     isize::MAX as usize
 };
 
+pub struct ParsedChunk {
+    pub chunk: Option<fuse_ast::Chunk>,
+    pub errors: Vec<Error>,
+    pub paniced: bool,
+}
+
+impl ParsedChunk {
+    fn new(chunk: fuse_ast::Chunk, errors: Vec<Error>) -> Self {
+        Self {
+            chunk: Some(chunk),
+            errors,
+            paniced: false,
+        }
+    }
+
+    fn with_panic(errors: Vec<Error>) -> Self {
+        Self {
+            chunk: None,
+            errors,
+            paniced: true,
+        }
+    }
+}
+
 pub enum Error {
     LexerError(lexer::LexerError),
+}
+
+pub struct Parser<'a> {
+    lexer: lexer::Lexer<'a>,
+    errors: Vec<Error>,
+    source: &'a str,
+    factory: fuse_ast::AstFactory,
+}
+
+impl<'a> Parser<'a> {
+    pub fn new(source: &'a str) -> Self {
+        Self {
+            lexer: lexer::Lexer::new(source),
+            errors: Vec::new(),
+            source,
+            factory: fuse_ast::AstFactory(),
+        }
+    }
+
+    pub fn parse(mut self) -> ParsedChunk {
+        match self.parse_chunk() {
+            ParserResult::Ok(chunk) => ParsedChunk::new(chunk, self.errors),
+            ParserResult::Err | ParserResult::NotFound => ParsedChunk::with_panic(self.errors),
+        }
+    }
 }
 
 pub enum ParserResult<T> {
@@ -35,32 +84,6 @@ impl<T> ParserResult<T> {
     }
 }
 
-pub struct Parser<'a> {
-    lexer: lexer::Lexer<'a>,
-    errors: Vec<Error>,
-    source: &'a str,
-    factory: fuse_ast::AstFactory,
-}
-
-impl<'a> Parser<'a> {
-    pub fn new(source: &'a str) -> Self {
-        Self {
-            lexer: lexer::Lexer::new(source),
-            errors: Vec::new(),
-            source,
-            factory: fuse_ast::AstFactory()
-        }
-    }
-
-    pub fn parse(mut self) -> ParserResult<fuse_ast::Chunk> {
-        let chunk = self.parse_chunk();
-        ParserResult::NotFound
-    }
-}
-
-pub fn parse<'a>(src: &'a str) -> Result<bool, Box<Error>> {
-    let mut parser = Parser::new(src);
-    let block = parser.parse();
-
-    Ok(true)
+pub fn parse<'a>(src: &'a str) -> ParsedChunk {
+    Parser::new(src).parse()
 }

@@ -16,5 +16,33 @@ impl Block {
 }
 
 pub enum Statement {
+    /// Empty statement for example `;;`
     Empty,
+    /// A variable declaration using const, let or global keywords.
+    VariableDeclaration(VariableDeclaration),
 }
+
+pub struct VariableDeclaration {
+    pub span: Span,
+    pub kind: VariableDeclarationKind,
+    pub binding: BindingPattern,
+}
+
+pub enum VariableDeclarationKind {
+    Let,
+    Const,
+    Global,
+}
+
+pub struct BindingPattern {
+    pub kind: BindingPatternKind,
+    pub type_annotation: Option<TypeAnnotation>,
+    pub optional: bool,
+}
+
+pub enum BindingPatternKind {
+    IdentifierBinding,
+    TupleBinding,
+}
+
+pub struct TypeAnnotation {}

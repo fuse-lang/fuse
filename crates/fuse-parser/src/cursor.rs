@@ -30,7 +30,10 @@ impl<'a> Parser<'a> {
         let token = self.lexer.consume();
 
         match token {
-            LexerResult::Ok(token) => Ok(token),
+            LexerResult::Ok(token) => {
+                self.prev_token_end = token.end();
+                Ok(token)
+            }
             LexerResult::Recovered(token, errors) => {
                 self.push_errors(errors);
                 Ok(token)

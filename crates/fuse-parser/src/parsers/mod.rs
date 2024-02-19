@@ -1,3 +1,4 @@
+mod declaration;
 mod statements;
 
 use fuse_ast::{Block, Chunk};

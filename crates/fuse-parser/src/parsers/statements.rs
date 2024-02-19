@@ -1,6 +1,6 @@
 use fuse_ast::{Block, Statement};
 
-use crate::{lexer::TokenKind, Parser, ParserResult};
+use crate::{lexer::TokenKind, parsers::statements, Parser, ParserResult};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_block(&mut self) -> ParserResult<Block> {
@@ -33,28 +33,22 @@ impl<'a> Parser<'a> {
         let Ok(cur_kind) = self.cur_kind() else {
             return ParserResult::Err;
         };
-        let semicolon = self.consume_if(TokenKind::Semicolon);
-        let statement = match semicolon {
-            ParserResult::Ok(_) => todo!("self.ast.statement_with_semicolon(semicolon)"),
-            _ => self.ast.empty_statement(),
-        };
-        ParserResult::Ok(statement);
+
+        let start_span = self.start_span();
 
         match cur_kind {
             kind if kind.is_trivial() => ParserResult::NotFound,
-            TokenKind::Const => {
-                let const_token = self.consume().unwrap();
-                let next_token = match self.cur_token() {
-                    Ok(token) => token,
-                    Err(_) => return ParserResult::Err,
-                };
-
-                match next_token.kind() {
-                    TokenKind::Identifier => ParserResult::Err,
-                    _ => ParserResult::Err,
-                }
-            }
+            TokenKind::Semicolon => ParserResult::Ok(self.parse_empty_statement()),
+            TokenKind::Const | TokenKind::Let | TokenKind::Global => self
+                .parse_variable_declaration(start_span)
+                .map(|decl| Statement::VariableDeclaration(decl)),
             _ => todo!(),
         }
+    }
+
+    pub(crate) fn parse_empty_statement(&mut self) -> Statement {
+        // advance the semicolon token
+        self.consume().unwrap();
+        self.ast.empty_statement()
     }
 }

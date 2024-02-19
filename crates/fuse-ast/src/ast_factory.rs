@@ -28,4 +28,20 @@ impl AstFactory {
     pub fn empty_statement(&self) -> Statement {
         Statement::Empty
     }
+
+    pub fn declaration_statement(&self, decl: VariableDeclaration) -> Statement {
+        Statement::VariableDeclaration(decl)
+    }
+
+    pub fn variable_declaration(
+        &self,
+        kind: VariableDeclarationKind,
+        binding: BindingPattern,
+    ) -> VariableDeclaration {
+        VariableDeclaration {
+            span: Span::default(),
+            kind,
+            binding,
+        }
+    }
 }

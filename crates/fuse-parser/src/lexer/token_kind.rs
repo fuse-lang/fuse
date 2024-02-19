@@ -14,10 +14,12 @@ pub enum TokenKind {
     NumberLiteral,
 
     // Symbols
-    Const,
     Let,
+    Const,
+    Global,
 
     // Punctuations
+    Comma,
     Semicolon,
 }
 

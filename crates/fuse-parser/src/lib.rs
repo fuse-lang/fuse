@@ -62,6 +62,7 @@ pub struct Parser<'a> {
     errors: Vec<Error>,
     source: &'a str,
     ast: fuse_ast::AstFactory,
+    prev_token_end: u32,
 }
 
 impl<'a> Parser<'a> {
@@ -71,6 +72,7 @@ impl<'a> Parser<'a> {
             errors: Vec::new(),
             source,
             ast: fuse_ast::AstFactory(),
+            prev_token_end: 0,
         }
     }
 
@@ -89,8 +91,20 @@ impl<'a> Parser<'a> {
         self.errors
             .append(&mut errors.into_iter().map(E::into).collect())
     }
+
+    fn start_span(&self) -> fuse_common::Span {
+        let token = self.cur_token().unwrap();
+        fuse_common::Span::new(token.start(), 0)
+    }
+
+    fn end_span(&self, span: fuse_common::Span) -> fuse_common::Span {
+        let mut span = span;
+        span.end = 0;
+        span
+    }
 }
 
+#[derive(Eq, PartialEq)]
 pub enum ParserResult<T> {
     Ok(T),
     Err,
@@ -114,6 +128,11 @@ impl<T> ParserResult<T> {
             ParserResult::Err => ParserResult::Err,
             ParserResult::NotFound => ParserResult::NotFound,
         }
+    }
+
+    #[inline]
+    pub fn is_ok(&self) -> bool {
+        matches!(self, Self::Ok(_))
     }
 }
 

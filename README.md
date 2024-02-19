@@ -1,4 +1,10 @@
-# fuse-parser
+# Fuse Lang
+
+##### This project is in development, __NOT__ ready for production.
+
+[Documentation](https://fuse-lang.github.io/docs/home/)
+
+## Consider giving this project a star if you would like to see it's release, We need to hit a certain amount of Github stars in order to secure the development funding.
 
 ### Inspiration
 

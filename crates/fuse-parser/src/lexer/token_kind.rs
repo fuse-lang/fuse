@@ -21,6 +21,8 @@ pub enum TokenKind {
     // Punctuations
     Comma,
     Semicolon,
+    LParen,
+    RParen,
 }
 
 impl TokenKind {

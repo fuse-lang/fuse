@@ -48,7 +48,7 @@ impl<'a> Parser<'a> {
 
     pub(crate) fn parse_empty_statement(&mut self) -> Statement {
         // advance the semicolon token
-        self.consume().unwrap();
+        self.consume();
         self.ast.empty_statement()
     }
 }

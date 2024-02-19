@@ -1,3 +1,4 @@
+mod binding;
 mod declaration;
 mod statements;
 
@@ -16,5 +17,4 @@ impl<'a> Parser<'a> {
         let chunk = self.ast.chunk(span, body);
         ParserResult::Ok(chunk)
     }
-
 }

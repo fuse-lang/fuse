@@ -14,6 +14,10 @@ impl<'a> Parser<'a> {
             _ => return ParserResult::Err,
         };
 
+        self.consume();
+
+        let ident = self.parse_binding();
+
         ParserResult::Err
         // Ok(self.ast.variable_declaration(declarations))
     }

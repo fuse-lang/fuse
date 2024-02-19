@@ -56,4 +56,19 @@ impl<'a> Parser<'a> {
     pub fn at(&self, kind: TokenKind) -> bool {
         matches!(self.cur_token(), Ok(token) if token.kind == kind)
     }
+
+    pub fn nth(&mut self, n: u8) -> Result<&TokenReference> {
+        if n == 0 {
+            self.cur_token()
+        } else {
+            match self.lexer.lookahead(n) {
+                LexerResult::Ok(token) | LexerResult::Recovered(token, _) => Ok(token),
+                LexerResult::Fatal(_) => Err(()),
+            }
+        }
+    }
+
+    pub fn nth_kind(&mut self, n: u8) -> Result<TokenKind> {
+        self.nth(n).map(|token| token.kind)
+    }
 }

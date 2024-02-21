@@ -7,18 +7,18 @@ impl<'a> Parser<'a> {
         &mut self,
         start_span: Span,
     ) -> ParserResult<VariableDeclaration> {
-        let declaration_kind = match self.cur_kind().unwrap() {
+        let declaration_kind = match self.cur_kind() {
             TokenKind::Let => VariableDeclarationKind::Let,
             TokenKind::Const => VariableDeclarationKind::Const,
             TokenKind::Global => VariableDeclarationKind::Global,
-            _ => return ParserResult::Err,
+            _ => return Err(self.unexpected_error()),
         };
 
         self.consume();
 
         let ident = self.parse_binding();
 
-        ParserResult::Err
+        todo!()
         // Ok(self.ast.variable_declaration(declarations))
     }
 }

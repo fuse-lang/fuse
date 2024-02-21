@@ -13,3 +13,4 @@ fuse_common = { workspace = true }
 
 paste = { workspace = true }
 serde = { workspace = true }
+thiserror = { workspace = true }

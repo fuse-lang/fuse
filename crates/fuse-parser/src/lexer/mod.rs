@@ -1,3 +1,4 @@
+mod keyword;
 mod source;
 mod token;
 mod token_kind;
@@ -14,7 +15,7 @@ use std::collections::VecDeque;
 
 pub struct Lexer<'a> {
     source: Source<'a>,
-    current_token: LexerResult<TokenReference>,
+    current_token: TokenReference,
     lookahead: VecDeque<Lookahead<'a>>,
 }
 
@@ -22,7 +23,7 @@ impl<'a> Lexer<'a> {
     pub fn new(src: &'a str) -> Self {
         let mut lexer = Self {
             source: Source::new(src),
-            current_token: LexerResult::default(),
+            current_token: TokenReference::default(),
             lookahead: VecDeque::new(),
         };
 
@@ -31,7 +32,7 @@ impl<'a> Lexer<'a> {
         lexer
     }
 
-    pub fn current(&self) -> &LexerResult<TokenReference> {
+    pub fn current(&self) -> &TokenReference {
         debug_assert!(
             self.source.offset() == 0,
             "attempt to access `current` before advancing to the first token."
@@ -40,18 +41,18 @@ impl<'a> Lexer<'a> {
         &self.current_token
     }
 
-    pub fn peek(&self) -> Option<&LexerResult<TokenReference>> {
+    pub fn peek(&self) -> Option<&TokenReference> {
         self.lookahead.front().map(|next| &next.result)
     }
 
-    pub fn lookahead(&mut self, n: u8) -> &LexerResult<TokenReference> {
+    pub fn lookahead(&mut self, n: u8) -> &TokenReference {
         // Cache the new lookahead if it dosn't exists.
         self.ensure_lookahead(n);
 
         &self.lookahead[n as usize - 1].result
     }
 
-    pub fn consume(&mut self) -> LexerResult<TokenReference> {
+    pub fn consume(&mut self) -> TokenReference {
         let next = match self.lookahead.pop_front() {
             Some(next) => next.result,
             None => self.next_with_trivia(),
@@ -99,56 +100,36 @@ impl<'a> Lexer<'a> {
         unsafe { self.source.set_position(position) };
     }
 
-    fn next_with_trivia(&mut self) -> LexerResult<TokenReference> {
+    fn next_with_trivia(&mut self) -> TokenReference {
         let mut leading_trivia = Vec::new();
         let mut errors: Option<Vec<LexerError>> = None;
 
         let token = loop {
-            match self.next() {
-                LexerResult::Ok(token) if token.kind().is_trivial() => {
-                    leading_trivia.push(token);
-                }
-
-                LexerResult::Ok(token) => {
-                    break token;
-                }
-
-                LexerResult::Fatal(error) => return LexerResult::Fatal(error),
-
-                LexerResult::Recovered(token, mut token_errors) => {
-                    match errors.as_mut() {
-                        Some(errors) => errors.append(&mut token_errors),
-                        _ => errors = Some(token_errors),
-                    }
-
-                    if token.kind().is_trivial() {
-                        leading_trivia.push(token);
-                    } else {
-                        break token;
-                    }
-                }
+            let next = self.next();
+            if next.kind().is_trivial() {
+                leading_trivia.push(next);
+            } else {
+                break next;
             }
         };
 
         let trailing_trivia = self.collect_trailing_trivia();
-        let token = TokenReference::with_trivia(token, leading_trivia, trailing_trivia);
-
-        match errors {
-            Some(errors) => LexerResult::Recovered(token, errors),
-            None => LexerResult::Ok(token),
-        }
+        TokenReference::with_trivia(token, leading_trivia, trailing_trivia)
     }
 
-    fn next(&mut self) -> LexerResult<Token> {
+    fn next(&mut self) -> Token {
         let start = self.source.offset();
 
         let Some(first) = self.source.next_char() else {
             return self.create(start, TokenKind::Eof);
         };
 
-        match first {
-            ' ' | '\t' | '\r' => self.whitespace(start, first),
-            _ => unreachable!("lexer couldn't tokenize the character {first} at {start} position"),
+        if let Some(token) = self.whitespace(start, first) {
+            token
+        } else if let Some(token) = self.keyword(start, first) {
+            token
+        } else {
+            self.create(start, TokenKind::Undetermined)
         }
     }
 
@@ -159,7 +140,7 @@ impl<'a> Lexer<'a> {
             let start = self.source.position();
 
             match self.next() {
-                LexerResult::Ok(token) if token.kind().is_trivial() => {
+                token if token.kind().is_trivial() => {
                     let view = self.view_token(token);
                     trailing_trivia.push(token);
                     if token.kind() == TokenKind::Whitespace && view.contains('\n') {
@@ -179,14 +160,14 @@ impl<'a> Lexer<'a> {
         trailing_trivia
     }
 
-    fn create(&self, start: u32, token_kind: TokenKind) -> LexerResult<Token> {
-        LexerResult::Ok(Token::new(
+    fn create(&self, start: u32, token_kind: TokenKind) -> Token {
+        Token::new(
             Span {
                 start,
                 end: self.source.offset(),
             },
             token_kind,
-        ))
+        )
     }
 
     fn view_token(&self, token: Token) -> &'a str {
@@ -204,14 +185,8 @@ pub enum LexerResult<T> {
     Recovered(T, Vec<LexerError>),
 }
 
-impl Default for LexerResult<TokenReference> {
-    fn default() -> Self {
-        Self::Ok(TokenReference::new(Token::default()))
-    }
-}
-
 #[derive(Debug)]
 struct Lookahead<'a> {
     position: SourcePosition<'a>,
-    result: LexerResult<TokenReference>,
+    result: TokenReference,
 }

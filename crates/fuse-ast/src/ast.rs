@@ -41,8 +41,8 @@ pub struct BindingPattern {
 }
 
 pub enum BindingPatternKind {
-    IdentifierBinding,
-    TupleBinding,
+    Identifier,
+    Tuple,
 }
 
 pub struct TypeAnnotation {}

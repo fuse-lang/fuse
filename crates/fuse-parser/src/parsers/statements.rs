@@ -1,6 +1,6 @@
 use fuse_ast::{Block, Statement};
 
-use crate::{lexer::TokenKind, parsers::statements, Parser, ParserResult};
+use crate::{lexer::TokenKind, Parser, ParserResult};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_block(&mut self) -> ParserResult<Block> {
@@ -15,14 +15,9 @@ impl<'a> Parser<'a> {
                 ParserResult::Ok(stmt) => {
                     statements.push(stmt);
                 }
-                ParserResult::Err => {
-                    if statements.is_empty() {
-                        return ParserResult::Err;
-                    } else {
-                        break;
-                    }
+                ParserResult::Err(error) => {
+                    return ParserResult::Err(error);
                 }
-                ParserResult::NotFound => break,
             }
         }
 
@@ -30,18 +25,19 @@ impl<'a> Parser<'a> {
     }
 
     pub(crate) fn parse_statement(&mut self) -> ParserResult<Statement> {
-        let Ok(cur_kind) = self.cur_kind() else {
-            return ParserResult::Err;
-        };
+        let cur_kind = self.cur_kind();
 
         let start_span = self.start_span();
 
         match cur_kind {
-            kind if kind.is_trivial() => ParserResult::NotFound,
             TokenKind::Semicolon => ParserResult::Ok(self.parse_empty_statement()),
             TokenKind::Const | TokenKind::Let | TokenKind::Global => self
                 .parse_variable_declaration(start_span)
                 .map(|decl| Statement::VariableDeclaration(decl)),
+
+            kind if kind.is_trivial() => {
+                unreachable!("All trivial tokens should be eaten by a `TokenReference`.")
+            }
             _ => todo!(),
         }
     }

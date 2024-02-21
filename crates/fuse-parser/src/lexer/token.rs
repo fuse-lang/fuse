@@ -30,7 +30,7 @@ impl Token {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default, Clone)]
 pub struct TokenReference {
     token: Token,
     leading_trivia: Vec<Token>,

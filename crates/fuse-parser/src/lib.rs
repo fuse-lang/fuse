@@ -1,4 +1,5 @@
 mod cursor;
+mod error;
 mod lexer;
 mod parsers;
 
@@ -17,12 +18,12 @@ pub const MAX_SOURCE_SIZE: usize = if std::mem::size_of::<usize>() >= 8 {
 
 pub struct ParsedChunk {
     pub chunk: Option<fuse_ast::Chunk>,
-    pub errors: Vec<Error>,
+    pub errors: Vec<error::Error>,
     pub paniced: bool,
 }
 
 impl ParsedChunk {
-    fn new(chunk: fuse_ast::Chunk, errors: Vec<Error>) -> Self {
+    fn new(chunk: fuse_ast::Chunk, errors: Vec<error::Error>) -> Self {
         Self {
             chunk: Some(chunk),
             errors,
@@ -30,22 +31,12 @@ impl ParsedChunk {
         }
     }
 
-    fn with_panic(errors: Vec<Error>) -> Self {
+    fn with_panic(errors: Vec<error::Error>) -> Self {
         Self {
             chunk: None,
             errors,
             paniced: true,
         }
-    }
-}
-
-pub enum Error {
-    LexerError(lexer::LexerError),
-}
-
-impl From<lexer::LexerError> for Error {
-    fn from(error: lexer::LexerError) -> Self {
-        Self::LexerError(error)
     }
 }
 
@@ -59,7 +50,7 @@ impl<'a> LazyParser<'a> {
 
 pub struct Parser<'a> {
     lexer: lexer::Lexer<'a>,
-    errors: Vec<Error>,
+    errors: Vec<error::Error>,
     source: &'a str,
     ast: fuse_ast::AstFactory,
     prev_token_end: u32,
@@ -83,17 +74,24 @@ impl<'a> Parser<'a> {
     pub fn parse(mut self) -> ParsedChunk {
         match self.parse_chunk() {
             ParserResult::Ok(chunk) => ParsedChunk::new(chunk, self.errors),
-            ParserResult::Err | ParserResult::NotFound => ParsedChunk::with_panic(self.errors),
+            ParserResult::Err(error) => {
+                self.push_error(error);
+                ParsedChunk::with_panic(self.errors)
+            }
         }
     }
 
-    fn push_errors<E: Into<Error>>(&mut self, errors: Vec<E>) {
+    fn push_error<E: Into<error::Error>>(&mut self, error: E) {
+        self.errors.push(error.into());
+    }
+
+    fn push_errors<E: Into<error::Error>>(&mut self, errors: Vec<E>) {
         self.errors
             .append(&mut errors.into_iter().map(E::into).collect())
     }
 
     fn start_span(&self) -> fuse_common::Span {
-        let token = self.cur_token().unwrap();
+        let token = self.cur_token();
         fuse_common::Span::new(token.start(), 0)
     }
 
@@ -104,37 +102,7 @@ impl<'a> Parser<'a> {
     }
 }
 
-#[derive(Eq, PartialEq)]
-pub enum ParserResult<T> {
-    Ok(T),
-    Err,
-    NotFound,
-}
-
-impl<T> ParserResult<T> {
-    #[inline]
-    pub fn unwrap(self) -> T {
-        match self {
-            ParserResult::Ok(result) => result,
-            ParserResult::Err => panic!("Attempt to unwrap a ParserResult::Err."),
-            ParserResult::NotFound => panic!("Attempt to unwrap a ParserResult::NotFound."),
-        }
-    }
-
-    #[inline]
-    pub fn map<U, F: FnOnce(T) -> U>(self, op: F) -> ParserResult<U> {
-        match self {
-            ParserResult::Ok(res) => ParserResult::Ok(op(res)),
-            ParserResult::Err => ParserResult::Err,
-            ParserResult::NotFound => ParserResult::NotFound,
-        }
-    }
-
-    #[inline]
-    pub fn is_ok(&self) -> bool {
-        matches!(self, Self::Ok(_))
-    }
-}
+pub type ParserResult<T> = Result<T, error::Error>;
 
 pub fn parse<'a>(src: &'a str) -> ParsedChunk {
     Parser::new(src).parse()

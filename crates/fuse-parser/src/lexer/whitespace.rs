@@ -1,5 +1,4 @@
-use super::{Lexer, LexerResult, Token, TokenKind};
-use fuse_common::Span;
+use super::{Lexer, Token, TokenKind};
 
 impl<'a> Lexer<'a> {
     pub(super) fn whitespace(&mut self, start: u32, first: char) -> Option<Token> {
@@ -9,7 +8,7 @@ impl<'a> Lexer<'a> {
 
         while let Some(next) = self.source.peek_char() {
             if self.is_whitespace(next) {
-                self.source.consume();
+                self.source.advance();
             } else {
                 break;
             }

@@ -1,6 +1,6 @@
 use crate::{
-    lexer::{LexerResult, TokenKind, TokenReference},
-    Parser, ParserResult,
+    lexer::{TokenKind, TokenReference},
+    Parser,
 };
 
 impl<'a> Parser<'a> {

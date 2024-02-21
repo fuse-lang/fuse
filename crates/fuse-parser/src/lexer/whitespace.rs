@@ -3,35 +3,22 @@ use fuse_common::Span;
 
 impl<'a> Lexer<'a> {
     pub(super) fn whitespace(&mut self, start: u32, first: char) -> Option<Token> {
-        let mut end = start + first.len_utf8() as u32;
+        if !self.is_whitespace(first) {
+            return None;
+        }
+
         while let Some(next) = self.source.peek_char() {
-            if next == ' ' || next == '\t' {
-                end += next.len_utf8() as u32;
-                self.source
-                    .next_char()
-                    .expect("we peeked this character before");
-            } else if next == '\n' {
-                end += next.len_utf8() as u32;
-                self.source
-                    .next_char()
-                    .expect("we peeked this character before");
-                break;
-            } else if next == '\r' && self.source.peek_char2() == Some('\n') {
-                let slash_r = self
-                    .source
-                    .next_char()
-                    .expect("we peeked this character before");
-                let slash_n = self
-                    .source
-                    .next_char()
-                    .expect("we peeked this character before");
-                end += slash_r.len_utf8() as u32 + slash_n.len_utf8() as u32;
-                break;
+            if self.is_whitespace(next) {
+                self.source.consume();
             } else {
                 break;
             }
         }
 
-        Some(Token::new(Span::new(start, end), TokenKind::Whitespace))
+        Some(self.create(start, TokenKind::Whitespace))
+    }
+
+    fn is_whitespace(&self, c: char) -> bool {
+        matches!(c, ' ' | '\t' | '\n' | '\r')
     }
 }

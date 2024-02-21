@@ -89,6 +89,20 @@ impl<'a> Source<'a> {
         (self.ptr as usize - self.start as usize) as u32
     }
 
+    /// consumes the next character
+    #[inline]
+    pub(super) fn consume(&mut self) {
+        self.next_char().unwrap();
+    }
+
+    /// consumes the next n characters
+    #[inline]
+    pub(super) fn consume_n(&mut self, n: u8) {
+        for _ in 0..n {
+            self.consume();
+        }
+    }
+
     #[inline]
     pub(super) fn next_char(&mut self) -> Option<char> {
         let byte = self.peek_byte()?;

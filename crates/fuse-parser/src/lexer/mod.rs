@@ -179,13 +179,6 @@ impl<'a> Lexer<'a> {
 pub enum LexerError {}
 
 #[derive(Debug)]
-pub enum LexerResult<T> {
-    Ok(T),
-    Fatal(Vec<LexerError>),
-    Recovered(T, Vec<LexerError>),
-}
-
-#[derive(Debug)]
 struct Lookahead<'a> {
     position: SourcePosition<'a>,
     result: TokenReference,

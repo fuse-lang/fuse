@@ -1,10 +1,10 @@
 # Fuse Lang
 
-##### This project is in development, __NOT__ ready for production.
+##### This project is in development, __NOT__ ready for production; We are at sub 0.1 version.
 
 [Documentation](https://fuse-lang.github.io/docs/home/)
 
-## Consider giving this project a star if you would like to see it's release, We need to hit a certain amount of Github stars in order to secure the development funding.
+## Giving a star to this project can go a long way in order to hit a sooner release date by putting us on the map for both possible contributors and sponsors to see.
 
 ### Inspiration
 

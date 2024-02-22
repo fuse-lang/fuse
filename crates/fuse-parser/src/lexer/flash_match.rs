@@ -1,11 +1,12 @@
 /// A quick match between lexer's source characters and given expressions.
 #[macro_export]
 macro_rules! flash_match {
-    {
-        ($source:expr, $start:expr, $first:ident),
-        $($head:tt => {
-            $($tail:expr => $value:expr,)*
-        })+
+    {(
+        $source:expr, $start:expr, $first:ident) {
+            $($head:tt => {
+                $($tail:expr => $value:expr,)*
+            })+
+        }
     } => ({
         let pos = $start as usize + 1;
         match $first {

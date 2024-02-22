@@ -10,7 +10,7 @@ impl<'a> Lexer<'a> {
             let Some(next) = self.source.peek_char() else {
                 break;
             };
-            if !next.is_ascii_alphabetic() && !next.is_ascii_digit() {
+            if !next.is_ascii_alphabetic() && !next.is_ascii_digit() && next != '_' {
                 break;
             }
             self.source.advance();

@@ -1,4 +1,6 @@
+mod flash_match;
 mod keyword;
+mod operator;
 mod source;
 mod token;
 mod token_kind;
@@ -127,6 +129,8 @@ impl<'a> Lexer<'a> {
         if let Some(token) = self.whitespace(start, first) {
             token
         } else if let Some(token) = self.keyword(start, first) {
+            token
+        } else if let Some(token) = self.operator(start, first) {
             token
         } else {
             self.create(start, TokenKind::Undetermined)

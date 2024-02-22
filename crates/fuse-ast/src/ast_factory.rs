@@ -47,14 +47,14 @@ impl AstFactory {
         }
     }
 
-    pub fn binding_pattern(
+    pub fn binding_identifier_pattern(
         &self,
-        kind: BindingPatternKind,
+        binding_identifier: BindingIdentifier,
         type_annotation: Option<TypeAnnotation>,
         optional: bool,
     ) -> BindingPattern {
         BindingPattern {
-            kind,
+            kind: BindingPatternKind::Identifier(binding_identifier),
             type_annotation,
             optional,
         }

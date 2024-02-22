@@ -1,21 +1,21 @@
 use crate::{lexer::TokenKind, Parser, ParserResult};
-use fuse_ast::{BindingPattern, BindingPatternKind};
+use fuse_ast::{Atom, BindingIdentifier, BindingPattern, BindingPatternKind};
 use fuse_common::Span;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_binding(&mut self) -> ParserResult<BindingPattern> {
         match self.cur_kind() {
-            TokenKind::LParen => self.parse_tuple_binding(),
-            _ => self.parse_binding_identifier(),
+            TokenKind::LParen => self.parse_tuple_binding_pattern(),
+            _ => self.parse_binding_identifier_pattern(),
         }
     }
 
-    fn parse_tuple_binding(&mut self) -> ParserResult<BindingPattern> {
+    fn parse_tuple_binding_pattern(&mut self) -> ParserResult<BindingPattern> {
         self.consume();
 
         // fallback to identifier binding if it is just a variable in parentheses
         if self.nth_kind(1) == TokenKind::RParen {
-            let binding = self.parse_binding_identifier();
+            let binding = self.parse_binding_identifier_pattern();
             // consume the closing parentheses
             self.consume();
             return binding;
@@ -28,21 +28,24 @@ impl<'a> Parser<'a> {
         })
     }
 
-    fn parse_binding_identifier(&mut self) -> ParserResult<BindingPattern> {
+    fn parse_binding_identifier_pattern(&mut self) -> ParserResult<BindingPattern> {
         if !self.cur_kind().is_valid_identifier() {
             return Err(self.unexpected_error());
         }
 
-        let mut span = self.start_span();
+        let identifier = self.parse_binding_identifier();
+        Ok(self.ast.binding_identifier_pattern(identifier, None, false))
+    }
 
+    fn parse_binding_identifier(&mut self) -> BindingIdentifier {
+        let mut span = self.start_span();
         let token = self.consume();
         let name = self.view_token(*token);
 
         span = self.end_span(span);
+
         let atom = self.ast.atom(name);
-        let identifier = self.ast.binding_identifier(span, atom);
-        Ok(self
-            .ast
-            .binding_pattern(BindingPatternKind::Identifier(identifier), None, false))
+
+        self.ast.binding_identifier(span, atom)
     }
 }

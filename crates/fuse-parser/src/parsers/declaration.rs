@@ -16,9 +16,12 @@ impl<'a> Parser<'a> {
 
         self.consume();
 
-        let ident = self.parse_binding();
+        let ident = self.parse_binding()?;
 
-        todo!()
+        // let first = self.consume_if(TokenKind::Eq)
+
+
+        todo!("{ident:?}")
         // Ok(self.ast.variable_declaration(declarations))
     }
 }

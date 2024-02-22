@@ -17,6 +17,7 @@ impl<'a> Lexer<'a> {
         Some(self.create(start, TokenKind::Whitespace))
     }
 
+    #[inline]
     fn is_whitespace(&self, c: char) -> bool {
         matches!(c, ' ' | '\t' | '\n' | '\r')
     }

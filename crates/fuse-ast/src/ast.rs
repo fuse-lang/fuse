@@ -1,4 +1,5 @@
 use fuse_common::Span;
+use std::rc::Rc;
 
 pub struct Chunk {
     pub span: Span,
@@ -18,9 +19,14 @@ impl Block {
 #[derive(Debug, PartialEq, Eq)]
 pub enum Statement {
     /// Empty statement for example `;;`
-    Empty,
+    Empty(EmptyStatement),
     /// A variable declaration using const, let or global keywords.
     VariableDeclaration(VariableDeclaration),
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct EmptyStatement {
+    pub span: Span,
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -46,9 +52,18 @@ pub struct BindingPattern {
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum BindingPatternKind {
-    Identifier,
+    Identifier(BindingIdentifier),
     Tuple,
 }
 
 #[derive(Debug, PartialEq, Eq)]
+pub struct BindingIdentifier {
+    pub span: Span,
+    pub atom: Atom,
+}
+
+#[derive(Debug, PartialEq, Eq)]
 pub struct TypeAnnotation {}
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct Atom(pub Rc<str>);

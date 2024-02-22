@@ -1,5 +1,5 @@
 use crate::{
-    lexer::{TokenKind, TokenReference},
+    lexer::{Token, TokenKind, TokenReference},
     Parser,
 };
 
@@ -40,5 +40,9 @@ impl<'a> Parser<'a> {
 
     pub fn nth_kind(&mut self, n: u8) -> TokenKind {
         self.nth(n).kind
+    }
+
+    pub fn view_token(&self, token: Token) -> &'a str {
+        self.lexer.view_token(token)
     }
 }

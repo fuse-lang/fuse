@@ -177,7 +177,7 @@ impl<'a> Lexer<'a> {
         )
     }
 
-    fn view_token(&self, token: Token) -> &'a str {
+    pub(super) fn view_token(&self, token: Token) -> &'a str {
         self.source.as_str().view(&token.span())
     }
 }

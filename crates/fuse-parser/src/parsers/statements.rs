@@ -1,4 +1,5 @@
 use fuse_ast::{Block, Statement};
+use fuse_common::Span;
 
 use crate::{lexer::TokenKind, Parser, ParserResult};
 
@@ -27,24 +28,25 @@ impl<'a> Parser<'a> {
     pub(crate) fn parse_statement(&mut self) -> ParserResult<Statement> {
         let cur_kind = self.cur_kind();
 
-        let start_span = self.start_span();
+        let start = self.start_span();
 
         match cur_kind {
-            TokenKind::Semicolon => ParserResult::Ok(self.parse_empty_statement()),
+            TokenKind::Semicolon => ParserResult::Ok(self.parse_empty_statement(start)),
             TokenKind::Const | TokenKind::Let | TokenKind::Global => self
-                .parse_variable_declaration(start_span)
+                .parse_variable_declaration(start)
                 .map(|decl| Statement::VariableDeclaration(decl)),
 
             kind if kind.is_trivial() => {
                 unreachable!("All trivial tokens should be eaten by a `TokenReference`.")
             }
-            _ => todo!("{cur_kind:?}"),
+            _ => todo!("{:?}", self.cur_token()),
         }
     }
 
-    pub(crate) fn parse_empty_statement(&mut self) -> Statement {
+    pub(crate) fn parse_empty_statement(&mut self, start: Span) -> Statement {
         // advance the semicolon token
         self.consume();
-        self.ast.empty_statement()
+        let span = self.end_span(start);
+        self.ast.empty_statement(span)
     }
 }

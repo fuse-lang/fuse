@@ -1,5 +1,6 @@
 use crate::{lexer::TokenKind, Parser, ParserResult};
 use fuse_ast::{BindingPattern, BindingPatternKind};
+use fuse_common::Span;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_binding(&mut self) -> ParserResult<BindingPattern> {
@@ -28,9 +29,20 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_binding_identifier(&mut self) -> ParserResult<BindingPattern> {
-        if self.cur_kind().is_identifier() {
-
+        if !self.cur_kind().is_valid_identifier() {
+            return Err(self.unexpected_error());
         }
-        todo!()
+
+        let mut span = self.start_span();
+
+        let token = self.consume();
+        let name = self.view_token(*token);
+
+        span = self.end_span(span);
+        let atom = self.ast.atom(name);
+        let identifier = self.ast.binding_identifier(span, atom);
+        Ok(self
+            .ast
+            .binding_pattern(BindingPatternKind::Identifier(identifier), None, false))
     }
 }

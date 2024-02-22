@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use crate::ast::*;
 use fuse_common::Span;
 
@@ -25,8 +27,8 @@ impl AstFactory {
         Block { statements }
     }
 
-    pub fn empty_statement(&self) -> Statement {
-        Statement::Empty
+    pub fn empty_statement(&self, span: Span) -> Statement {
+        Statement::Empty(EmptyStatement { span })
     }
 
     pub fn declaration_statement(&self, decl: VariableDeclaration) -> Statement {
@@ -43,5 +45,26 @@ impl AstFactory {
             kind,
             binding,
         }
+    }
+
+    pub fn binding_pattern(
+        &self,
+        kind: BindingPatternKind,
+        type_annotation: Option<TypeAnnotation>,
+        optional: bool,
+    ) -> BindingPattern {
+        BindingPattern {
+            kind,
+            type_annotation,
+            optional,
+        }
+    }
+
+    pub fn binding_identifier(&self, span: Span, atom: Atom) -> BindingIdentifier {
+        BindingIdentifier { span, atom }
+    }
+
+    pub fn atom(&self, value: &str) -> Atom {
+        Atom(Rc::from(value))
     }
 }

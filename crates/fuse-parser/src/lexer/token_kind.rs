@@ -81,7 +81,7 @@ impl TokenKind {
         }
     }
 
-    pub fn is_identifier(&self) -> bool {
+    pub fn is_valid_identifier(&self) -> bool {
         matches!(self, TokenKind::Identifier) || !self.is_reserved_keyword()
     }
 

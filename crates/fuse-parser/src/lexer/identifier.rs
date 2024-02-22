@@ -2,10 +2,16 @@ use super::{Lexer, Token, TokenKind};
 
 impl<'a> Lexer<'a> {
     pub(super) fn identifier(&mut self, start: u32, first: char) -> Option<Token> {
-        // self.source.advance();
         if !matches!(first, 'a'..='z' | 'A'..='Z' | '_') {
             return None;
         }
+
+        // Eat the hash symbol if it is a raw identifier.
+        if first == 'r' && self.source.peek_char()? == '#' {
+            self.source.advance();
+        }
+
+        // Eat the rest of the identifier.
         loop {
             let Some(next) = self.source.peek_char() else {
                 break;
@@ -15,6 +21,7 @@ impl<'a> Lexer<'a> {
             }
             self.source.advance();
         }
+
         Some(self.create(start, TokenKind::Identifier))
     }
 }

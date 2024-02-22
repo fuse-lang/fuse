@@ -65,6 +65,7 @@ pub enum TokenKind {
     Semicolon,
     LParen,
     RParen,
+    Eq,
 }
 
 impl TokenKind {

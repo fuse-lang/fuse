@@ -95,6 +95,14 @@ impl<'a> Source<'a> {
         self.next_char().unwrap();
     }
 
+    /// Advance for the next n characters
+    #[inline]
+    pub(super) fn advance_n(&mut self, n: u8) {
+        for _ in 0..n {
+            self.advance();
+        }
+    }
+
     #[inline]
     pub(super) fn next_char(&mut self) -> Option<char> {
         let byte = self.peek_byte()?;
@@ -102,7 +110,7 @@ impl<'a> Source<'a> {
         if byte.is_ascii() {
             // SAFETY: We already peeked the next byte and know that `ptr < end`.
             // and since this byte is ASCII, advancing by 1 would result in a valid UTF-8 boundary.
-            unsafe { self.ptr == self.ptr.add(1) };
+            unsafe { self.ptr = self.ptr.add(1) };
             return Some(byte as char);
         }
 

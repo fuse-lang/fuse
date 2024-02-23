@@ -1,13 +1,13 @@
 use super::{Lexer, Token, TokenKind};
 
 impl<'a> Lexer<'a> {
-    pub(super) fn identifier(&mut self, start: u32, first: char) -> Option<Token> {
-        if !matches!(first, 'a'..='z' | 'A'..='Z' | '_') {
+    pub(super) fn identifier(&mut self, start: u32, peek: char) -> Option<Token> {
+        if !matches!(peek, 'a'..='z' | 'A'..='Z' | '_') {
             return None;
         }
 
         // Eat the hash symbol if it is a raw identifier.
-        if first == 'r' && self.source.peek_char()? == '#' {
+        if peek == 'r' && self.source.peek_char()? == '#' {
             self.source.advance();
         }
 

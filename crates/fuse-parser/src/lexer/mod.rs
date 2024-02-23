@@ -127,16 +127,19 @@ impl<'a> Lexer<'a> {
             return self.create(start, TokenKind::Eof);
         };
 
-        if let Some(token) = self.whitespace(start, first) {
-            token
-        } else if let Some(token) = self.keyword(start, first) {
-            token
-        } else if let Some(token) = self.operator(start, first) {
-            token
-        } else if let Some(token) = self.identifier(start, first) {
-            token
-        } else {
-            self.create(start, TokenKind::Undetermined)
+        macro_rules! analyze {
+            {| $first:ident $(| $lexer:ident)*} => {
+                if let Some(token) = self.$first(start, first) {token}
+                $(else if let Some(token) = self.$lexer(start, first) {token})+
+                else { self.create(start, TokenKind::Undetermined) }
+            };
+        }
+
+        analyze! {
+            | whitespace
+            | keyword
+            | operator
+            | identifier
         }
     }
 

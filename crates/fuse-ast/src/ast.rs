@@ -1,11 +1,13 @@
 use fuse_common::Span;
 use std::rc::Rc;
 
+#[derive(Debug)]
 pub struct Chunk {
     pub span: Span,
     pub body: Block,
 }
 
+#[derive(Debug)]
 pub struct Block {
     pub statements: Vec<Statement>,
 }

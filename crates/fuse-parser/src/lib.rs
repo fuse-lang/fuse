@@ -16,6 +16,7 @@ pub const MAX_SOURCE_SIZE: usize = if std::mem::size_of::<usize>() >= 8 {
     isize::MAX as usize
 };
 
+#[derive(Debug)]
 pub struct ParsedChunk {
     pub chunk: Option<fuse_ast::Chunk>,
     pub errors: Vec<error::Error>,

@@ -28,12 +28,10 @@ impl<'a> Parser<'a> {
     pub(crate) fn parse_statement(&mut self) -> ParserResult<Statement> {
         let cur_kind = self.cur_kind();
 
-        let start = self.start_span();
-
         match cur_kind {
-            TokenKind::Semicolon => ParserResult::Ok(self.parse_empty_statement(start)),
+            TokenKind::Semicolon => ParserResult::Ok(self.parse_empty_statement()),
             TokenKind::Const | TokenKind::Let | TokenKind::Global => self
-                .parse_variable_declaration(start)
+                .parse_variable_declaration()
                 .map(|decl| Statement::VariableDeclaration(decl)),
 
             kind if kind.is_trivial() => {
@@ -43,7 +41,8 @@ impl<'a> Parser<'a> {
         }
     }
 
-    pub(crate) fn parse_empty_statement(&mut self, start: Span) -> Statement {
+    pub(crate) fn parse_empty_statement(&mut self) -> Statement {
+        let start = self.start_span();
         // advance the semicolon token
         self.consume();
         let span = self.end_span(start);

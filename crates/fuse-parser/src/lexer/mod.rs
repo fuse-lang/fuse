@@ -1,6 +1,7 @@
 mod flash_match;
 mod identifier;
 mod keyword;
+mod number;
 mod operator;
 mod source;
 mod token;
@@ -57,7 +58,12 @@ impl<'a> Lexer<'a> {
 
     pub fn consume(&mut self) -> TokenReference {
         let next = match self.lookahead.pop_front() {
-            Some(next) => next.result,
+            Some(next) => {
+                // SAFETY: all lookaheads belong to this lexer
+                // and `self.source` never changes.
+                unsafe { self.source.set_position(next.position) };
+                next.result
+            }
             None => self.next_with_trivia(),
         };
 
@@ -123,20 +129,24 @@ impl<'a> Lexer<'a> {
     fn next(&mut self) -> Token {
         let start = self.source.offset();
 
-        let Some(first) = self.source.next_char() else {
+        if self.source.is_eof() {
+            return self.create(start, TokenKind::Eof);
+        }
+        let Some(peek) = self.source.peek_char() else {
             return self.create(start, TokenKind::Eof);
         };
 
         macro_rules! analyze {
-            {| $first:ident $(| $lexer:ident)*} => {
-                if let Some(token) = self.$first(start, first) {token}
-                $(else if let Some(token) = self.$lexer(start, first) {token})+
+            {$(|)? $lex1:ident $(| $lexn:ident)*} => {
+                if let Some(token) = self.$lex1(start, peek) {token}
+                $(else if let Some(token) = self.$lexn(start, peek) {token})+
                 else { self.create(start, TokenKind::Undetermined) }
             };
         }
 
         analyze! {
             | whitespace
+            | number
             | keyword
             | operator
             | identifier

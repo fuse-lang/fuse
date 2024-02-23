@@ -78,7 +78,7 @@ pub enum Expression {
 pub struct NumberLiteral {
     pub span: Span,
     pub value: NumberType,
-    pub base: NumberKind,
+    pub kind: NumberKind,
 }
 
 pub type NumberType = f64;

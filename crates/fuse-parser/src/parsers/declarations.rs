@@ -3,10 +3,7 @@ use fuse_ast::{VariableDeclaration, VariableDeclarationKind};
 use fuse_common::Span;
 
 impl<'a> Parser<'a> {
-    pub(crate) fn parse_variable_declaration(
-        &mut self,
-        start: Span,
-    ) -> ParserResult<VariableDeclaration> {
+    pub(crate) fn parse_variable_declaration(&mut self) -> ParserResult<VariableDeclaration> {
         let decl_kind = match self.cur_kind() {
             TokenKind::Let => VariableDeclarationKind::Let,
             TokenKind::Const => VariableDeclarationKind::Const,
@@ -21,8 +18,8 @@ impl<'a> Parser<'a> {
             .consume_if(TokenKind::Eq)
             .and_then(|_| self.parse_expression().ok());
 
-        self.ast
-            .variable_declaration(decl_kind, binding, expression);
-        todo!()
+        Ok(self
+            .ast
+            .variable_declaration(decl_kind, binding, expression))
     }
 }

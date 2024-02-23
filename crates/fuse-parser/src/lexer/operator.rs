@@ -8,6 +8,9 @@ impl<'a> Lexer<'a> {
             '=' => {
                 "" => TokenKind::Eq,
             }
+            ';' => {
+                "" => TokenKind::Semicolon,
+            }
         })?;
 
         Some(self.create(start, kind))

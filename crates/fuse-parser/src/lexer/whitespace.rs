@@ -5,7 +5,6 @@ impl<'a> Lexer<'a> {
         if !self.is_whitespace(peek) {
             return None;
         }
-        self.source.advance();
 
         while let Some(next) = self.source.peek_char() {
             if self.is_whitespace(next) {

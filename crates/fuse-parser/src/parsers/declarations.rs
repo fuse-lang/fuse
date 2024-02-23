@@ -5,9 +5,9 @@ use fuse_common::Span;
 impl<'a> Parser<'a> {
     pub(crate) fn parse_variable_declaration(
         &mut self,
-        start_span: Span,
+        start: Span,
     ) -> ParserResult<VariableDeclaration> {
-        let declaration_kind = match self.cur_kind() {
+        let decl_kind = match self.cur_kind() {
             TokenKind::Let => VariableDeclarationKind::Let,
             TokenKind::Const => VariableDeclarationKind::Const,
             TokenKind::Global => VariableDeclarationKind::Global,
@@ -16,12 +16,13 @@ impl<'a> Parser<'a> {
 
         self.consume();
 
-        let ident = self.parse_binding()?;
+        let binding = self.parse_binding()?;
+        let expression = self
+            .consume_if(TokenKind::Eq)
+            .and_then(|_| self.parse_expression().ok());
 
-        // let first = self.consume_if(TokenKind::Eq)
-
-
-        todo!("{ident:?}")
-        // Ok(self.ast.variable_declaration(declarations))
+        self.ast
+            .variable_declaration(decl_kind, binding, expression);
+        todo!()
     }
 }

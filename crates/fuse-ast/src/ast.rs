@@ -16,7 +16,7 @@ impl Block {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq)]
 pub enum Statement {
     /// Empty statement for example `;;`
     Empty(EmptyStatement),
@@ -24,46 +24,69 @@ pub enum Statement {
     VariableDeclaration(VariableDeclaration),
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq)]
 pub struct EmptyStatement {
     pub span: Span,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq)]
 pub struct VariableDeclaration {
     pub span: Span,
     pub kind: VariableDeclarationKind,
     pub binding: BindingPattern,
+    pub expression: Option<Expression>,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq)]
 pub enum VariableDeclarationKind {
     Let,
     Const,
     Global,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq)]
 pub struct BindingPattern {
     pub kind: BindingPatternKind,
     pub type_annotation: Option<TypeAnnotation>,
     pub optional: bool,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq)]
 pub enum BindingPatternKind {
     Identifier(BindingIdentifier),
     Tuple,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq)]
 pub struct BindingIdentifier {
     pub span: Span,
     pub atom: Atom,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq)]
 pub struct TypeAnnotation {}
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq)]
 pub struct Atom(pub Rc<str>);
+
+#[derive(Debug, PartialEq)]
+pub enum Expression {
+    NumberLiteral(NumberLiteral),
+}
+
+#[derive(Debug, PartialEq)]
+pub struct NumberLiteral {
+    pub span: Span,
+    pub value: NumberType,
+    pub base: NumberKind,
+}
+
+pub type NumberType = f64;
+
+#[derive(Debug, PartialEq)]
+pub enum NumberKind {
+    Binary,
+    Decimal,
+    Hexadecimal,
+    Float,
+}

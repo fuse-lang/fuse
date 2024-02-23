@@ -39,11 +39,13 @@ impl AstFactory {
         &self,
         kind: VariableDeclarationKind,
         binding: BindingPattern,
+        expression: Option<Expression>,
     ) -> VariableDeclaration {
         VariableDeclaration {
             span: Span::default(),
             kind,
             binding,
+            expression,
         }
     }
 

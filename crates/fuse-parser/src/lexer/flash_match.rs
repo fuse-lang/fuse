@@ -8,15 +8,15 @@ macro_rules! flash_match {
         })+
     }
     } => ({
+        // Plus 1 to skip the peek character position.
         let pos = $start as usize + 1;
         match $peek {
             $($head => {
-                // Eat the peek character.
-                $source.advance();
                 match () {
                     $(
                         _ if &$source.as_str()[pos..pos + $tail.len()] == $tail => {
-                            $source.advance_n($tail.len() as u8);
+                            // Plus 1 to eat the peek character.
+                            $source.advance_n($tail.len() as u8 + 1);
                             Some($value)
                         },
                     )+

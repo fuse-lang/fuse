@@ -11,6 +11,12 @@ impl<'a> Lexer<'a> {
             ';' => {
                 "" => TokenKind::Semicolon,
             }
+            '-' => {
+                "" => TokenKind::Minus,
+            }
+            '+' => {
+                "" => TokenKind::Plus,
+            }
         })?;
 
         Some(self.create(start, kind))

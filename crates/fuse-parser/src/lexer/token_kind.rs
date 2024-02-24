@@ -66,6 +66,8 @@ pub enum TokenKind {
     LParen,
     RParen,
     Eq,
+    Minus,
+    Plus,
 }
 
 impl TokenKind {

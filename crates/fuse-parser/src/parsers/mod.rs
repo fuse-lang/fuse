@@ -1,6 +1,7 @@
 mod binding;
 mod declarations;
 mod expressions;
+mod numbers;
 mod statements;
 
 use fuse_ast::{Block, Chunk};

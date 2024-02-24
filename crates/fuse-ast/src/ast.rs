@@ -74,6 +74,7 @@ pub struct Atom(pub Rc<str>);
 #[derive(Debug, PartialEq)]
 pub enum Expression {
     NumberLiteral(NumberLiteral),
+    StringLiteral(StringLiteral),
 }
 
 #[derive(Debug, PartialEq)]
@@ -95,3 +96,6 @@ pub enum NumberKind {
     Hexadecimal,
     Float,
 }
+
+#[derive(Debug, PartialEq)]
+pub struct StringLiteral {}

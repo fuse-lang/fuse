@@ -3,10 +3,10 @@ mod declarations;
 mod expressions;
 mod numbers;
 mod statements;
+mod string;
 
-use fuse_ast::{Block, Chunk};
-
-use crate::{lexer::TokenKind, Parser, ParserResult};
+use fuse_ast::Chunk;
+use crate::{Parser, ParserResult};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_chunk(&mut self) -> ParserResult<Chunk> {

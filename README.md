@@ -1,6 +1,6 @@
 # Fuse Lang
 
-##### [Fuse](https://fuse-lang.github.io/) is in development, __NOT__ ready for production; We are at sub 0.1 version.
+##### [Fuse](https://fuse-lang.github.io/) is in development, __NOT__ ready for production; We are at version sub 0.1.
 
 [Documentation](https://fuse-lang.github.io/docs/home/)
 

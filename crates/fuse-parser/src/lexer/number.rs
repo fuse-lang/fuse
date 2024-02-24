@@ -8,23 +8,21 @@ impl<'a> Lexer<'a> {
             return None;
         }
 
-        let kind = if peek == '0' {
+        if peek == '0' {
             match self.source.peek_char2() {
                 Some('x' | 'X') => {
                     self.source.advance_n(2);
                     self.eat_hexadecimal_literal();
-                    NumberKind::Hexadecimal
                 }
                 Some('b' | 'B') => {
                     self.source.advance_n(2);
                     self.eat_binary_literal();
-                    NumberKind::Binary
                 }
                 _ => self.eat_decimal_or_float_literal(),
             }
         } else {
             self.eat_decimal_or_float_literal()
-        };
+        }
 
         Some(self.create(start, TokenKind::NumberLiteral))
     }
@@ -54,10 +52,18 @@ impl<'a> Lexer<'a> {
 
     /// Eats a decimal or floating point number literal,
     /// And returns the `NumberKind` corresponding to it.
-    fn eat_decimal_or_float_literal(&mut self) -> NumberKind {
+    fn eat_decimal_or_float_literal(&mut self) {
         while self.source.advance_if(|next| {
-            next.is_ascii_digit()
+            matches! {
+                next,
+                | '0'..='9'
+                | '.'
+                | '_'
+                // exponent part
+                | 'e'
+                | '-'
+                | '+'
+            }
         }) {}
-        NumberKind::Decimal
     }
 }

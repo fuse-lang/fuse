@@ -7,7 +7,7 @@ use fuse_ast::{Expression, IntType, NumberKind, NumberLiteral, NumberType};
 impl<'a> Parser<'a> {
     pub(crate) fn parse_expression(&mut self) -> ParserResult<Expression> {
         if !self.at(TokenKind::NumberLiteral) {
-            return Err(self.unexpected_error());
+            return Err(self.unexpect_token_kind_error(TokenKind::NumberLiteral));
         }
 
         let token = self.consume();
@@ -30,12 +30,14 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_hexadecimal_number(&self, str: &str) -> ParserResult<(NumberType, NumberKind)> {
-        let value = IntType::from_str_radix(str, 16).map_err(|err| self.unexpected_error())?;
+        let value =
+            IntType::from_str_radix(str, 16).map_err(|_| self.invalid_number_literal_error())?;
         Ok((value as NumberType, NumberKind::Hexadecimal))
     }
 
     fn parse_binary_number(&self, str: &str) -> ParserResult<(NumberType, NumberKind)> {
-        let value = IntType::from_str_radix(str, 2).map_err(|err| self.unexpected_error())?;
+        let value =
+            IntType::from_str_radix(str, 2).map_err(|_| self.invalid_number_literal_error())?;
         Ok((value as NumberType, NumberKind::Binary))
     }
 
@@ -44,7 +46,7 @@ impl<'a> Parser<'a> {
         if dots.len() > 1 {
             Err(self.unexpected_error())
         } else {
-            let value = str::parse(str).map_err(|err| self.unexpected_error())?;
+            let value = str::parse(str).map_err(|_| self.invalid_number_literal_error())?;
             Ok((
                 value,
                 if dots.len() == 0 {

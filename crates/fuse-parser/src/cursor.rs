@@ -14,7 +14,7 @@ impl<'a> Parser<'a> {
 
     pub(crate) fn consume(&mut self) -> TokenReference {
         let token = self.lexer.consume();
-        self.prev_token_end = token.end();
+        self.prev_token = token.clone();
         token
     }
 

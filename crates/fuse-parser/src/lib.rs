@@ -54,7 +54,7 @@ pub struct Parser<'a> {
     errors: Vec<error::Error>,
     source: &'a str,
     ast: fuse_ast::AstFactory,
-    prev_token_end: u32,
+    prev_token: lexer::TokenReference,
 }
 
 impl<'a> Parser<'a> {
@@ -64,7 +64,7 @@ impl<'a> Parser<'a> {
             errors: Vec::new(),
             source,
             ast: fuse_ast::AstFactory(),
-            prev_token_end: 0,
+            prev_token: lexer::TokenReference::default(),
         }
     }
 

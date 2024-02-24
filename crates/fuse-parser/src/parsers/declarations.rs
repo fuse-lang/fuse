@@ -14,9 +14,11 @@ impl<'a> Parser<'a> {
         self.consume();
 
         let binding = self.parse_binding()?;
-        let expression = self
-            .consume_if(TokenKind::Eq)
-            .and_then(|_| self.parse_expression().ok());
+        let expression = if let Some(_) = self.consume_if(TokenKind::Eq) {
+            Some(self.parse_expression()?)
+        } else {
+            None
+        };
 
         Ok(self
             .ast

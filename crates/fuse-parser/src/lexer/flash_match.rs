@@ -3,10 +3,10 @@
 macro_rules! flash_match {
     {(
         $source:expr, $start:expr, $peek:ident) {
-            $($head:tt => {
-                $($tail:expr => $value:expr,)*
-            })+
-        }
+        $($head:tt => {
+            $($tail:expr => $value:expr,)*
+        })+
+    }
     } => ({
         let pos = $start as usize + 1;
         match $peek {
@@ -20,10 +20,10 @@ macro_rules! flash_match {
                             Some($value)
                         },
                     )+
-                    _ => None,
+                        _ => None,
                 }}
-            ,)+
-            _ => None,
+                ,)+
+                _ => None,
         }
     });
 }

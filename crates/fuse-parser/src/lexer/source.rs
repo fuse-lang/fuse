@@ -103,6 +103,18 @@ impl<'a> Source<'a> {
         }
     }
 
+    /// Advance if the next character is accepted by `predicate`.
+    #[inline]
+    pub(super) fn advance_if<F: Fn(char) -> bool>(&mut self, predicate: F) -> bool {
+        match self.peek_char() {
+            Some(peek) if predicate(peek) => {
+                self.advance();
+                true
+            }
+            _ => false,
+        }
+    }
+
     #[inline]
     pub(super) fn next_char(&mut self) -> Option<char> {
         let byte = self.peek_byte()?;

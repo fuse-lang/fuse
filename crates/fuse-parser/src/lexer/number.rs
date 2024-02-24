@@ -1,21 +1,63 @@
+use fuse_ast::{NumberKind, NumberType};
+
 use super::{Lexer, Token, TokenKind};
-use crate::flash_match;
 
 impl<'a> Lexer<'a> {
     pub(super) fn number(&mut self, start: u32, peek: char) -> Option<Token> {
         if !peek.is_ascii_digit() {
             return None;
         }
-        self.source.advance();
 
-        while let Some(next) = self.source.peek_char() {
-            if next.is_ascii_digit() {
-                self.source.advance();
-            } else {
-                break;
+        let kind = if peek == '0' {
+            match self.source.peek_char2() {
+                Some('x' | 'X') => {
+                    self.source.advance_n(2);
+                    self.eat_hexadecimal_literal();
+                    NumberKind::Hexadecimal
+                }
+                Some('b' | 'B') => {
+                    self.source.advance_n(2);
+                    self.eat_binary_literal();
+                    NumberKind::Binary
+                }
+                _ => self.eat_decimal_or_float_literal(),
             }
-        }
+        } else {
+            self.eat_decimal_or_float_literal()
+        };
 
         Some(self.create(start, TokenKind::NumberLiteral))
+    }
+
+    fn eat_hexadecimal_literal(&mut self) {
+        while self.source.advance_if(|next| {
+            matches! {
+                next,
+                | '0'..='9'
+                | 'a'..='f'
+                | 'A'..='F'
+                | '_'
+            }
+        }) {}
+    }
+
+    fn eat_binary_literal(&mut self) {
+        while self.source.advance_if(|next| {
+            matches! {
+                next,
+                | '0'
+                | '1'
+                | '_'
+            }
+        }) {}
+    }
+
+    /// Eats a decimal or floating point number literal,
+    /// And returns the `NumberKind` corresponding to it.
+    fn eat_decimal_or_float_literal(&mut self) -> NumberKind {
+        while self.source.advance_if(|next| {
+            next.is_ascii_digit()
+        }) {}
+        NumberKind::Decimal
     }
 }

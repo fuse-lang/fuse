@@ -1,3 +1,3 @@
 fn main() {
-    println!("Hello, world!");
+    todo!("Fuse command line isn't ready yet.")
 }

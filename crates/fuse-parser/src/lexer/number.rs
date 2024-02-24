@@ -51,16 +51,31 @@ impl<'a> Lexer<'a> {
     /// Eats a decimal or floating point number literal,
     /// And returns the `NumberKind` corresponding to it.
     fn eat_decimal_or_float_literal(&mut self) {
-        while self.source.advance_if(|next| {
-            matches! {
-                next,
-                | '0'..='9'
-                | '.'
-                | '_'
-                // exponent part
-                | 'e'
-                | '-'
-                | '+'
+        let mut met_dot = false;
+        let mut met_exponent = false;
+        let mut met_exponent_sign = false;
+        while self.source.advance_if(move |next| {
+            match next {
+                // Don't accept any dots if we already consumed one.
+                '.' if met_dot => false,
+                '.' => {
+                    met_dot = true;
+                    true
+                }
+                // Don't accept any exponent if we already consumed one.
+                'e' if met_exponent => false,
+                'e' => {
+                    met_exponent = true;
+                    true
+                }
+                '-' | '+' if met_exponent_sign => false,
+                '-' | '+' => {
+                    met_exponent_sign = true;
+                    true
+                }
+                '0'..='9' => true,
+                '_' => true,
+                _ => false,
             }
         }) {}
     }

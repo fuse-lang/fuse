@@ -1,28 +1,37 @@
-use crate::{
-    lexer::{Token, TokenKind, TokenReference},
-    Parser, ParserResult,
-};
+use std::str::FromStr;
+
+use crate::{lexer::TokenKind, Parser, ParserResult};
 use fuse_ast::{Expression, IntType, NumberKind, NumberLiteral, NumberType};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_expression(&mut self) -> ParserResult<Expression> {
-        if !self.at(TokenKind::NumberLiteral) {
-            return Err(self.unexpect_token_kind_error(TokenKind::NumberLiteral));
+        match self.cur_kind() {
+            TokenKind::NumberLiteral => Ok(Expression::NumberLiteral(self.parse_number_literal()?)),
+            _ => Err(self.unexpected_error()),
         }
-
-        let token = self.consume();
-
-        Ok(Expression::NumberLiteral(self.parse_number_literal(token)?))
     }
 
-    fn parse_number_literal(&self, token: TokenReference) -> ParserResult<NumberLiteral> {
-        let raw = self.view_token(*token);
-        let trimmed_string = raw.replace('_', "");
+    fn parse_number_literal(&mut self) -> ParserResult<NumberLiteral> {
+        let token = self.consume();
 
-        let (value, kind) = match raw.as_bytes() {
-            &[b'0', b'x' | b'X'] => self.parse_hexadecimal_number(trimmed_string.as_str()),
-            &[b'0', b'b' | b'B'] => self.parse_binary_number(trimmed_string.as_str()),
-            _ => self.parse_decimal_number(trimmed_string.as_str()),
+        let raw = self.view_token(*token);
+
+        let (value, kind) = match raw.replace('_', "").as_bytes() {
+            [b'0', b'x' | b'X', rest @ ..] => {
+                // SAFETY: `rest` is just created from `raw`, and is a valid utf8
+                let rest = unsafe { std::str::from_utf8_unchecked(rest) };
+                self.parse_hexadecimal_number(rest)
+            }
+            [b'0', b'b' | b'B', rest @ ..] => {
+                // SAFETY: `rest` is just created from `raw`, and is a valid utf8
+                let rest = unsafe { std::str::from_utf8_unchecked(rest) };
+                self.parse_binary_number(rest)
+            }
+            rest => {
+                // SAFETY: `rest` is just created from `raw`, and is a valid utf8
+                let rest = unsafe { std::str::from_utf8_unchecked(rest) };
+                self.parse_decimal_number(rest)
+            }
         }?;
 
         let atom = self.ast.atom(raw);
@@ -42,19 +51,43 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_decimal_number(&self, str: &str) -> ParserResult<(NumberType, NumberKind)> {
-        let dots: Vec<_> = str.match_indices('.').collect();
-        if dots.len() > 1 {
-            Err(self.unexpected_error())
-        } else {
-            let value = str::parse(str).map_err(|_| self.invalid_number_literal_error())?;
-            Ok((
-                value,
-                if dots.len() == 0 {
-                    NumberKind::Decimal
-                } else {
-                    NumberKind::Float
-                },
-            ))
+        let float = {
+            let dots = str.match_indices('.').count();
+            if dots > 1 {
+                return Err(self.unexpected_error());
+            }
+            dots == 1
+        };
+
+        let exponent = {
+            let mut exponents: Vec<_> = str.match_indices('e').collect();
+            match exponents.len() {
+                0 => None,
+                1 => exponents.pop(),
+                _ => return Err(self.unexpected_error()),
+            }
+        };
+
+        fn parse<T: FromStr>(parser: &Parser, s: &str) -> ParserResult<T> {
+            T::from_str(s).map_err(|_| parser.invalid_number_literal_error())
         }
+
+        let value = if let Some((pos, _)) = exponent {
+            let decimal = parse::<NumberType>(self, &str[0..pos])?;
+            let exponent = parse::<i32>(self, &str[pos + 1..])?;
+
+            decimal * (10f64.powi(exponent)) as NumberType
+        } else {
+            parse(self, str)?
+        };
+
+        Ok((
+            value,
+            if float {
+                NumberKind::Float
+            } else {
+                NumberKind::Decimal
+            },
+        ))
     }
 }

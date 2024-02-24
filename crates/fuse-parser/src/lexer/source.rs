@@ -105,7 +105,7 @@ impl<'a> Source<'a> {
 
     /// Advance if the next character is accepted by `predicate`.
     #[inline]
-    pub(super) fn advance_if<F: Fn(char) -> bool>(&mut self, predicate: F) -> bool {
+    pub(super) fn advance_if<F: FnMut(char) -> bool>(&mut self, mut predicate: F) -> bool {
         match self.peek_char() {
             Some(peek) if predicate(peek) => {
                 self.advance();

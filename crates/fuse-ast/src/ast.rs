@@ -79,11 +79,14 @@ pub enum Expression {
 #[derive(Debug, PartialEq)]
 pub struct NumberLiteral {
     pub span: Span,
+    /// Raw value in the source code.
+    pub raw: Atom,
     pub value: NumberType,
     pub kind: NumberKind,
 }
 
 pub type NumberType = f64;
+pub type IntType = i64;
 
 #[derive(Debug, PartialEq)]
 pub enum NumberKind {

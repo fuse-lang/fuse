@@ -1,5 +1,3 @@
-use fuse_ast::{NumberKind, NumberType};
-
 use super::{Lexer, Token, TokenKind};
 
 impl<'a> Lexer<'a> {

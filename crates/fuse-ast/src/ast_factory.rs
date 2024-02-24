@@ -69,4 +69,19 @@ impl AstFactory {
     pub fn atom(&self, value: &str) -> Atom {
         Atom(Rc::from(value))
     }
+
+    pub fn number_literal(
+        &self,
+        span: Span,
+        raw: Atom,
+        value: NumberType,
+        kind: NumberKind,
+    ) -> NumberLiteral {
+        NumberLiteral {
+            span,
+            raw,
+            value,
+            kind,
+        }
+    }
 }

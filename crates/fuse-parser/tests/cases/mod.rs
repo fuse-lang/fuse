@@ -1,9 +1,5 @@
 use insta::assert_yaml_snapshot;
-use std::{
-    ffi::OsStr,
-    fs,
-    path::{Path, PathBuf},
-};
+use std::{ffi::OsStr, fs, path::PathBuf};
 
 use fuse_parser::{lexer::Lexer, parse};
 

@@ -117,9 +117,18 @@ impl<'a> Source<'a> {
         }
     }
 
-    /// Advance if the next character is accepted by `predicate`.
+    /// Advance if the next character is accepted by the immutable `predicate`.
     #[inline]
-    pub(super) fn advance_while<F: FnMut(char) -> bool>(&mut self, mut predicate: F) -> &'a str {
+    pub(super) fn advance_while<F: Fn(char) -> bool>(&mut self, predicate: F) -> &'a str {
+        self.advance_while_mut(predicate)
+    }
+
+    /// Advance if the next character is accepted by the mutable `predicate`.
+    #[inline]
+    pub(super) fn advance_while_mut<F: FnMut(char) -> bool>(
+        &mut self,
+        mut predicate: F,
+    ) -> &'a str {
         let start = self.offset();
         while let Some(peek) = self.peek_char() {
             if predicate(peek) {

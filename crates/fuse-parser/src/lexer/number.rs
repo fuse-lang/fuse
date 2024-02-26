@@ -54,7 +54,7 @@ impl<'a> Lexer<'a> {
         let mut met_dot = false;
         let mut met_exponent = false;
         let mut met_exponent_sign = false;
-        self.source.advance_while(move |next| {
+        self.source.advance_while_mut(move |next| {
             match next {
                 // Don't accept any dots if we already consumed one.
                 '.' if met_dot => false,

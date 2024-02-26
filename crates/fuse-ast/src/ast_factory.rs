@@ -37,12 +37,13 @@ impl AstFactory {
 
     pub fn variable_declaration(
         &self,
+        span: Span,
         kind: VariableDeclarationKind,
         binding: BindingPattern,
         expression: Option<Expression>,
     ) -> VariableDeclaration {
         VariableDeclaration {
-            span: Span::default(),
+            span,
             kind,
             binding,
             expression,

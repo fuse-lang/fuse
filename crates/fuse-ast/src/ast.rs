@@ -98,4 +98,32 @@ pub enum NumberKind {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct StringLiteral {}
+pub struct StringLiteral {
+    pub span: Span,
+    pub segments: Vec<StringSegment>,
+}
+
+#[derive(Debug, PartialEq)]
+pub enum StringSegment {
+    Literal(StringLiteralSegment),
+    Interpolated(InterpolatedStringSegment),
+}
+
+#[derive(Debug, PartialEq)]
+pub enum StringLiteralSegment {
+    Escaped(Atom),
+    Unescaped(Span),
+}
+
+#[derive(Debug, PartialEq)]
+pub struct InterpolatedStringSegment {
+    pub span: Span,
+    pub expression: Expression,
+    pub format: InterpolationFormat,
+}
+
+#[derive(Debug, PartialEq)]
+pub enum InterpolationFormat {
+    Display,
+    Debug,
+}

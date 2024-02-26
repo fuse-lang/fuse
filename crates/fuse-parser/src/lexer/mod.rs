@@ -200,6 +200,19 @@ impl<'a> Lexer<'a> {
     }
 }
 
+impl<'a> Iterator for Lexer<'a> {
+    type Item = TokenReference;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let token = self.consume();
+        if token.kind == TokenKind::Eof {
+            None
+        } else {
+            Some(token)
+        }
+    }
+}
+
 #[derive(Debug)]
 pub enum LexerError {}
 

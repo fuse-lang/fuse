@@ -7,9 +7,20 @@ license.workspace = true
 repository.workspace = true
 edition.workspace = true
 
+[features]
+default = ["serde"]
+serde = ["dep:serde", "fuse_common/serde"]
+
 [dependencies]
 fuse_ast = { workspace = true }
-fuse_common = { workspace = true }
+fuse_common = { workspace = true, optional = true }
+fuse_common_proc = { workspace = true }
+
+serde = { workspace = true, optional = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+fuse_common = { workspace = true, features = ["serde"] }
 
 serde = { workspace = true }
-thiserror = { workspace = true }
+insta = { workspace = true }

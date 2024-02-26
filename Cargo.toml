@@ -15,11 +15,10 @@ repository = "https://github.com/fuse-lang/fusec"
 fuse_ast = { version = "0.0.0", path = "crates/fuse-ast" }
 fuse_codegen = { version = "0.0.0", path = "crates/fuse-codegen" }
 fuse_common = { version = "0.0.0", path = "crates/fuse-common" }
+fuse_common_proc = { version = "0.0.0", path = "crates/fuse-common-proc" }
 fuse_parser = { version = "0.0.0", path = "crates/fuse-parser" }
 # fusec = { version = "0.0.0", path = "crates/fusec" }
 
 thiserror = { version = "1.0" }
 serde = { version = "1.0", features = ["derive"] }
-
-[workspace.dev-dependencies]
 insta = { version = "1.34", features = ["yaml"] }

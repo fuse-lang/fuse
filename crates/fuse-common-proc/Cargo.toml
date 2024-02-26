@@ -1,16 +1,15 @@
 [package]
-name = "fuse_common"
+name = "fuse_common_proc"
 version = "0.0.0"
 authors.workspace = true
 license.workspace = true
 repository.workspace = true
 edition.workspace = true
 
-[features]
-default = []
-serde = ["dep:serde"]
+[lib]
+proc-macro = true
 
 [dependencies]
-fuse_common_proc = { workspace = true }
-
+quote = "1.0"
+proc-macro2 = "1.0"
 serde = { workspace = true, optional = true}

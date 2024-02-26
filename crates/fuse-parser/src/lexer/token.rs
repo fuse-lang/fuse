@@ -1,6 +1,8 @@
 use super::TokenKind;
 use fuse_common::Span;
+use fuse_common_proc::serializable;
 
+#[serializable]
 #[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Token {
     pub span: Span,
@@ -30,6 +32,7 @@ impl Token {
     }
 }
 
+#[serializable]
 #[derive(Debug, Default, Clone, PartialEq, Eq, Hash)]
 pub struct TokenReference {
     token: Token,

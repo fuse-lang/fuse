@@ -1,7 +1,10 @@
 mod cursor;
 mod error;
-mod lexer;
 mod parsers;
+
+pub mod lexer;
+
+pub use error::Error;
 
 /// Maximum length of source that can be parsed in bytes.
 /// ~4GiB on 64-bit systems, ~2 GiB on 32-bit systems.

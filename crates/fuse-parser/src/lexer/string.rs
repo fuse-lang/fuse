@@ -7,20 +7,20 @@ pub use string_data::*;
 impl<'a> Lexer<'a> {
     pub(super) fn string(&mut self, start: u32, first: char) -> Option<Token> {
         // Return early if we are not peeking a string otherwise determine it's type.
-        let expect_hash = match (first, self.source.peek_pair()) {
-            ('"' | '\'', _) => 0,
-            ('r', Some(pair @ ('#', '\'' | '"' | '#'))) => {
-                self.source.advance_n(2);
-                let mut hash_count = if pair.1 == '#' { 2 } else { 1 };
-                0
-            }
-            _ => return None,
+        let (unicode_mod, raw_mod) = self.string_modifiers(first)?;
+
+        if unicode_mod {
+            self.source.advance();
+        }
+
+        let expected_hashes = if raw_mod {
+            self.source.advance();
+            self.source.advance_while(|c| matches!(c, '#'))
+        } else {
+            ""
         };
 
-        let quote = self
-            .source
-            .next_char()
-            .expect("We already peeked this character");
+        let quote = self.source.next_char()?;
 
         let multiline = match self.source.peek_pair() {
             // Detect multi-line string from its triple quote.
@@ -42,23 +42,43 @@ impl<'a> Lexer<'a> {
         while let Some(next) = self.source.next_char() {
             match (escape, next) {
                 // Accept escaped character no matter what.
-                (true, _) => escape = false,
+                (true, _) => escape = raw_mod,
 
                 // terminate string on matching quote.
                 (false, c) if c == quote => {
-                    if multiline {
+                    let end = if multiline {
                         // Check for triple quotes string termination
                         if matches!(self.source.peek_pair(), Some((p1, p2)) if p1 == p2 && p2 == quote)
                         {
                             // Eat the 2 quotes.
                             self.source.advance_n(2);
                             // Terminate the string.
-                            data_end = self.source.offset();
-                            break;
+                            self.source.offset()
+                        } else {
+                            0
                         }
                     } else {
                         // Terminate the string.
-                        data_end = self.source.offset();
+                        self.source.offset()
+                    };
+
+                    let terminated = if end != 0 {
+                        if raw_mod {
+                            let hashes = self.source.advance_while(|c| c == '#');
+                            if hashes == expected_hashes {
+                                true
+                            } else {
+                                false
+                            }
+                        } else {
+                            true
+                        }
+                    } else {
+                        false
+                    };
+
+                    if terminated {
+                        data_end = end;
                         break;
                     }
                 }
@@ -70,9 +90,8 @@ impl<'a> Lexer<'a> {
             }
         }
 
-        let terminated = data_end == 0;
-
-        if terminated {
+        // if terminated
+        if data_end != 0 {
             println!("Unterminated string literal!");
         }
 
@@ -84,12 +103,23 @@ impl<'a> Lexer<'a> {
                 quote,
                 data: "TEst Data!!".to_string(),
                 span: Span::new(data_start, data_end),
-                terminated,
-                special_characters: Vec::new(),
+                terminated: data_end != 0,
+                unicode: unicode_mod,
+                interpolations: Vec::new(),
             },
         );
 
         Some(token)
+    }
+
+    fn string_modifiers(&mut self, first: char) -> Option<(bool, bool)> {
+        match (first, self.source.peek_pair()) {
+            ('"' | '\'', _) => Some((false, false)),
+            ('u', Some(('\'' | '"', _))) => Some((true, false)),
+            ('r', Some(('#', '\'' | '"' | '#'))) => Some((false, true)),
+            ('u', Some(('r', '#'))) => Some((true, true)),
+            _ => None,
+        }
     }
 }
 
@@ -106,19 +136,12 @@ mod string_data {
         }
     }
 
-    pub enum SpecialCharacter {
-        SingleQuote,
-        DoubleQuote,
-        DollarSign,
-        LCurly,
-        RCurly,
-    }
-
     pub struct StringData {
         pub quote: char,
         pub data: String,
         pub span: Span,
         pub terminated: bool,
-        pub special_characters: Vec<(SpecialCharacter, usize)>,
+        pub unicode: bool,
+        pub interpolations: Vec<Span>,
     }
 }

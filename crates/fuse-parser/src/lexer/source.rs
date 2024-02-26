@@ -1,5 +1,7 @@
 use std::{marker::PhantomData, slice};
 
+use fuse_common::{Span, SpanView};
+
 macro_rules! debug_assert_char_byte {
     ($byte:expr) => {
         debug_assert_char_byte!($byte, true);
@@ -105,14 +107,30 @@ impl<'a> Source<'a> {
 
     /// Advance if the next character is accepted by `predicate`.
     #[inline]
-    pub(super) fn advance_if<F: FnMut(char) -> bool>(&mut self, mut predicate: F) -> bool {
+    pub(super) fn advance_if(&mut self, c: char) -> bool {
         match self.peek_char() {
-            Some(peek) if predicate(peek) => {
+            Some(peek) if peek == c => {
                 self.advance();
                 true
             }
             _ => false,
         }
+    }
+
+    /// Advance if the next character is accepted by `predicate`.
+    #[inline]
+    pub(super) fn advance_while<F: FnMut(char) -> bool>(&mut self, mut predicate: F) -> &'a str {
+        let start = self.offset();
+        while let Some(peek) = self.peek_char() {
+            if predicate(peek) {
+                self.advance();
+            } else {
+                break;
+            }
+        }
+
+        let span = Span::new(start, self.offset());
+        self.as_str().view(&span)
     }
 
     #[inline]
@@ -168,6 +186,21 @@ impl<'a> Source<'a> {
         // SAFETY: Since we are not at EOF there should be a next char.
         unsafe { chars.next().unwrap_unchecked() };
         chars.next()
+    }
+
+    /// Peek the next 2 chars as a pair without consuming them.
+    /// If there is not at least 2 characters in the remainder of
+    /// source it will return `None`.
+    #[inline]
+    pub(super) fn peek_pair(&self) -> Option<(char, char)> {
+        if self.is_eof() {
+            return None;
+        }
+
+        match (self.peek_char(), self.peek_char2()) {
+            (Some(a), Some(b)) => Some((a, b)),
+            _ => None,
+        }
     }
 
     /// Peek the next byte without consuming it.

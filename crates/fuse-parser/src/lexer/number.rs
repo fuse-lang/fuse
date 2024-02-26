@@ -1,19 +1,19 @@
 use super::{Lexer, Token, TokenKind};
 
 impl<'a> Lexer<'a> {
-    pub(super) fn number(&mut self, start: u32, peek: char) -> Option<Token> {
-        if !peek.is_ascii_digit() {
+    pub(super) fn number(&mut self, start: u32, first: char) -> Option<Token> {
+        if !first.is_ascii_digit() {
             return None;
         }
 
-        if peek == '0' {
-            match self.source.peek_char2() {
+        if first == '0' {
+            match self.source.peek_char() {
                 Some('x' | 'X') => {
-                    self.source.advance_n(2);
+                    self.source.advance();
                     self.eat_hexadecimal_literal();
                 }
                 Some('b' | 'B') => {
-                    self.source.advance_n(2);
+                    self.source.advance();
                     self.eat_binary_literal();
                 }
                 _ => self.eat_decimal_or_float_literal(),
@@ -26,7 +26,7 @@ impl<'a> Lexer<'a> {
     }
 
     fn eat_hexadecimal_literal(&mut self) {
-        while self.source.advance_if(|next| {
+        self.source.advance_while(|next| {
             matches! {
                 next,
                 | '0'..='9'
@@ -34,18 +34,18 @@ impl<'a> Lexer<'a> {
                 | 'A'..='F'
                 | '_'
             }
-        }) {}
+        });
     }
 
     fn eat_binary_literal(&mut self) {
-        while self.source.advance_if(|next| {
+        self.source.advance_while(|next| {
             matches! {
                 next,
                 | '0'
                 | '1'
                 | '_'
             }
-        }) {}
+        });
     }
 
     /// Eats a decimal or floating point number literal,
@@ -54,7 +54,7 @@ impl<'a> Lexer<'a> {
         let mut met_dot = false;
         let mut met_exponent = false;
         let mut met_exponent_sign = false;
-        while self.source.advance_if(move |next| {
+        self.source.advance_while(move |next| {
             match next {
                 // Don't accept any dots if we already consumed one.
                 '.' if met_dot => false,
@@ -77,6 +77,6 @@ impl<'a> Lexer<'a> {
                 '_' => true,
                 _ => false,
             }
-        }) {}
+        });
     }
 }

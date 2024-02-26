@@ -132,24 +132,25 @@ impl<'a> Lexer<'a> {
         if self.source.is_eof() {
             return self.create(start, TokenKind::Eof);
         }
-        let Some(peek) = self.source.peek_char() else {
+        let Some(first) = self.source.next_char() else {
             return self.create(start, TokenKind::Eof);
         };
 
         macro_rules! analyze {
             {$(|)? $lex1:ident $(| $lexn:ident)*} => {
-                if let Some(token) = self.$lex1(start, peek) {token}
-                $(else if let Some(token) = self.$lexn(start, peek) {token})+
+                if let Some(token) = self.$lex1(start, first) {token}
+                $(else if let Some(token) = self.$lexn(start, first) {token})+
                 else { self.create(start, TokenKind::Undetermined) }
             };
         }
 
         analyze! {
             | whitespace
-            | number
             | keyword
             | operator
             | identifier
+            | number
+            | string
         }
     }
 

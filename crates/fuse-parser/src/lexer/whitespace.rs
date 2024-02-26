@@ -1,8 +1,8 @@
 use super::{Lexer, Token, TokenKind};
 
 impl<'a> Lexer<'a> {
-    pub(super) fn whitespace(&mut self, start: u32, peek: char) -> Option<Token> {
-        if !self.is_whitespace(peek) {
+    pub(super) fn whitespace(&mut self, start: u32, first: char) -> Option<Token> {
+        if !self.is_whitespace(first) {
             return None;
         }
 

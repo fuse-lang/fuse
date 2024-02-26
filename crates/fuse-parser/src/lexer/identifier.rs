@@ -1,13 +1,18 @@
 use super::{Lexer, Token, TokenKind};
 
 impl<'a> Lexer<'a> {
-    pub(super) fn identifier(&mut self, start: u32, peek: char) -> Option<Token> {
-        if !matches!(peek, 'a'..='z' | 'A'..='Z' | '_') {
+    pub(super) fn identifier(&mut self, start: u32, first: char) -> Option<Token> {
+        if !match_identifier_start(first) {
             return None;
         }
 
-        // Eat the hash symbol if it is a raw identifier.
-        if peek == 'r' && self.source.peek_char()? == '#' {
+        let is_raw = matches!(
+            (first, self.source.peek_pair()),
+            ('r', Some(('#', p))) if match_identifier_start(p)
+        );
+
+        // Eat the visited hash.
+        if is_raw {
             self.source.advance();
         }
 
@@ -24,4 +29,9 @@ impl<'a> Lexer<'a> {
 
         Some(self.create(start, TokenKind::Identifier))
     }
+}
+
+#[inline]
+fn match_identifier_start(c: char) -> bool {
+    matches!(c, 'a'..='z' | 'A'..='Z' | '_')
 }

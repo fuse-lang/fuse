@@ -2,8 +2,10 @@ use crate::{
     lexer::{LexerError, TokenKind, TokenReference},
     Parser,
 };
+use fuse_common_proc::serializable;
 use thiserror::Error as ThisError;
 
+#[serializable]
 #[derive(ThisError, Debug)]
 pub enum Error {
     #[error("{0:?}")]

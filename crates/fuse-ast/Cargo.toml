@@ -6,7 +6,12 @@ license.workspace = true
 repository.workspace = true
 edition.workspace = true
 
+[features]
+default = []
+serde = ["serde/rc"]
+
 [dependencies]
 fuse_common = { workspace = true }
+fuse_common_proc = { workspace = true }
 
-serde = { workspace = true }
+serde = { workspace = true, optional = true}

@@ -9,10 +9,10 @@ edition.workspace = true
 
 [features]
 default = ["serde"]
-serde = ["dep:serde", "fuse_common/serde"]
+serde = ["dep:serde", "fuse_ast/serde", "fuse_common/serde"]
 
 [dependencies]
-fuse_ast = { workspace = true }
+fuse_ast = { workspace = true, optional = true }
 fuse_common = { workspace = true, optional = true }
 fuse_common_proc = { workspace = true }
 

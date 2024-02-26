@@ -14,6 +14,7 @@ pub use token::*;
 pub use token_kind::*;
 
 use fuse_common::{Span, SpanView};
+use fuse_common_proc::serializable;
 
 use source::{Source, SourcePosition};
 
@@ -213,6 +214,7 @@ impl<'a> Iterator for Lexer<'a> {
     }
 }
 
+#[serializable]
 #[derive(Debug)]
 pub enum LexerError {}
 

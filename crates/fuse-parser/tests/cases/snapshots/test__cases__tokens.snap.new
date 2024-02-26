@@ -1,0 +1,49 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+assertion_line: 49
+expression: tokens
+---
+- token:
+    span:
+      start: 0
+      end: 3
+    kind: Let
+  leading_trivia: []
+  trailing_trivia:
+    - span:
+        start: 3
+        end: 4
+      kind: Whitespace
+- token:
+    span:
+      start: 4
+      end: 6
+    kind: Identifier
+  leading_trivia: []
+  trailing_trivia:
+    - span:
+        start: 6
+        end: 7
+      kind: Whitespace
+- token:
+    span:
+      start: 7
+      end: 8
+    kind: Eq
+  leading_trivia: []
+  trailing_trivia:
+    - span:
+        start: 8
+        end: 9
+      kind: Whitespace
+- token:
+    span:
+      start: 9
+      end: 12
+    kind: NumberLiteral
+  leading_trivia: []
+  trailing_trivia:
+    - span:
+        start: 12
+        end: 14
+      kind: Whitespace

@@ -9,10 +9,12 @@ impl<'a> Parser<'a> {
 
         let view = self.view_token(*token);
 
+        let str_data = self.lexer.get_string_data(&*token);
+
         Ok(StringLiteral {
             span: token.span,
             segments: vec![StringSegment::Literal(StringLiteralSegment::Escaped(Atom(
-                Rc::from("TEST"),
+                Rc::from(str_data.data.clone()),
             )))],
         })
     }

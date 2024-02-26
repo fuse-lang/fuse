@@ -37,8 +37,6 @@ impl<'a> Lexer<'a> {
 
         let mut escape = false;
 
-        // panic!("{:?}", self.current());
-
         while let Some(next) = self.source.next_char() {
             match (escape, next) {
                 // Accept escaped character no matter what.

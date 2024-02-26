@@ -4,10 +4,12 @@ mod keyword;
 mod number;
 mod operator;
 mod source;
+mod string;
 mod token;
 mod token_kind;
 mod whitespace;
 
+pub use string::StringData;
 pub use token::*;
 pub use token_kind::*;
 
@@ -15,12 +17,13 @@ use fuse_common::{Span, SpanView};
 
 use source::{Source, SourcePosition};
 
-use std::collections::VecDeque;
+use std::collections::{HashMap, VecDeque};
 
 pub struct Lexer<'a> {
     source: Source<'a>,
     current_token: TokenReference,
     lookahead: VecDeque<Lookahead<'a>>,
+    strings_data: HashMap<Token, StringData>,
 }
 
 impl<'a> Lexer<'a> {
@@ -29,6 +32,7 @@ impl<'a> Lexer<'a> {
             source: Source::new(src),
             current_token: TokenReference::default(),
             lookahead: VecDeque::new(),
+            strings_data: HashMap::new(),
         };
 
         // Consume the default token to load the first set of tokens.

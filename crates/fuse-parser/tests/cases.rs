@@ -7,7 +7,8 @@ use fuse_parser::parse;
 #[test]
 fn test_simple() {
     assert_eq!(true, true);
-    let ast = parse("const xyz = 123;");
+    let ast = parse("const r#const = 123");
+    panic!("{ast:?}");
     // assert_eq!(
     //     ast.chunk.unwrap().body.statements[0],
     //     Statement::VariableDeclaration(VariableDeclaration {

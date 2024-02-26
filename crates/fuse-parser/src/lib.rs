@@ -98,7 +98,7 @@ impl<'a> Parser<'a> {
 
     fn end_span(&self, span: fuse_common::Span) -> fuse_common::Span {
         let mut span = span;
-        span.end = 0;
+        span.end = self.prev_token.end();
         span
     }
 }

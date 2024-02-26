@@ -11,6 +11,8 @@ impl<'a> Parser<'a> {
             _ => return Err(self.unexpected_error()),
         };
 
+        let start = self.start_span();
+
         self.consume();
 
         let binding = self.parse_binding()?;
@@ -22,6 +24,6 @@ impl<'a> Parser<'a> {
 
         Ok(self
             .ast
-            .variable_declaration(decl_kind, binding, expression))
+            .variable_declaration(self.end_span(start), decl_kind, binding, expression))
     }
 }

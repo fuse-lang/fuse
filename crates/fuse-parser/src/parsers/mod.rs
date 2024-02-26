@@ -3,7 +3,7 @@ mod declarations;
 mod expressions;
 mod numbers;
 mod statements;
-mod string;
+mod strings;
 
 use fuse_ast::Chunk;
 use crate::{Parser, ParserResult};

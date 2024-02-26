@@ -1,7 +1,7 @@
 use super::TokenKind;
 use fuse_common::Span;
 
-#[derive(Debug, Default, Clone, Copy)]
+#[derive(Debug, Default, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Token {
     pub span: Span,
     pub kind: TokenKind,
@@ -30,7 +30,7 @@ impl Token {
     }
 }
 
-#[derive(Debug, Default, Clone)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, Hash)]
 pub struct TokenReference {
     token: Token,
     leading_trivia: Vec<Token>,

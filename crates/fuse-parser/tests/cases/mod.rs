@@ -71,7 +71,7 @@ fn test_lexer(src_path: &OsStr) {
         "Lexer changes the content of the original source buffer."
     );
 
-    insta::assert_yaml_snapshot!("tokens", tokens);
+    insta::assert_ron_snapshot!("tokens", tokens);
 }
 
 fn test_parser(path: &OsStr, expect_error: bool, expect_panic: bool) {
@@ -99,5 +99,5 @@ fn test_parser(path: &OsStr, expect_error: bool, expect_panic: bool) {
     let chunk = parsed.chunk;
     let errors = parsed.errors;
 
-    insta::assert_yaml_snapshot!("ast", chunk);
+    insta::assert_ron_snapshot!("ast", chunk);
 }

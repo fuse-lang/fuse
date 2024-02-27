@@ -27,11 +27,12 @@ impl<'a> Context<'a> {
 
 #[test]
 fn pass() {
-    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    let root = PathBuf::from(file!()).parent().unwrap().to_path_buf();
+    println!("{}, w", env!("CARGO_MANIFEST_DIR"));
 
     let ctx = Context {
         root,
-        test_dir: PathBuf::new().join("tests").join("cases").join("pass"),
+        test_dir: PathBuf::from("pass"),
         source_name: "case.fuse",
         settings: insta::Settings::clone_current(),
     };

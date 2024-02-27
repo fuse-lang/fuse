@@ -30,4 +30,4 @@ jobs:
           ls -la
 
       - name: Test
-        run: cargo test --verbose
+        run: cargo test --verbose -- --test-threads=1

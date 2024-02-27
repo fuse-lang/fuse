@@ -33,7 +33,10 @@ Some(Chunk(
             end: 16,
           ),
           segments: [
-            Literal(Escaped(Atom("Hello"))),
+            Literal(Unescaped(Span(
+              start: 10,
+              end: 16,
+            ))),
           ],
         ))),
       )),

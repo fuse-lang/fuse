@@ -4,11 +4,11 @@ on:
   #   branches:
   #     - master
 
-  pull_request:
-    branches:
-      - master
 
   workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
 
 jobs:
   test:
@@ -16,5 +16,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Test
-        run: |
-          cargo test
+        run: cargo test --verbose

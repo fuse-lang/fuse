@@ -50,10 +50,7 @@ fn fail() {
 
     let ctx = Context {
         root,
-        test_dir: PathBuf::new()
-            .join("tests")
-            .join("cases")
-            .join("fail"),
+        test_dir: PathBuf::new().join("tests").join("cases").join("fail"),
         source_name: "case.fuse",
         settings: insta::Settings::clone_current(),
     };
@@ -72,10 +69,7 @@ fn panic() {
 
     let ctx = Context {
         root,
-        test_dir: PathBuf::new()
-            .join("tests")
-            .join("cases")
-            .join("panic"),
+        test_dir: PathBuf::new().join("tests").join("cases").join("panic"),
         source_name: "case.fuse",
         settings: insta::Settings::clone_current(),
     };

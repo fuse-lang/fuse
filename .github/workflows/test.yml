@@ -18,5 +18,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - name: Log
+        run: ls -la
+
       - name: Test
         run: cargo test --verbose

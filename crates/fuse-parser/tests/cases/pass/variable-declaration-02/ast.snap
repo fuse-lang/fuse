@@ -1,0 +1,42 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+expression: parsed.chunk
+input_file: crates/fuse-parser/tests/cases/pass/variable-declaration-02/case.fuse
+---
+Some(Chunk(
+  span: Span(
+    start: 0,
+    end: 18,
+  ),
+  body: Block(
+    statements: [
+      VariableDeclaration(VariableDeclaration(
+        span: Span(
+          start: 0,
+          end: 17,
+        ),
+        kind: Let,
+        binding: BindingPattern(
+          kind: Identifier(BindingIdentifier(
+            span: Span(
+              start: 4,
+              end: 6,
+            ),
+            atom: Atom("id"),
+          )),
+          type_annotation: None,
+          optional: false,
+        ),
+        expression: Some(StringLiteral(StringLiteral(
+          span: Span(
+            start: 9,
+            end: 17,
+          ),
+          segments: [
+            Literal(Escaped(Atom("TEst Data!!"))),
+          ],
+        ))),
+      )),
+    ],
+  ),
+))

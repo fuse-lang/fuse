@@ -38,6 +38,52 @@ fn pass() {
     }
 }
 
+#[test]
+fn fail() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+
+    let ctx = Context {
+        root,
+        test_dir: PathBuf::new()
+            .join("tests")
+            .join("cases")
+            .join("fail")
+            .join("recover"),
+        source_name: "case.fuse",
+        settings: insta::Settings::clone_current(),
+    };
+
+    // TODO: better way for pointing to the test cases directory.
+    let cases = load_cases(&ctx);
+
+    for case in cases {
+        run(&ctx, case, true, false);
+    }
+}
+
+#[test]
+fn panic() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+
+    let ctx = Context {
+        root,
+        test_dir: PathBuf::new()
+            .join("tests")
+            .join("cases")
+            .join("fail")
+            .join("panic"),
+        source_name: "case.fuse",
+        settings: insta::Settings::clone_current(),
+    };
+
+    // TODO: better way for pointing to the test cases directory.
+    let cases = load_cases(&ctx);
+
+    for case in cases {
+        run(&ctx, case, true, true);
+    }
+}
+
 // helpers
 fn load_cases(ctx: &Context) -> Vec<PathBuf> {
     fs::read_dir(ctx.path())
@@ -96,8 +142,9 @@ fn test_parser(path: &OsStr, expect_error: bool, expect_panic: bool) {
         "Error vector is different from expectations."
     );
 
-    let chunk = parsed.chunk;
-    let errors = parsed.errors;
+    insta::assert_ron_snapshot!("ast", parsed.chunk);
 
-    insta::assert_ron_snapshot!("ast", chunk);
+    if expect_error {
+        insta::assert_ron_snapshot!("errors", parsed.errors);
+    }
 }

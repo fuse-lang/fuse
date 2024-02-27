@@ -1,0 +1,26 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+expression: parsed.errors
+input_file: crates/fuse-parser/tests/cases/panic/variable-declaration-02/case.fuse
+---
+[
+  UnexpectedError(TokenReference(
+    token: Token(
+      span: Span(
+        start: 0,
+        end: 5,
+      ),
+      kind: Const,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 5,
+          end: 6,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  )),
+]

@@ -53,8 +53,7 @@ fn fail() {
         test_dir: PathBuf::new()
             .join("tests")
             .join("cases")
-            .join("fail")
-            .join("recover"),
+            .join("fail"),
         source_name: "case.fuse",
         settings: insta::Settings::clone_current(),
     };
@@ -76,7 +75,6 @@ fn panic() {
         test_dir: PathBuf::new()
             .join("tests")
             .join("cases")
-            .join("fail")
             .join("panic"),
         source_name: "case.fuse",
         settings: insta::Settings::clone_current(),

@@ -57,7 +57,7 @@ input_file: crates/fuse-parser/tests/cases/fail/recover/variable-declaration-01/
     token: Token(
       span: Span(
         start: 9,
-        end: 12,
+        end: 13,
       ),
       kind: NumberLiteral,
     ),
@@ -65,8 +65,8 @@ input_file: crates/fuse-parser/tests/cases/fail/recover/variable-declaration-01/
     trailing_trivia: [
       Token(
         span: Span(
-          start: 12,
-          end: 14,
+          start: 13,
+          end: 15,
         ),
         kind: Whitespace,
       ),

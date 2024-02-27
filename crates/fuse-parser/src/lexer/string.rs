@@ -31,14 +31,25 @@ impl<'a> Lexer<'a> {
 
         let mut has_ever_escaped = false;
         let mut escape = false;
+        let mut escape_whitespace = false;
         let mut value = Vec::<char>::new();
 
         while let Some(next) = self.source.next_char() {
-            let accept = match (escape, next) {
-                // Accept escaped character no matter what.
-                (true, _) => {
+            let c = match (escape, next) {
+                // Skip escaped whitespaces.
+                (true, c) if c.is_ascii_whitespace() => {
+                    escape_whitespace = true;
+                    None
+                }
+                // Parse escape character or terminate space escape.
+                (true, c) => {
                     escape = raw_mod;
-                    true
+                    if !escape_whitespace {
+                        parse_escaped_character(c)
+                    } else {
+                        escape_whitespace = false;
+                        Some(c)
+                    }
                 }
 
                 // terminate string on matching quote.
@@ -50,23 +61,23 @@ impl<'a> Lexer<'a> {
                         data_end = end;
                         break;
                     } else {
-                        true
+                        Some(c)
                     }
                 }
 
                 (false, '\\') => {
                     escape = true;
-                    false
+                    None
                 }
-                _ => true,
+                (_, c) => Some(c),
             };
 
             if escape {
                 has_ever_escaped = true;
             }
 
-            if accept {
-                value.push(next);
+            if let Some(c) = c {
+                value.push(c);
             }
         }
 
@@ -125,6 +136,17 @@ impl<'a> Lexer<'a> {
         } else {
             true
         }
+    }
+}
+
+fn parse_escaped_character(c: char) -> Option<char> {
+    match c {
+        'n' => Some('\n'),
+        'r' => Some('\r'),
+        't' => Some('\t'),
+        '\\' => Some('\\'),
+        '0' => Some('\0'),
+        _ => None,
     }
 }
 

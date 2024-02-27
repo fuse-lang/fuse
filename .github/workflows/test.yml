@@ -19,15 +19,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Log
-        run: |
-          ls -la
-          cd crates
-          ls -la
-          cd fuse-parser
-          ls -la
-          cd tests
-          ls -la
-
       - name: Test
-        run: cargo test --verbose -- --test-threads=1
+        run: cargo test --verbose

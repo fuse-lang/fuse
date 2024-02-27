@@ -106,7 +106,7 @@ fn run(ctx: &Context, case_dir: PathBuf, expect_error: bool, expect_panic: bool)
 }
 
 fn test_lexer(src_path: &OsStr) {
-    let source = fs::read_to_string(src_path).unwrap();
+    let source = read_source_normalized(src_path).unwrap();
     let reference = source.clone();
     let tokens: Vec<_> = Lexer::new(&source).collect();
 
@@ -120,7 +120,7 @@ fn test_lexer(src_path: &OsStr) {
 }
 
 fn test_parser(path: &OsStr, expect_error: bool, expect_panic: bool) {
-    let source = fs::read_to_string(path).unwrap();
+    let source = read_source_normalized(path).unwrap();
     let reference = source.clone();
     let parsed = parse(source.as_str());
 
@@ -151,4 +151,8 @@ fn test_parser(path: &OsStr, expect_error: bool, expect_panic: bool) {
     if expect_error {
         insta::assert_ron_snapshot!("errors", parsed.errors);
     }
+}
+
+fn read_source_normalized(path: &OsStr) -> Result<String, std::io::Error> {
+    fs::read_to_string(path).map(|it| it.replace("\r\n", "\n"))
 }

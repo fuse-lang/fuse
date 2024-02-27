@@ -74,7 +74,7 @@ input_file: crates/fuse-parser/tests/cases/pass/variable-declaration-01/case.fus
       Token(
         span: Span(
           start: 12,
-          end: 14,
+          end: 13,
         ),
         kind: Whitespace,
       ),

@@ -1,7 +1,7 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
 expression: tokens
-input_file: crates/fuse-parser/tests/cases/fail/panic/variable-declaration-01/case.fuse
+input_file: crates/fuse-parser/tests/cases/panic/variable-declaration-01/case.fuse
 ---
 [
   TokenReference(
@@ -74,7 +74,7 @@ input_file: crates/fuse-parser/tests/cases/fail/panic/variable-declaration-01/ca
       Token(
         span: Span(
           start: 16,
-          end: 18,
+          end: 17,
         ),
         kind: Whitespace,
       ),

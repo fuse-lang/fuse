@@ -70,14 +70,6 @@ input_file: crates/fuse-parser/tests/cases/pass/variable-declaration-02/case.fus
       kind: StringLiteral,
     ),
     leading_trivia: [],
-    trailing_trivia: [
-      Token(
-        span: Span(
-          start: 17,
-          end: 18,
-        ),
-        kind: Whitespace,
-      ),
-    ],
+    trailing_trivia: [],
   ),
 ]

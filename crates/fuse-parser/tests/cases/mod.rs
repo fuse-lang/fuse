@@ -28,7 +28,7 @@ impl<'a> Context<'a> {
 #[test]
 fn pass() {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    panic!("{} :: {}", root, file!());
+    panic!("{:?} :: {}", root, file!());
 
     let ctx = Context {
         root,

@@ -85,7 +85,7 @@ fn panic() {
 // helpers
 fn load_cases(ctx: &Context) -> Vec<PathBuf> {
     fs::read_dir(ctx.path())
-        .unwrap()
+        .expect(&format!("Failed to read {}", ctx.path().to_str().unwrap()))
         .map(|x| x.unwrap())
         .filter(|x| x.metadata().is_ok_and(|meta| meta.is_dir()))
         .map(|node| node.path())

@@ -44,22 +44,7 @@ impl<'a> Lexer<'a> {
                 // terminate string on matching quote.
                 (false, c) if c == quote => {
                     let end = self.source.offset();
-                    let terminate = if raw_mod {
-                        let position = self.source.position();
-                        let hashes = self.source.advance_while(|c| c == '#');
-                        if hashes == expected_hashes {
-                            true
-                        } else {
-                            // SAFETY: this position is created from the same source,
-                            // and source never changes.
-                            unsafe {
-                                self.source.set_position(position);
-                            }
-                            false
-                        }
-                    } else {
-                        true
-                    };
+                    let terminate = self.string_terminate(raw_mod, expected_hashes);
 
                     if terminate {
                         data_end = end;
@@ -120,6 +105,25 @@ impl<'a> Lexer<'a> {
             ('r', Some(('#', '\'' | '"' | '#'))) => Some((false, true)),
             ('u', Some(('r', '#'))) => Some((true, true)),
             _ => None,
+        }
+    }
+
+    fn string_terminate(&mut self, raw_mod: bool, expected_hashes: &str) -> bool {
+        if raw_mod {
+            let position = self.source.position();
+            let hashes = self.source.advance_while(|c| c == '#');
+            if hashes == expected_hashes {
+                true
+            } else {
+                // SAFETY: this position is created from the same source,
+                // and source never changes.
+                unsafe {
+                    self.source.set_position(position);
+                }
+                false
+            }
+        } else {
+            true
         }
     }
 }

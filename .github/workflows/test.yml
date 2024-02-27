@@ -20,7 +20,14 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Log
-        run: ls -la
+        run: |
+          ls -la
+          cd crates
+          ls -la
+          cd fuse-parser
+          ls -la
+          cd tests
+          ls -la
 
       - name: Test
         run: cargo test --verbose

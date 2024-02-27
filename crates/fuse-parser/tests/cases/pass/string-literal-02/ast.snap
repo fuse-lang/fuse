@@ -1,7 +1,7 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
 expression: parsed.chunk
-input_file: crates/fuse-parser/tests/cases/pass/string-literal-01/case.fuse
+input_file: crates/fuse-parser/tests/cases/pass/string-literal-02/case.fuse
 ---
 Some(Chunk(
   span: Span(

@@ -9,7 +9,7 @@ mod token;
 mod token_kind;
 mod whitespace;
 
-pub use string::StringData;
+pub use string::{StringData, StringValue};
 pub use token::*;
 pub use token_kind::*;
 

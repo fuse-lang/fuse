@@ -33,6 +33,9 @@ impl<'a> Parser<'a> {
             TokenKind::Const | TokenKind::Let | TokenKind::Global => self
                 .parse_variable_declaration()
                 .map(|decl| Statement::VariableDeclaration(decl)),
+            TokenKind::NumberLiteral | TokenKind::StringLiteral => self
+                .parse_expression()
+                .map(|expr| Statement::Expression(expr)),
 
             kind if kind.is_trivial() => {
                 unreachable!("All trivial tokens should be eaten by a `TokenReference`.")

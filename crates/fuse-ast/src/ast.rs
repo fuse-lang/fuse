@@ -26,6 +26,8 @@ impl Block {
 pub enum Statement {
     /// Empty statement for example `;;`
     Empty(EmptyStatement),
+    /// An expression statement.
+    Expression(Expression),
     /// A variable declaration using const, let or global keywords.
     VariableDeclaration(VariableDeclaration),
 }

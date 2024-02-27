@@ -28,7 +28,6 @@ impl<'a> Context<'a> {
 #[test]
 fn pass() {
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    panic!("{:?} :: {}", root, file!());
 
     let ctx = Context {
         root,
@@ -87,7 +86,7 @@ fn panic() {
 fn load_cases(ctx: &Context) -> Vec<PathBuf> {
     fs::read_dir(ctx.path())
         .expect(&format!("Failed to read {}", ctx.path().to_str().unwrap()))
-        .map(|x| x.unwrap())
+        .filter_map(|x| x.ok())
         .filter(|x| x.metadata().is_ok_and(|meta| meta.is_dir()))
         .map(|node| node.path())
         .collect()

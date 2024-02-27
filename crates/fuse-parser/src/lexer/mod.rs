@@ -43,7 +43,7 @@ impl<'a> Lexer<'a> {
 
     pub fn current(&self) -> &TokenReference {
         debug_assert!(
-            self.source.offset() != 0,
+            self.source.offset() != 0 || self.source.is_eof(),
             "attempt to access `current` before advancing to the first token."
         );
 

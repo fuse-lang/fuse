@@ -37,7 +37,7 @@ impl<'a> Parser<'a> {
             kind if kind.is_trivial() => {
                 unreachable!("All trivial tokens should be eaten by a `TokenReference`.")
             }
-            _ => todo!("{:?} {:?}", self.cur_token(), self.lexer.peek()),
+            _ => Err(self.unexpected_error()),
         }
     }
 

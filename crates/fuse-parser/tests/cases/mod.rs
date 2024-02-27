@@ -2,6 +2,12 @@ use std::{ffi::OsStr, fs, path::PathBuf};
 
 use fuse_parser::{lexer::Lexer, parse};
 
+macro_rules! expect_eq {
+    ($lhs:expr, $rhs:expr, $format:literal, path: $path:expr, $($args:expr$(,)?)*) => {
+        assert_eq!($lhs, $rhs, "{} : {}", format!($format, $($args,)*), $path);
+    };
+}
+
 struct Context<'a> {
     root: PathBuf,
     test_dir: PathBuf,
@@ -112,9 +118,10 @@ fn test_lexer(src_path: &OsStr) {
     let reference = source.clone();
     let tokens: Vec<_> = Lexer::new(&source).collect();
 
-    assert_eq!(
+    expect_eq!(
         source, reference,
-        "Lexer changes the content of the original source buffer."
+        "Lexer changes the content of the original source buffer.",
+        path: src_path.to_str().unwrap_or("unknown source"),
     );
 
     insta::assert_ron_snapshot!("tokens", tokens);
@@ -125,21 +132,26 @@ fn test_parser(path: &OsStr, expect_error: bool, expect_panic: bool) {
     let reference = source.clone();
     let parsed = parse(source.as_str());
 
-    assert_eq!(
+    expect_eq!(
         source, reference,
-        "Lexer changes the content of the original source buffer."
+        "Lexer changes the content of the original source buffer.",
+        path: path.to_str().unwrap_or("unknown case!"),
     );
 
-    assert_eq!(
-        expect_panic, parsed.paniced,
+    expect_eq!(
+        expect_panic,
+        parsed.paniced,
         "Panic state ({}) was different from the expected value ({}).",
-        parsed.paniced, expect_panic
+        path: path.to_str().unwrap_or("unknown case!"),
+        parsed.paniced,
+        expect_panic,
     );
 
-    assert_eq!(
+    expect_eq!(
         expect_error,
         !parsed.errors.is_empty(),
-        "Error vector is different from expectations."
+        "Error vector is different from expectations.",
+        path: path.to_str().unwrap_or("unknown case!"),
     );
 
     insta::assert_ron_snapshot!("ast", parsed.chunk);

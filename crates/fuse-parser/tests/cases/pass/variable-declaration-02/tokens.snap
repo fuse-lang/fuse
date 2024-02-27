@@ -65,11 +65,19 @@ input_file: crates/fuse-parser/tests/cases/pass/variable-declaration-02/case.fus
     token: Token(
       span: Span(
         start: 9,
-        end: 17,
+        end: 16,
       ),
       kind: StringLiteral,
     ),
     leading_trivia: [],
-    trailing_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 16,
+          end: 17,
+        ),
+        kind: Whitespace,
+      ),
+    ],
   ),
 ]

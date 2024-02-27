@@ -20,71 +20,65 @@ impl<'a> Lexer<'a> {
             ""
         };
 
-        let quote = self.source.next_char()?;
-
-        let multiline = match self.source.peek_pair() {
-            // Detect multi-line string from its triple quote.
-            Some((p1, p2)) if p1 == p2 && p2 == quote => {
-                // Eat the 2 peeked chars.
-                self.source.advance_n(2);
-                true
-            }
-            _ => false,
+        let quote = if matches!(first, '\'' | '"') {
+            first
+        } else {
+            self.source.next_char()?
         };
 
         let data_start = self.source.offset();
         let mut data_end = 0;
 
         let mut escape = false;
+        let mut value = Vec::<char>::new();
 
         while let Some(next) = self.source.next_char() {
-            match (escape, next) {
+            println!("{}", next);
+            let accept = match (escape, next) {
                 // Accept escaped character no matter what.
-                (true, _) => escape = raw_mod,
+                (true, _) => {
+                    escape = raw_mod;
+                    true
+                }
 
                 // terminate string on matching quote.
                 (false, c) if c == quote => {
-                    let end = if multiline {
-                        // Check for triple quotes string termination
-                        if matches!(self.source.peek_pair(), Some((p1, p2)) if p1 == p2 && p2 == quote)
-                        {
-                            // Eat the 2 quotes.
-                            self.source.advance_n(2);
-                            // Terminate the string.
-                            self.source.offset()
-                        } else {
-                            0
-                        }
-                    } else {
-                        // Terminate the string.
-                        self.source.offset()
-                    };
-
-                    let terminated = if end != 0 {
-                        if raw_mod {
-                            let hashes = self.source.advance_while(|c| c == '#');
-                            if hashes == expected_hashes {
-                                true
-                            } else {
-                                false
-                            }
-                        } else {
+                    let end = self.source.offset();
+                    let terminate = if raw_mod {
+                        let position = self.source.position();
+                        let hashes = self.source.advance_while(|c| c == '#');
+                        if hashes == expected_hashes {
                             true
+                        } else {
+                            // SAFETY: this position is created from the same source,
+                            // and source never changes.
+                            unsafe {
+                                self.source.set_position(position);
+                            }
+                            false
                         }
                     } else {
-                        false
+                        true
                     };
 
-                    if terminated {
+                    if terminate {
                         data_end = end;
                         break;
+                    } else {
+                        true
                     }
                 }
 
-                (false, '\n' | '\r') if !multiline => break,
+                (false, '\\') => {
+                    escape = true;
+                    false
+                }
+                _ => true,
+            };
 
-                (false, '\\') => escape = true,
-                _ => {}
+            println!(" accpet: {} {}", accept, next);
+            if accept {
+                value.push(next);
             }
         }
 
@@ -99,7 +93,7 @@ impl<'a> Lexer<'a> {
             token,
             StringData {
                 quote,
-                data: "TEst Data!!".to_string(),
+                data: value.iter().collect(),
                 span: Span::new(data_start, data_end),
                 terminated: data_end != 0,
                 unicode: unicode_mod,

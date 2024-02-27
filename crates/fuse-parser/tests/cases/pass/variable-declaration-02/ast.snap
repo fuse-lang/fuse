@@ -13,7 +13,7 @@ Some(Chunk(
       VariableDeclaration(VariableDeclaration(
         span: Span(
           start: 0,
-          end: 17,
+          end: 16,
         ),
         kind: Let,
         binding: BindingPattern(
@@ -30,10 +30,10 @@ Some(Chunk(
         expression: Some(StringLiteral(StringLiteral(
           span: Span(
             start: 9,
-            end: 17,
+            end: 16,
           ),
           segments: [
-            Literal(Escaped(Atom("TEst Data!!"))),
+            Literal(Escaped(Atom("Hello"))),
           ],
         ))),
       )),

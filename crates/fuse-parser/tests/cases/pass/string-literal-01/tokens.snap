@@ -1,0 +1,26 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+expression: tokens
+input_file: crates/fuse-parser/tests/cases/pass/string-literal-01/case.fuse
+---
+[
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 0,
+        end: 14,
+      ),
+      kind: StringLiteral,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 14,
+          end: 15,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+]

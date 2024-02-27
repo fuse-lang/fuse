@@ -1,0 +1,24 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+expression: parsed.chunk
+input_file: crates/fuse-parser/tests/cases/pass/string-literal-01/case.fuse
+---
+Some(Chunk(
+  span: Span(
+    start: 0,
+    end: 15,
+  ),
+  body: Block(
+    statements: [
+      Expression(StringLiteral(StringLiteral(
+        span: Span(
+          start: 0,
+          end: 14,
+        ),
+        segments: [
+          Literal(Escaped(Atom("Hello, World"))),
+        ],
+      ))),
+    ],
+  ),
+))

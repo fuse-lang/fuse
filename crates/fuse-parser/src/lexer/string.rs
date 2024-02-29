@@ -33,6 +33,7 @@ impl<'a> Lexer<'a> {
         let mut escape = false;
         let mut escape_whitespace = false;
         let mut value = Vec::<char>::new();
+        let mut interpolations: Vec<Span> = Vec::new();
 
         while let Some(next) = self.source.next_char() {
             let c = match (escape, next) {
@@ -52,7 +53,7 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
-                // terminate string on matching quote.
+                // possible point of string termination.
                 (false, c) if c == quote => {
                     let end = self.source.offset();
                     let terminate = self.string_terminate(raw_mod, expected_hashes);
@@ -65,10 +66,19 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
+                // start of an interpolated string segment.
+                (false, '$') if self.source.peek_char() == Some('{') => {
+                    // Eat the peeked brace
+                    self.source.advance();
+                    return Some(self.promote_to_interpolated_string(start));
+                }
+
                 (false, '\\') => {
                     escape = true;
+                    escape_whitespace = false;
                     None
                 }
+
                 (_, c) => Some(c),
             };
 
@@ -146,6 +156,7 @@ fn parse_escaped_character(c: char) -> Option<char> {
         't' => Some('\t'),
         '\\' => Some('\\'),
         '0' => Some('\0'),
+        '$' => Some('$'),
         _ => None,
     }
 }

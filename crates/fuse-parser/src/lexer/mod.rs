@@ -24,6 +24,7 @@ pub struct Lexer<'a> {
     source: Source<'a>,
     current_token: TokenReference,
     lookahead: VecDeque<Lookahead<'a>>,
+    context: LexerContext,
     strings_data: HashMap<Token, StringData>,
 }
 
@@ -33,6 +34,7 @@ impl<'a> Lexer<'a> {
             source: Source::new(src),
             current_token: TokenReference::default(),
             lookahead: VecDeque::new(),
+            context: LexerContext::Default,
             strings_data: HashMap::new(),
         };
 
@@ -51,14 +53,14 @@ impl<'a> Lexer<'a> {
     }
 
     pub fn peek(&self) -> Option<&TokenReference> {
-        self.lookahead.front().map(|next| &next.result)
+        self.lookahead.front().map(|next| &next.token)
     }
 
     pub fn lookahead(&mut self, n: u8) -> &TokenReference {
         // Cache the new lookahead if it dosn't exists.
         self.ensure_lookahead(n);
 
-        &self.lookahead[n as usize - 1].result
+        &self.lookahead[n as usize - 1].token
     }
 
     pub fn consume(&mut self) -> TokenReference {
@@ -67,7 +69,8 @@ impl<'a> Lexer<'a> {
                 // SAFETY: all lookaheads belong to this lexer
                 // and `self.source` never changes.
                 unsafe { self.source.set_position(next.position) };
-                next.result
+                self.context = next.context;
+                next.token
             }
             None => self.next_with_trivia(),
         };
@@ -92,19 +95,22 @@ impl<'a> Lexer<'a> {
 
         // Save the initial position.
         let position = self.source.position();
+        let context = self.context;
 
         // Move the source head to the position at the last lookahead state.
         if let Some(lookahead) = self.lookahead.back() {
             // SAFETY: We never change the `self.source` and `self.lookahead`s
             // are all created in this `Lexer` instance and all belong to the same `Source`.
             unsafe { self.source.set_position(lookahead.position) };
+            self.context = lookahead.context;
         }
 
         for _ in self.lookahead.len()..n {
             let next = self.next_with_trivia();
             self.lookahead.push_back(Lookahead {
                 position: self.source.position(),
-                result: next,
+                context: self.context,
+                token: next,
             });
         }
 
@@ -112,6 +118,7 @@ impl<'a> Lexer<'a> {
         // and `self.source` dosn't change throughout the `Lexer`'s lifetime.
         // Restore the source to the initial `position`.
         unsafe { self.source.set_position(position) };
+        self.context = context;
     }
 
     fn next_with_trivia(&mut self) -> TokenReference {
@@ -221,5 +228,12 @@ pub enum LexerError {}
 #[derive(Debug)]
 struct Lookahead<'a> {
     position: SourcePosition<'a>,
-    result: TokenReference,
+    context: LexerContext,
+    token: TokenReference,
+}
+
+#[derive(Debug, Clone, Copy)]
+enum LexerContext {
+    Default,
+    Interpolation,
 }

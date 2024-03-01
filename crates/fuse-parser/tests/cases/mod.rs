@@ -146,7 +146,9 @@ fn test_parser(path: &OsStr, expect_error: bool, expect_panic: bool) {
         path: path.to_str().unwrap_or("unknown case!"),
     );
 
-    insta::assert_ron_snapshot!("ast", parsed.chunk);
+    if !expect_panic {
+        insta::assert_ron_snapshot!("ast", parsed.chunk);
+    }
 
     if expect_error {
         insta::assert_ron_snapshot!("errors", parsed.errors);

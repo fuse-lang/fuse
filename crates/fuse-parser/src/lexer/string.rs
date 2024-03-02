@@ -1,8 +1,9 @@
 use fuse_common::Span;
 
-use super::{Lexer, Token, TokenKind};
-
-pub use string_data::*;
+use super::{
+    string_data::{StringData, StringValue},
+    Lexer, Token, TokenKind,
+};
 
 impl<'a> Lexer<'a> {
     pub(super) fn string(&mut self, start: u32, first: char) -> Option<Token> {
@@ -33,7 +34,6 @@ impl<'a> Lexer<'a> {
         let mut escape = false;
         let mut escape_whitespace = false;
         let mut value = Vec::<char>::new();
-        let mut interpolations: Vec<Span> = Vec::new();
 
         while let Some(next) = self.source.next_char() {
             let c = match (escape, next) {
@@ -70,7 +70,11 @@ impl<'a> Lexer<'a> {
                 (false, '$') if self.source.peek_char() == Some('{') => {
                     // Eat the peeked brace
                     self.source.advance();
-                    return Some(self.promote_to_interpolated_string(start));
+                    return Some(self.promote_to_interpolated_string(
+                        start,
+                        has_ever_escaped,
+                        value,
+                    ));
                 }
 
                 (false, '\\') => {
@@ -112,7 +116,7 @@ impl<'a> Lexer<'a> {
                 value,
                 terminated: data_end != 0,
                 unicode: unicode_mod,
-                interpolations: Vec::new(),
+                raw: raw_mod,
             },
         );
 
@@ -158,40 +162,5 @@ fn parse_escaped_character(c: char) -> Option<char> {
         '0' => Some('\0'),
         '$' => Some('$'),
         _ => None,
-    }
-}
-
-mod string_data {
-    use super::{Lexer, Token};
-    use fuse_common::Span;
-    impl<'a> Lexer<'a> {
-        /// Get a reference to the string data related to the given token.
-        /// It can panic if token dosn't have any stored string.
-        pub fn get_string_data(&mut self, token: &Token) -> &mut StringData {
-            self.strings_data.get_mut(&token).unwrap()
-        }
-
-        /// Get the ownership of string data related to the given token.
-        /// It can panic if token dosn't have any stored string.
-        pub fn eat_string_data(&mut self, token: &Token) -> StringData {
-            self.strings_data.remove(token).unwrap()
-        }
-
-        pub(super) fn set_string_data(&mut self, token: Token, data: StringData) -> bool {
-            self.strings_data.insert(token, data).is_some()
-        }
-    }
-
-    pub struct StringData {
-        pub quote: char,
-        pub value: StringValue,
-        pub terminated: bool,
-        pub unicode: bool,
-        pub interpolations: Vec<Span>,
-    }
-
-    pub enum StringValue {
-        Escaped(String),
-        Unescaped(Span),
     }
 }

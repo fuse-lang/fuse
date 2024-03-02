@@ -10,7 +10,7 @@ mod token;
 mod token_kind;
 mod whitespace;
 
-pub use string::{StringData, StringValue};
+pub use string_data::{StringData, StringValue};
 pub use token::*;
 pub use token_kind::*;
 
@@ -222,6 +222,46 @@ impl<'a> Iterator for Lexer<'a> {
         } else {
             Some(token)
         }
+    }
+}
+
+mod string_data {
+    use super::{Lexer, Token};
+    use fuse_common::Span;
+    impl<'a> Lexer<'a> {
+        /// Get a reference to the string data related to the given token.
+        /// It can panic if token dosn't have any stored string.
+        pub fn get_string_data(&mut self, token: &Token) -> &mut StringData {
+            self.strings_data.get_mut(&token).unwrap()
+        }
+
+        /// Get the ownership of string data related to the given token.
+        /// It can panic if token dosn't have any stored string.
+        pub fn eat_string_data(&mut self, token: &Token) -> StringData {
+            self.strings_data.remove(token).unwrap()
+        }
+
+        /// Set the string data for the given token.
+        /// It returns `None` if the key has no previous value,
+        /// otherwise returns the `Some` of old value.
+        ///
+        /// Internal
+        pub(super) fn set_string_data(&mut self, token: Token, data: StringData) -> Option<StringData> {
+            self.strings_data.insert(token, data)
+        }
+    }
+
+    pub struct StringData {
+        pub quote: char,
+        pub value: StringValue,
+        pub terminated: bool,
+        pub unicode: bool,
+        pub raw: bool,
+    }
+
+    pub enum StringValue {
+        Escaped(String),
+        Unescaped(Span),
     }
 }
 

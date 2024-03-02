@@ -30,10 +30,88 @@ impl<'a> Lexer<'a> {
         let data_start = self.source.offset();
         let mut data_end = 0;
 
-        let mut has_ever_escaped = false;
-        let mut escape = false;
+        let value = self.collect_string_literal(quote, raw_mod, expected_hashes);
+
+                // // start of an interpolated string segment.
+                // (false, '$') if self.source.peek_char() == Some('{') => {
+                //     // Eat the peeked brace
+                //     self.source.advance();
+                //     // ignore the `${` at the end
+                //     let end = self.source.offset() - 2;
+                //     return Some(self.promote_to_interpolated_string(
+                //         start,
+                //         StringData {
+                //             quote,
+                //             value: StringValue::new(
+                //                 Span::new(data_start, end),
+                //                 value,
+                //                 has_ever_escaped,
+                //             ),
+                //             terminated: true,
+                //             unicode: unicode_mod,
+                //             raw: raw_mod,
+                //         },
+                //     ));
+                // }
+
+        // if not terminated
+        if data_end == 0 {
+            println!("Unterminated string literal!, {value:?}");
+        }
+
+        let token = self.create(start, TokenKind::StringLiteral);
+
+        self.set_string_data(
+            token,
+            StringData {
+                quote,
+                value: StringValue::new(Span::new(data_start, data_end), value, has_ever_escaped),
+                terminated: data_end != 0,
+                unicode: unicode_mod,
+                raw: raw_mod,
+            },
+        );
+
+        Some(token)
+    }
+
+    fn string_modifiers(&mut self, first: char) -> Option<(bool, bool)> {
+        let res = match (first, self.source.peek_pair()) {
+            ('"' | '\'', _) => Some((false, false)),
+            ('u', Some(('\'' | '"', _))) => Some((true, false)),
+            ('r', Some(('#', '\'' | '"' | '#'))) => Some((false, true)),
+            ('u', Some(('r', '#'))) => Some((true, true)),
+            _ => None,
+        };
+        res
+    }
+
+    fn string_terminate(&mut self, raw_mod: bool, expected_hashes: &str) -> bool {
+        if raw_mod {
+            let position = self.source.position();
+            let hashes = self.source.advance_while(|c| c == '#');
+            if hashes == expected_hashes {
+                true
+            } else {
+                // SAFETY: this position is created from the same source,
+                // and source never changes.
+                unsafe {
+                    self.source.set_position(position);
+                }
+                false
+            }
+        } else {
+            true
+        }
+    }
+
+    fn collect_string_literal(&self, quote: char, raw_mod: bool, expected_hashes: &str) -> Vec<char> {
+        let mut value = Vec::new();
+        let mut escape = raw_mod;
         let mut escape_whitespace = false;
-        let mut value = Vec::<char>::new();
+
+        let mut has_ever_escaped = false;
+        let mut data_end = 0;
 
         while let Some(next) = self.source.next_char() {
             let c = match (escape, next) {
@@ -66,16 +144,6 @@ impl<'a> Lexer<'a> {
                     }
                 }
 
-                // start of an interpolated string segment.
-                (false, '$') if self.source.peek_char() == Some('{') => {
-                    // Eat the peeked brace
-                    self.source.advance();
-                    return Some(self.promote_to_interpolated_string(
-                        start,
-                        has_ever_escaped,
-                        value,
-                    ));
-                }
 
                 (false, '\\') => {
                     escape = true;
@@ -94,62 +162,7 @@ impl<'a> Lexer<'a> {
                 value.push(c);
             }
         }
-
-        // if terminated
-        if data_end != 0 {
-            println!("Unterminated string literal!");
-        }
-
-        let token = self.create(start, TokenKind::StringLiteral);
-
-        let value = if has_ever_escaped {
-            // TODO: look into more efficent ways to collect char array into string.
-            StringValue::Escaped(value.iter().collect())
-        } else {
-            StringValue::Unescaped(Span::new(data_start, data_end))
-        };
-
-        self.set_string_data(
-            token,
-            StringData {
-                quote,
-                value,
-                terminated: data_end != 0,
-                unicode: unicode_mod,
-                raw: raw_mod,
-            },
-        );
-
-        Some(token)
-    }
-
-    fn string_modifiers(&mut self, first: char) -> Option<(bool, bool)> {
-        match (first, self.source.peek_pair()) {
-            ('"' | '\'', _) => Some((false, false)),
-            ('u', Some(('\'' | '"', _))) => Some((true, false)),
-            ('r', Some(('#', '\'' | '"' | '#'))) => Some((false, true)),
-            ('u', Some(('r', '#'))) => Some((true, true)),
-            _ => None,
-        }
-    }
-
-    fn string_terminate(&mut self, raw_mod: bool, expected_hashes: &str) -> bool {
-        if raw_mod {
-            let position = self.source.position();
-            let hashes = self.source.advance_while(|c| c == '#');
-            if hashes == expected_hashes {
-                true
-            } else {
-                // SAFETY: this position is created from the same source,
-                // and source never changes.
-                unsafe {
-                    self.source.set_position(position);
-                }
-                false
-            }
-        } else {
-            true
-        }
+        value
     }
 }
 

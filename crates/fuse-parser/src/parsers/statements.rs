@@ -33,7 +33,9 @@ impl<'a> Parser<'a> {
             TokenKind::Const | TokenKind::Let | TokenKind::Global => self
                 .parse_variable_declaration()
                 .map(|decl| Statement::VariableDeclaration(decl)),
-            TokenKind::NumberLiteral | TokenKind::StringLiteral => self
+            TokenKind::NumberLiteral
+            | TokenKind::StringLiteral
+            | TokenKind::InterpolatedStringHead => self
                 .parse_expression()
                 .map(|expr| Statement::Expression(expr)),
 

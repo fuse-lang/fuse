@@ -85,7 +85,7 @@ impl<'a> Lexer<'a> {
         };
 
         // ensure the existence of at least one lookahead.
-        self.ensure_lookahead(1);
+        // self.ensure_lookahead(1);
 
         current
     }
@@ -246,7 +246,11 @@ mod string_data {
         /// otherwise returns the `Some` of old value.
         ///
         /// Internal
-        pub(super) fn set_string_data(&mut self, token: Token, data: StringData) -> Option<StringData> {
+        pub(super) fn set_string_data(
+            &mut self,
+            token: Token,
+            data: StringData,
+        ) -> Option<StringData> {
             self.strings_data.insert(token, data)
         }
     }
@@ -262,6 +266,17 @@ mod string_data {
     pub enum StringValue {
         Escaped(String),
         Unescaped(Span),
+    }
+
+    impl StringValue {
+        pub(super) fn new(span: Span, value: Vec<char>, escaped: bool) -> Self {
+            if escaped {
+                // TODO: look into more efficent ways to collect char array into string.
+                Self::Escaped(value.into_iter().collect())
+            } else {
+                Self::Unescaped(span)
+            }
+        }
     }
 }
 

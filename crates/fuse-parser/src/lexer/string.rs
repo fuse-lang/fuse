@@ -30,33 +30,48 @@ impl<'a> Lexer<'a> {
         let data_start = self.source.offset();
         let mut data_end = 0;
 
-        let value = self.collect_string_literal(quote, raw_mod, expected_hashes);
+        let mut builder = StringBuilder::new();
 
-                // // start of an interpolated string segment.
-                // (false, '$') if self.source.peek_char() == Some('{') => {
-                //     // Eat the peeked brace
-                //     self.source.advance();
-                //     // ignore the `${` at the end
-                //     let end = self.source.offset() - 2;
-                //     return Some(self.promote_to_interpolated_string(
-                //         start,
-                //         StringData {
-                //             quote,
-                //             value: StringValue::new(
-                //                 Span::new(data_start, end),
-                //                 value,
-                //                 has_ever_escaped,
-                //             ),
-                //             terminated: true,
-                //             unicode: unicode_mod,
-                //             raw: raw_mod,
-                //         },
-                //     ));
-                // }
+        while let Some(next) = self.source.next_char() {
+            match (builder.escape, next) {
+                // start of an interpolated string segment.
+                (false, '$') if self.source.peek_char() == Some('{') => {
+                    // Eat the peeked brace
+                    self.source.advance();
+                    // ignore the `${` at the end
+                    let end = self.source.offset() - 2;
+                    return Some(self.promote_to_interpolated_string(
+                        start,
+                        StringData {
+                            quote,
+                            value: builder.build(Span::new(data_start, end)),
+                            terminated: true,
+                            unicode: unicode_mod,
+                            raw: raw_mod,
+                        },
+                    ));
+                }
+
+                // possible point of string termination.
+                (false, c) if c == quote => {
+                    let end = self.source.offset();
+                    let terminate = self.string_terminate(raw_mod, expected_hashes);
+
+                    if terminate {
+                        builder.terminate();
+                        data_end = end;
+                        break;
+                    } else {
+                        builder.lex(c);
+                    }
+                }
+                _ => builder.lex(next),
+            }
+        }
 
         // if not terminated
         if data_end == 0 {
-            println!("Unterminated string literal!, {value:?}");
+            println!("Unterminated string literal at {data_end:?}!");
         }
 
         let token = self.create(start, TokenKind::StringLiteral);
@@ -65,7 +80,7 @@ impl<'a> Lexer<'a> {
             token,
             StringData {
                 quote,
-                value: StringValue::new(Span::new(data_start, data_end), value, has_ever_escaped),
+                value: builder.build(Span::new(data_start, data_end)),
                 terminated: data_end != 0,
                 unicode: unicode_mod,
                 raw: raw_mod,
@@ -104,65 +119,81 @@ impl<'a> Lexer<'a> {
             true
         }
     }
+}
 
-    fn collect_string_literal(&self, quote: char, raw_mod: bool, expected_hashes: &str) -> Vec<char> {
-        let mut value = Vec::new();
-        let mut escape = raw_mod;
-        let mut escape_whitespace = false;
+struct StringBuilder {
+    chars: Vec<char>,
+    escape: bool,
+    escape_whitespace: bool,
+    has_ever_escaped: bool,
+    terminated: bool,
+    raw: bool,
+}
 
-        let mut has_ever_escaped = false;
-        let mut data_end = 0;
-
-        while let Some(next) = self.source.next_char() {
-            let c = match (escape, next) {
-                // Skip escaped whitespaces.
-                (true, c) if c.is_ascii_whitespace() => {
-                    escape_whitespace = true;
-                    None
-                }
-                // Parse escape character or terminate space escape.
-                (true, c) => {
-                    escape = raw_mod;
-                    if !escape_whitespace {
-                        parse_escaped_character(c)
-                    } else {
-                        escape_whitespace = false;
-                        Some(c)
-                    }
-                }
-
-                // possible point of string termination.
-                (false, c) if c == quote => {
-                    let end = self.source.offset();
-                    let terminate = self.string_terminate(raw_mod, expected_hashes);
-
-                    if terminate {
-                        data_end = end;
-                        break;
-                    } else {
-                        Some(c)
-                    }
-                }
-
-
-                (false, '\\') => {
-                    escape = true;
-                    escape_whitespace = false;
-                    None
-                }
-
-                (_, c) => Some(c),
-            };
-
-            if escape {
-                has_ever_escaped = true;
-            }
-
-            if let Some(c) = c {
-                value.push(c);
-            }
+impl StringBuilder {
+    fn new() -> Self {
+        Self {
+            chars: Vec::new(),
+            escape: false,
+            escape_whitespace: false,
+            has_ever_escaped: false,
+            terminated: false,
+            raw: false,
         }
-        value
+    }
+
+    fn with_raw_mod() -> Self {
+        Self {
+            chars: Vec::new(),
+            escape: false,
+            escape_whitespace: false,
+            has_ever_escaped: false,
+            terminated: false,
+            raw: true,
+        }
+    }
+
+    fn lex(&mut self, c: char) {
+        match (self.escape, c) {
+            // Skip escaped whitespaces.
+            (true, c) if c.is_ascii_whitespace() => {
+                self.escape_whitespace = true;
+            }
+
+            // Parse escaped character or terminate whitespace escape sequence.
+            (true, c) => {
+                self.escape = self.raw;
+                if !self.escape_whitespace {
+                    if let Some(c) = parse_escaped_character(c) {
+                        self.push(c);
+                    }
+                } else {
+                    self.escape_whitespace = false;
+                    self.push(c);
+                }
+            }
+
+            (false, '\\') => {
+                self.escape = true;
+                // reset whitespace escape sequence.
+                self.escape_whitespace = false;
+                self.has_ever_escaped = true;
+            }
+
+            (_, c) => self.push(c),
+        }
+    }
+
+    fn terminate(&mut self) {
+        self.terminated = true
+    }
+
+    fn build(self, span: Span) -> StringValue {
+        StringValue::new(span, self.chars, self.has_ever_escaped)
+    }
+
+    pub(self) fn push(&mut self, c: char) {
+        self.chars.push(c)
     }
 }
 

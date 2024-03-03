@@ -35,9 +35,9 @@ impl Token {
 #[serializable]
 #[derive(Debug, Default, Clone, PartialEq, Eq, Hash)]
 pub struct TokenReference {
-    token: Token,
-    leading_trivia: Vec<Token>,
-    trailing_trivia: Vec<Token>,
+    pub token: Token,
+    pub leading_trivia: Vec<Token>,
+    pub trailing_trivia: Vec<Token>,
 }
 
 impl TokenReference {

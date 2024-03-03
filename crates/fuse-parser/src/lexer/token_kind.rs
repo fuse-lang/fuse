@@ -13,8 +13,11 @@ pub enum TokenKind {
 
     // Identifiers and Literals
     Identifier,
-    StringLiteral,
     NumberLiteral,
+    StringLiteral,
+    InterpolatedStringHead,
+    InterpolatedStringMiddle,
+    InterpolatedStringTail,
 
     // Symbols
     And,
@@ -68,6 +71,8 @@ pub enum TokenKind {
     Semicolon,
     LParen,
     RParen,
+    LCurly,
+    RCurly,
     Eq,
     Minus,
     Plus,

@@ -138,7 +138,6 @@ pub enum StringLiteralSegment {
 #[serializable]
 #[derive(Debug, PartialEq)]
 pub struct InterpolatedStringSegment {
-    pub span: Span,
     pub expression: Expression,
     pub format: InterpolationFormat,
 }

@@ -1,6 +1,8 @@
+use core::panic;
+
 use crate::{
     lexer::{Token, TokenKind, TokenReference},
-    Parser,
+    Parser, ParserResult,
 };
 
 impl<'a> Parser<'a> {
@@ -26,8 +28,22 @@ impl<'a> Parser<'a> {
         }
     }
 
+    pub fn consume_expect(&mut self, kind: TokenKind) -> ParserResult<TokenReference> {
+        self.expect(kind)?;
+        Ok(self.consume())
+    }
+
     pub fn at(&self, kind: TokenKind) -> bool {
         self.cur_kind() == kind
+    }
+
+    #[inline]
+    pub fn expect(&self, kind: TokenKind) -> ParserResult<()> {
+        if self.at(kind) {
+            Ok(())
+        } else {
+            Err(self.unexpect_token_kind_error(kind))
+        }
     }
 
     pub fn nth(&mut self, n: u8) -> &TokenReference {

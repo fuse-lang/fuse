@@ -92,6 +92,7 @@ pub enum Expression {
     StringLiteral(StringLiteral),
     BooleanLiteral(BooleanLiteral),
     Identifier(Identifier),
+    Function(Function),
 }
 
 #[serializable]
@@ -163,4 +164,34 @@ pub enum InterpolationFormat {
 pub struct Identifier {
     pub span: Span,
     pub name: Atom,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct Function {
+    pub span: Span,
+    pub params: FunctionParameters,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct FunctionParameters {
+    pub span: Span,
+    pub items: Vec<FunctionParameter>,
+    pub rest: Option<BindingRest>,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct FunctionParameter {
+    pub span: Span,
+    pub pattern: BindingPattern,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct BindingRest {
+    pub span: Span,
+    pub binding: BindingIdentifier,
+    pub type_annotation: Option<TypeAnnotation>,
 }

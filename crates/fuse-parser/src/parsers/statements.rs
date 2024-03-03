@@ -40,7 +40,9 @@ impl<'a> Parser<'a> {
             | TokenKind::NumberLiteral
             | TokenKind::StringLiteral
             | TokenKind::InterpolatedStringHead
-            | TokenKind::Identifier => self
+            | TokenKind::Identifier
+            | TokenKind::Function
+            | TokenKind::Fn => self
                 .parse_expression()
                 .map(|expr| Statement::Expression(expr)),
 

@@ -91,6 +91,7 @@ pub enum Expression {
     NumberLiteral(NumberLiteral),
     StringLiteral(StringLiteral),
     BooleanLiteral(BooleanLiteral),
+    Identifier(Identifier),
 }
 
 #[serializable]
@@ -155,4 +156,11 @@ pub struct InterpolatedStringSegment {
 pub enum InterpolationFormat {
     Display,
     Debug,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct Identifier {
+    pub span: Span,
+    pub name: Atom,
 }

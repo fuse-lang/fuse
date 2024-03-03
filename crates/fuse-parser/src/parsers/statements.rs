@@ -30,14 +30,17 @@ impl<'a> Parser<'a> {
 
         match cur_kind {
             TokenKind::Semicolon => ParserResult::Ok(self.parse_empty_statement()),
+
             TokenKind::Const | TokenKind::Let | TokenKind::Global => self
                 .parse_variable_declaration()
                 .map(|decl| Statement::VariableDeclaration(decl)),
+
             TokenKind::True
             | TokenKind::False
             | TokenKind::NumberLiteral
             | TokenKind::StringLiteral
-            | TokenKind::InterpolatedStringHead => self
+            | TokenKind::InterpolatedStringHead
+            | TokenKind::Identifier => self
                 .parse_expression()
                 .map(|expr| Statement::Expression(expr)),
 

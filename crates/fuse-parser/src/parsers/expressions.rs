@@ -1,5 +1,5 @@
 use crate::{lexer::TokenKind, Parser, ParserResult};
-use fuse_ast::{BooleanLiteral, Expression};
+use fuse_ast::{BooleanLiteral, Expression, Identifier};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_expression(&mut self) -> ParserResult<Expression> {
@@ -16,7 +16,16 @@ impl<'a> Parser<'a> {
             TokenKind::StringLiteral | TokenKind::InterpolatedStringHead => {
                 Ok(Expression::StringLiteral(self.parse_string_literal()?))
             }
+            TokenKind::Identifier => self.parse_identifier().map(|id| Expression::Identifier(id)),
             _ => Err(self.unexpected_error()),
         }
+    }
+    pub(crate) fn parse_identifier(&mut self) -> ParserResult<Identifier> {
+        let token = self.consume();
+        let view = self.view_token(*token);
+        Ok(Identifier {
+            span: token.span(),
+            name: self.ast.atom(view),
+        })
     }
 }

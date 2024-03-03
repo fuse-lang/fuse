@@ -1,13 +1,13 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
-expression: parsed.errors
-input_file: crates/fuse-parser/tests/cases/panic/variable-declaration-01/case.fuse
+expression: tokens
+input_file: crates/fuse-parser/tests/cases/pass/identifier-01/case.fuse
 ---
 [
-  UnexpectedError(TokenReference(
+  TokenReference(
     token: Token(
       span: Span(
-        start: 6,
+        start: 0,
         end: 10,
       ),
       kind: Identifier,
@@ -22,5 +22,5 @@ input_file: crates/fuse-parser/tests/cases/panic/variable-declaration-01/case.fu
         kind: Whitespace,
       ),
     ],
-  )),
+  ),
 ]

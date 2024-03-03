@@ -5,7 +5,6 @@ mod number;
 mod operator;
 mod source;
 mod string;
-mod string_interpolation;
 mod token;
 mod token_kind;
 mod whitespace;
@@ -25,7 +24,6 @@ pub struct Lexer<'a> {
     source: Source<'a>,
     current_token: TokenReference,
     lookahead: VecDeque<Lookahead<'a>>,
-    context: LexerContextStack,
     strings_data: HashMap<Token, StringData>,
 }
 
@@ -35,7 +33,6 @@ impl<'a> Lexer<'a> {
             source: Source::new(src),
             current_token: TokenReference::default(),
             lookahead: VecDeque::new(),
-            context: LexerContextStack::new(),
             strings_data: HashMap::new(),
         };
 
@@ -70,7 +67,6 @@ impl<'a> Lexer<'a> {
                 // SAFETY: all lookaheads belong to this lexer
                 // and `self.source` never changes.
                 unsafe { self.source.set_position(next.position) };
-                self.context.push(next.context);
                 next.token
             }
             None => self.next_with_trivia(),
@@ -102,7 +98,6 @@ impl<'a> Lexer<'a> {
             // SAFETY: We never change the `self.source` and `self.lookahead`s
             // are all created in this `Lexer` instance and all belong to the same `Source`.
             unsafe { self.source.set_position(lookahead.position) };
-            self.context.push(lookahead.context);
         }
 
         let mut n = 0;
@@ -110,7 +105,6 @@ impl<'a> Lexer<'a> {
             let next = self.next_with_trivia();
             self.lookahead.push_back(Lookahead {
                 position: self.source.position(),
-                context: self.context.current().clone(),
                 token: next,
             });
             n += 1;
@@ -120,9 +114,6 @@ impl<'a> Lexer<'a> {
         // and `self.source` dosn't change throughout the `Lexer`'s lifetime.
         // Restore the source to the initial `position`.
         unsafe { self.source.set_position(position) };
-        for _ in 0..n {
-            self.context.pop();
-        }
     }
 
     fn next_with_trivia(&mut self) -> TokenReference {
@@ -287,40 +278,5 @@ pub enum LexerError {}
 #[derive(Debug)]
 struct Lookahead<'a> {
     position: SourcePosition<'a>,
-    context: LexerContext,
     token: TokenReference,
-}
-
-#[derive(Debug, Clone)]
-struct LexerContextStack(VecDeque<LexerContext>);
-
-impl LexerContextStack {
-    fn new() -> Self {
-        Self(VecDeque::new())
-    }
-
-    fn current(&self) -> &LexerContext {
-        // SAFETY: Queue is private and we always keep one context in the stack
-        unsafe { self.0.back().unwrap_unchecked() }
-    }
-
-    fn push(&mut self, ctx: LexerContext) {
-        self.0.push_back(ctx)
-    }
-
-    fn pop(&mut self) -> LexerContext {
-        // SAFETY: Queue is private and we always keep one context in the stack
-        let ctx = unsafe { self.0.pop_back().unwrap_unchecked() };
-
-        if self.0.is_empty() {
-            self.push(LexerContext::Default);
-        }
-        ctx
-    }
-}
-
-#[derive(Debug, Clone, Copy)]
-enum LexerContext {
-    Default,
-    Interpolation,
 }

@@ -70,8 +70,8 @@ impl<'a> Lexer<'a> {
         }
 
         // if not terminated
-        if data_end == 0 {
-            println!("Unterminated string literal at {data_end:?}!");
+        if !builder.terminated {
+            println!("Unterminated string literal!");
         }
 
         let token = self.create(start, TokenKind::StringLiteral);
@@ -88,6 +88,22 @@ impl<'a> Lexer<'a> {
         );
 
         Some(token)
+    }
+
+    pub(crate) fn follow_string_interpolation(&mut self) -> Token {
+        if self.source.next_char().unwrap() != '}' {
+            panic!("Unterminated string interpolation!");
+        }
+        todo!()
+        // match substitution segment.
+        // after each middle segment we expect an expression.
+    }
+
+    fn promote_to_interpolated_string(&mut self, start: u32, data: StringData) -> Token {
+        let token = self.create(start, TokenKind::InterpolatedStringHead);
+
+        self.set_string_data(token, data);
+        token
     }
 
     fn string_modifiers(&mut self, first: char) -> Option<(bool, bool)> {

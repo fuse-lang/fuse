@@ -8,19 +8,44 @@ input_file: crates/fuse-parser/tests/cases/pass/string-literal-04/case.fuse
     token: Token(
       span: Span(
         start: 0,
-        end: 17,
+        end: 9,
+      ),
+      kind: InterpolatedStringHead,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 9,
+        end: 12,
+      ),
+      kind: NumberLiteral,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 12,
+        end: 13,
+      ),
+      kind: RCurly,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 13,
+        end: 15,
       ),
       kind: StringLiteral,
     ),
     leading_trivia: [],
-    trailing_trivia: [
-      Token(
-        span: Span(
-          start: 17,
-          end: 18,
-        ),
-        kind: Whitespace,
-      ),
-    ],
+    trailing_trivia: [],
   ),
 ]

@@ -2,7 +2,7 @@ use fuse_common::Span;
 
 use super::{
     string_data::{StringData, StringValue},
-    Lexer, Token, TokenKind,
+    Lexer, Token, TokenKind, TokenReference,
 };
 
 impl<'a> Lexer<'a> {
@@ -47,6 +47,7 @@ impl<'a> Lexer<'a> {
                             value: builder.build(Span::new(data_start, end)),
                             terminated: true,
                             unicode: unicode_mod,
+                            expected_hashes,
                             raw: raw_mod,
                         },
                     ));
@@ -83,6 +84,7 @@ impl<'a> Lexer<'a> {
                 value: builder.build(Span::new(data_start, data_end)),
                 terminated: data_end != 0,
                 unicode: unicode_mod,
+                expected_hashes,
                 raw: raw_mod,
             },
         );
@@ -90,16 +92,72 @@ impl<'a> Lexer<'a> {
         Some(token)
     }
 
-    pub(crate) fn follow_string_interpolation(&mut self) -> Token {
-        if self.source.next_char().unwrap() != '}' {
-            panic!("Unterminated string interpolation!");
+    pub(crate) fn follow_string_interpolation(&mut self, head_data: &StringData<'a>) {
+        debug_assert_eq!(
+            self.current().kind(),
+            TokenKind::RCurly,
+            "Invalid string interpolation pattern,\
+             Following string interpolation expects\
+             the current lexed token to be of `}}` kind."
+        );
+
+        let start = self.current().start();
+
+        // Clear the lookahead to avoid any conflict.
+        self.lookahead.clear();
+
+        let mut builder = StringBuilder::with_head_ref(head_data);
+        let mut kind = TokenKind::Undetermined;
+        let data_start = self.source.offset();
+        let mut data_end: u32 = 0;
+
+        while let Some(next) = self.source.next_char() {
+            match (builder.escape, next) {
+                (false, '$') if self.source.peek_char() == Some('{') => {
+                    self.source.advance();
+                    kind = TokenKind::InterpolatedStringMiddle;
+                    // ignore ${` at the end
+                    data_end = self.source.offset() - 2;
+                }
+                (false, c) if c == head_data.quote => {
+                    let end = self.source.offset();
+                    let terminate = self.string_terminate(head_data.raw, head_data.expected_hashes);
+
+                    if terminate {
+                        builder.terminate();
+                        kind = TokenKind::InterpolatedStringTail;
+                        data_end = end;
+                        break;
+                    } else {
+                        builder.lex(c);
+                    }
+                }
+                _ => builder.lex(next),
+            }
         }
-        todo!()
-        // match substitution segment.
-        // after each middle segment we expect an expression.
+        let token = self.create(start, kind);
+        self.set_string_data(
+            token,
+            StringData {
+                quote: head_data.quote,
+                unicode: head_data.unicode,
+                expected_hashes: head_data.expected_hashes,
+                raw: head_data.raw,
+                terminated: builder.terminated,
+                value: builder.build(Span::new(data_start, data_end)),
+            },
+        );
+        let token = TokenReference::with_trivia(
+            token,
+            self.current().leading_trivia.clone(),
+            Vec::default(),
+        );
+        unsafe {
+            self.set_current(token);
+        }
     }
 
-    fn promote_to_interpolated_string(&mut self, start: u32, data: StringData) -> Token {
+    fn promote_to_interpolated_string(&mut self, start: u32, data: StringData<'a>) -> Token {
         let token = self.create(start, TokenKind::InterpolatedStringHead);
 
         self.set_string_data(token, data);
@@ -166,6 +224,17 @@ impl StringBuilder {
             has_ever_escaped: false,
             terminated: false,
             raw: true,
+        }
+    }
+
+    fn with_head_ref(head_data: &StringData) -> Self {
+        Self {
+            chars: Vec::new(),
+            escape: false,
+            escape_whitespace: false,
+            has_ever_escaped: false,
+            terminated: false,
+            raw: head_data.raw,
         }
     }
 

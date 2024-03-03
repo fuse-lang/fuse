@@ -6,17 +6,28 @@ input_file: crates/fuse-parser/tests/cases/pass/string-literal-04/case.fuse
 Some(Chunk(
   span: Span(
     start: 0,
-    end: 18,
+    end: 15,
   ),
   body: Block(
     statements: [
       Expression(StringLiteral(StringLiteral(
         span: Span(
           start: 0,
-          end: 17,
+          end: 15,
         ),
         segments: [
-          Literal(Escaped(Atom("Hello ${world}"))),
+          Interpolated(InterpolatedStringSegment(
+            expression: NumberLiteral(NumberLiteral(
+              span: Span(
+                start: 9,
+                end: 12,
+              ),
+              raw: Atom("123"),
+              value: 123.0,
+              kind: Decimal,
+            )),
+            format: Display,
+          )),
         ],
       ))),
     ],

@@ -33,15 +33,16 @@ impl<'a> Parser<'a> {
     fn parse_string_interpolation(&mut self) -> ParserResult<StringLiteral> {
         let mut segments: Vec<StringSegment> = Vec::new();
         let head = self.consume();
+        let head_data = self.lexer.eat_string_data(&*head);
         let tail = loop {
             let expression = self.parse_expression()?;
-            let next_segment = self.lexer.follow_string_interpolation();
-
+            self.lexer.follow_string_interpolation(&head_data);
+            let next_segment = self.consume();
             segments.push(StringSegment::Interpolated(InterpolatedStringSegment {
                 expression,
                 format: fuse_ast::InterpolationFormat::Display,
             }));
-            if next_segment.kind == TokenKind::InterpolatedStringTail {
+            if next_segment.kind() == TokenKind::InterpolatedStringTail {
                 break self.consume();
             }
         };

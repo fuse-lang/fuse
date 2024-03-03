@@ -24,7 +24,7 @@ pub struct Lexer<'a> {
     source: Source<'a>,
     current_token: TokenReference,
     lookahead: VecDeque<Lookahead<'a>>,
-    strings_data: HashMap<Token, StringData>,
+    strings_data: HashMap<Token, StringData<'a>>,
 }
 
 impl<'a> Lexer<'a> {
@@ -72,17 +72,25 @@ impl<'a> Lexer<'a> {
             None => self.next_with_trivia(),
         };
 
-        // SAFETY: Both the current and next token are created by this
-        // `Lexer` and have the same lifetime and alignment.
-        let current = unsafe {
-            let current = std::ptr::read(&mut self.current_token);
-            std::ptr::write(&mut self.current_token, next);
-            current
-        };
+        // SAFETY: `next` is either aqquired through `self.lookahead`
+        // or the `self.next_with_trivia()`, either way it is created,
+        // using the same lexer as `self.current_token`.
+        let current = unsafe { self.set_current(next) };
 
         // ensure the existence of at least one lookahead.
         // self.ensure_lookahead(1);
 
+        current
+    }
+
+    /// Replace the current token and returns the old one back.
+    /// SAFETY: `token` should be a token created using the `self`,
+    /// and have the same lifetime and alignment.
+    unsafe fn set_current(&mut self, token: TokenReference) -> TokenReference {
+        // SAFETY: Both the current and next token are created by this
+        // `Lexer` and have the same lifetime and alignment.
+        let current = std::ptr::read(&mut self.current_token);
+        std::ptr::write(&mut self.current_token, token);
         current
     }
 
@@ -222,13 +230,13 @@ mod string_data {
     impl<'a> Lexer<'a> {
         /// Get a reference to the string data related to the given token.
         /// It can panic if token dosn't have any stored string.
-        pub fn get_string_data(&mut self, token: &Token) -> &mut StringData {
+        pub fn get_string_data(&mut self, token: &Token) -> &'a mut StringData {
             self.strings_data.get_mut(&token).unwrap()
         }
 
         /// Get the ownership of string data related to the given token.
         /// It can panic if token dosn't have any stored string.
-        pub fn eat_string_data(&mut self, token: &Token) -> StringData {
+        pub fn eat_string_data(&mut self, token: &Token) -> StringData<'a> {
             self.strings_data.remove(token).unwrap()
         }
 
@@ -240,17 +248,18 @@ mod string_data {
         pub(super) fn set_string_data(
             &mut self,
             token: Token,
-            data: StringData,
-        ) -> Option<StringData> {
+            data: StringData<'a>,
+        ) -> Option<StringData<'a>> {
             self.strings_data.insert(token, data)
         }
     }
 
-    pub struct StringData {
+    pub struct StringData<'a> {
         pub quote: char,
         pub value: StringValue,
         pub terminated: bool,
         pub unicode: bool,
+        pub expected_hashes: &'a str,
         pub raw: bool,
     }
 

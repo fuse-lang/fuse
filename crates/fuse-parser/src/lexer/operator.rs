@@ -17,6 +17,12 @@ impl<'a> Lexer<'a> {
             '+' => {
                 "" => TokenKind::Plus,
             }
+            '{' => {
+                "" => TokenKind::LCurly,
+            }
+            '}' => {
+                "" => TokenKind::RCurly,
+            }
         })?;
 
         Some(self.create(start, kind))

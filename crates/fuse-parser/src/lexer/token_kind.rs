@@ -71,6 +71,8 @@ pub enum TokenKind {
     Semicolon,
     LParen,
     RParen,
+    LCurly,
+    RCurly,
     Eq,
     Minus,
     Plus,

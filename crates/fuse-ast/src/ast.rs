@@ -90,6 +90,14 @@ pub struct Atom(pub Rc<str>);
 pub enum Expression {
     NumberLiteral(NumberLiteral),
     StringLiteral(StringLiteral),
+    BooleanLiteral(BooleanLiteral),
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct BooleanLiteral {
+    pub span: Span,
+    pub value: bool,
 }
 
 #[serializable]

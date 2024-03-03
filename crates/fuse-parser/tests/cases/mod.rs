@@ -3,8 +3,15 @@ use std::{ffi::OsStr, fs, path::PathBuf};
 use fuse_parser::{lexer::Lexer, parse};
 
 macro_rules! expect_eq {
-    ($lhs:expr, $rhs:expr, $format:literal, path: $path:expr, $($args:expr$(,)?)*) => {
-        assert_eq!($lhs, $rhs, "{} : {}", format!($format, $($args,)*), $path);
+    (
+        $lhs:expr,
+        $rhs:expr,
+        $format:literal,
+        path: $path:expr,
+        dump: $dump:ident,
+        $($args:expr$(,)?)*
+    ) => {
+        assert_eq!($lhs, $rhs, "{} : {}\ndump: {:?}", format!($format, $($args,)*), $path, $dump);
     };
 }
 
@@ -101,8 +108,8 @@ fn run(ctx: &Context, case_dir: PathBuf, expect_error: bool, expect_panic: bool)
     settings.set_prepend_module_to_snapshot(false);
 
     let _guard = settings.bind_to_scope();
-    test_lexer(source_path.as_os_str());
     test_parser(source_path.as_os_str(), expect_error, expect_panic);
+    test_lexer(source_path.as_os_str());
 }
 
 fn test_lexer(src_path: &OsStr) {
@@ -114,6 +121,7 @@ fn test_lexer(src_path: &OsStr) {
         source, reference,
         "Lexer changes the content of the original source buffer.",
         path: src_path.to_str().unwrap_or("unknown source"),
+        dump: tokens,
     );
 
     insta::assert_ron_snapshot!("tokens", tokens);
@@ -128,6 +136,7 @@ fn test_parser(path: &OsStr, expect_error: bool, expect_panic: bool) {
         source, reference,
         "Lexer changes the content of the original source buffer.",
         path: path.to_str().unwrap_or("unknown case!"),
+        dump: parsed,
     );
 
     expect_eq!(
@@ -135,6 +144,7 @@ fn test_parser(path: &OsStr, expect_error: bool, expect_panic: bool) {
         parsed.paniced,
         "Panic state ({}) was different from the expected value ({}).",
         path: path.to_str().unwrap_or("unknown case!"),
+        dump: parsed,
         parsed.paniced,
         expect_panic,
     );
@@ -144,9 +154,12 @@ fn test_parser(path: &OsStr, expect_error: bool, expect_panic: bool) {
         !parsed.errors.is_empty(),
         "Error vector is different from expectations.",
         path: path.to_str().unwrap_or("unknown case!"),
+        dump: parsed,
     );
 
-    insta::assert_ron_snapshot!("ast", parsed.chunk);
+    if !expect_panic {
+        insta::assert_ron_snapshot!("ast", parsed.chunk);
+    }
 
     if expect_error {
         insta::assert_ron_snapshot!("errors", parsed.errors);

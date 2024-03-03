@@ -1,0 +1,38 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+expression: parsed.chunk
+input_file: crates/fuse-parser/tests/cases/pass/string-interpolation-02/case.fuse
+---
+Some(Chunk(
+  span: Span(
+    start: 0,
+    end: 26,
+  ),
+  body: Block(
+    statements: [
+      Expression(StringLiteral(StringLiteral(
+        span: Span(
+          start: 0,
+          end: 26,
+        ),
+        segments: [
+          Interpolated(InterpolatedStringSegment(
+            expression: StringLiteral(StringLiteral(
+              span: Span(
+                start: 10,
+                end: 17,
+              ),
+              segments: [
+                Literal(Unescaped(Span(
+                  start: 11,
+                  end: 17,
+                ))),
+              ],
+            )),
+            format: Display,
+          )),
+        ],
+      ))),
+    ],
+  ),
+))

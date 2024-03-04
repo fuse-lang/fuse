@@ -43,6 +43,7 @@ impl<'a> Parser<'a> {
         let token = self.consume();
         println!("{token:?}, {:?}", self.cur_kind());
         let params = self.parse_function_parameters()?;
+        let end = self.consume_expect(TokenKind::End);
         Ok(Function {
             span: self.end_span(start),
             params,

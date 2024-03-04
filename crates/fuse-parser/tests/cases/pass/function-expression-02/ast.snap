@@ -1,0 +1,46 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+expression: parsed.chunk
+input_file: crates/fuse-parser/tests/cases/pass/function-expression-02/case.fuse
+---
+Some(Chunk(
+  span: Span(
+    start: 0,
+    end: 24,
+  ),
+  body: Block(
+    statements: [
+      Expression(Function(Function(
+        span: Span(
+          start: 0,
+          end: 19,
+        ),
+        params: FunctionParameters(
+          span: Span(
+            start: 2,
+            end: 4,
+          ),
+          items: [],
+          rest: None,
+        ),
+        return_type: None,
+        body: Block(Block(
+          statements: [
+            Expression(StringLiteral(StringLiteral(
+              span: Span(
+                start: 6,
+                end: 19,
+              ),
+              segments: [
+                Literal(Unescaped(Span(
+                  start: 7,
+                  end: 19,
+                ))),
+              ],
+            ))),
+          ],
+        )),
+      ))),
+    ],
+  ),
+))

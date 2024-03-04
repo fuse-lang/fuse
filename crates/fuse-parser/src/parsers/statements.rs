@@ -11,7 +11,7 @@ impl<'a> Parser<'a> {
     pub(crate) fn parse_statements(&mut self) -> ParserResult<Vec<Statement>> {
         let mut statements = Vec::new();
 
-        while !self.at(TokenKind::Eof) {
+        while !self.at(TokenKind::Eof) && !self.at(TokenKind::End) {
             match self.parse_statement() {
                 ParserResult::Ok(stmt) => {
                     statements.push(stmt);

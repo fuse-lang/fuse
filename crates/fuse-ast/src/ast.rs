@@ -172,7 +172,7 @@ pub struct Function {
     pub span: Span,
     pub params: FunctionParameters,
     pub return_type: Option<TypeAnnotation>,
-    pub body: Option<FunctionBody>,
+    pub body: FunctionBody,
 }
 
 #[serializable]

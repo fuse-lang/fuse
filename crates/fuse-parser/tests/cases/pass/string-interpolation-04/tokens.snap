@@ -43,7 +43,7 @@ input_file: crates/fuse-parser/tests/cases/pass/string-interpolation-04/case.fus
         start: 15,
         end: 16,
       ),
-      kind: Undetermined,
+      kind: Comma,
     ),
     leading_trivia: [],
     trailing_trivia: [

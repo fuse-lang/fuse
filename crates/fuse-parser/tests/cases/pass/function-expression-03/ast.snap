@@ -1,0 +1,76 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+expression: parsed.chunk
+input_file: crates/fuse-parser/tests/cases/pass/function-expression-03/case.fuse
+---
+Some(Chunk(
+  span: Span(
+    start: 0,
+    end: 16,
+  ),
+  body: Block(
+    statements: [
+      Expression(Function(Function(
+        span: Span(
+          start: 0,
+          end: 11,
+        ),
+        params: FunctionParameters(
+          span: Span(
+            start: 2,
+            end: 8,
+          ),
+          items: [
+            FunctionParameter(
+              span: Span(
+                start: 3,
+                end: 4,
+              ),
+              pattern: BindingPattern(
+                kind: Identifier(BindingIdentifier(
+                  span: Span(
+                    start: 3,
+                    end: 4,
+                  ),
+                  atom: Atom("a"),
+                )),
+                type_annotation: None,
+                optional: false,
+              ),
+            ),
+            FunctionParameter(
+              span: Span(
+                start: 6,
+                end: 7,
+              ),
+              pattern: BindingPattern(
+                kind: Identifier(BindingIdentifier(
+                  span: Span(
+                    start: 6,
+                    end: 7,
+                  ),
+                  atom: Atom("b"),
+                )),
+                type_annotation: None,
+                optional: false,
+              ),
+            ),
+          ],
+          rest: None,
+        ),
+        return_type: None,
+        body: Block(Block(
+          statements: [
+            Expression(Identifier(Identifier(
+              span: Span(
+                start: 10,
+                end: 11,
+              ),
+              name: Atom("a"),
+            ))),
+          ],
+        )),
+      ))),
+    ],
+  ),
+))

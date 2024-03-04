@@ -1,16 +1,16 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
 expression: tokens
-input_file: crates/fuse-parser/tests/cases/pass/string-interpolation-05/case.fuse
+input_file: crates/fuse-parser/tests/cases/pass/function-expression-02/case.fuse
 ---
 [
   TokenReference(
     token: Token(
       span: Span(
         start: 0,
-        end: 10,
+        end: 2,
       ),
-      kind: InterpolatedStringHead,
+      kind: Fn,
     ),
     leading_trivia: [],
     trailing_trivia: [],
@@ -18,10 +18,10 @@ input_file: crates/fuse-parser/tests/cases/pass/string-interpolation-05/case.fus
   TokenReference(
     token: Token(
       span: Span(
-        start: 10,
-        end: 15,
+        start: 2,
+        end: 3,
       ),
-      kind: False,
+      kind: LParen,
     ),
     leading_trivia: [],
     trailing_trivia: [],
@@ -29,28 +29,17 @@ input_file: crates/fuse-parser/tests/cases/pass/string-interpolation-05/case.fus
   TokenReference(
     token: Token(
       span: Span(
-        start: 15,
-        end: 16,
+        start: 3,
+        end: 4,
       ),
-      kind: RCurly,
-    ),
-    leading_trivia: [],
-    trailing_trivia: [],
-  ),
-  TokenReference(
-    token: Token(
-      span: Span(
-        start: 16,
-        end: 17,
-      ),
-      kind: Comma,
+      kind: RParen,
     ),
     leading_trivia: [],
     trailing_trivia: [
       Token(
         span: Span(
-          start: 17,
-          end: 18,
+          start: 4,
+          end: 6,
         ),
         kind: Whitespace,
       ),
@@ -59,23 +48,39 @@ input_file: crates/fuse-parser/tests/cases/pass/string-interpolation-05/case.fus
   TokenReference(
     token: Token(
       span: Span(
-        start: 18,
-        end: 23,
-      ),
-      kind: Identifier,
-    ),
-    leading_trivia: [],
-    trailing_trivia: [],
-  ),
-  TokenReference(
-    token: Token(
-      span: Span(
-        start: 23,
-        end: 25,
+        start: 6,
+        end: 19,
       ),
       kind: StringLiteral,
     ),
     leading_trivia: [],
-    trailing_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 19,
+          end: 20,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 20,
+        end: 23,
+      ),
+      kind: End,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 23,
+          end: 24,
+        ),
+        kind: Whitespace,
+      ),
+    ],
   ),
 ]

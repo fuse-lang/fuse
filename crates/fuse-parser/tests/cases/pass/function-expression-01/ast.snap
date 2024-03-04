@@ -13,7 +13,7 @@ Some(Chunk(
       Expression(Function(Function(
         span: Span(
           start: 0,
-          end: 15,
+          end: 11,
         ),
         params: FunctionParameters(
           span: Span(
@@ -24,7 +24,9 @@ Some(Chunk(
           rest: None,
         ),
         return_type: None,
-        body: None,
+        body: Block(Block(
+          statements: [],
+        )),
       ))),
     ],
   ),

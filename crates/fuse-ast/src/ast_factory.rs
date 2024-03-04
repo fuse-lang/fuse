@@ -117,4 +117,8 @@ impl AstFactory {
     pub fn function_expression(&self, func: Function) -> Expression {
         Expression::Function(Box::from(func))
     }
+
+    pub fn if_expression(&self, expr: If) -> Expression {
+        Expression::If(Box::from(expr))
+    }
 }

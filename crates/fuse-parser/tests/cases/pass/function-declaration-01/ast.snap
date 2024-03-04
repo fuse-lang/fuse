@@ -13,7 +13,7 @@ Some(Chunk(
       FunctionDeclaration(Function(
         span: Span(
           start: 0,
-          end: 15,
+          end: 19,
         ),
         identifier: Some(Identifier(
           span: Span(

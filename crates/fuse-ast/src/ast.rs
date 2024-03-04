@@ -95,6 +95,7 @@ pub enum Expression {
     BooleanLiteral(Box<BooleanLiteral>),
     Identifier(Box<Identifier>),
     Function(Box<Function>),
+    If(Box<If>)
 }
 
 #[serializable]
@@ -206,4 +207,21 @@ pub struct BindingRest {
 pub enum FunctionBody {
     Block(Block),
     Expression(Expression),
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct If {
+    pub span: Span,
+    pub cond: Expression,
+    pub body: Block,
+    pub r#else: Option<Else>,
+}
+
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub enum Else {
+    If(Box<If>),
+    Else(Box<Block>),
 }

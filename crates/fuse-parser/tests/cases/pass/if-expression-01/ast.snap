@@ -1,0 +1,40 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+expression: parsed.chunk
+input_file: crates/fuse-parser/tests/cases/pass/if-expression-01/case.fuse
+---
+Some(Chunk(
+  span: Span(
+    start: 0,
+    end: 22,
+  ),
+  body: Block(
+    statements: [
+      Expression(If(If(
+        span: Span(
+          start: 0,
+          end: 21,
+        ),
+        cond: Identifier(Identifier(
+          span: Span(
+            start: 3,
+            end: 7,
+          ),
+          name: Atom("expr"),
+        )),
+        body: Block(
+          statements: [
+            Expression(BooleanLiteral(BooleanLiteral(
+              span: Span(
+                start: 13,
+                end: 17,
+              ),
+              value: true,
+            ))),
+          ],
+        ),
+        else: None,
+      ))),
+    ],
+  ),
+))

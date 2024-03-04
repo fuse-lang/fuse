@@ -13,7 +13,7 @@ Some(Chunk(
       Expression(Function(Function(
         span: Span(
           start: 0,
-          end: 11,
+          end: 15,
         ),
         identifier: None,
         params: FunctionParameters(

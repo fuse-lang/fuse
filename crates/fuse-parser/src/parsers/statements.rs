@@ -3,14 +3,32 @@ use fuse_ast::{Block, Statement};
 use crate::{lexer::TokenKind, Parser, ParserResult};
 
 impl<'a> Parser<'a> {
+    /// Parse a block of statements until and including the `end` token.
     pub(crate) fn parse_block(&mut self) -> ParserResult<Block> {
-        self.parse_statements().map(|stmts| self.ast.block(stmts))
+        let result = self
+            .parse_statements(|kind| kind == TokenKind::End)
+            .map(|stmts| self.ast.block(stmts));
+        // Eat the end token.
+        self.consume();
+        result
     }
 
-    pub(crate) fn parse_statements(&mut self) -> ParserResult<Vec<Statement>> {
+    /// Parse a block of statements while the predicate returns `true`.
+    pub(crate) fn parse_block_while<F: Fn(TokenKind) -> bool>(
+        &mut self,
+        predicate: F,
+    ) -> ParserResult<Block> {
+        self.parse_statements(predicate)
+            .map(|stmts| self.ast.block(stmts))
+    }
+
+    pub(crate) fn parse_statements<F: Fn(TokenKind) -> bool>(
+        &mut self,
+        predicate: F,
+    ) -> ParserResult<Vec<Statement>> {
         let mut statements = Vec::new();
 
-        while !self.at(TokenKind::Eof) && !self.at(TokenKind::End) {
+        while !self.at(TokenKind::Eof) && !predicate(self.cur_kind()) {
             match self.parse_statement() {
                 ParserResult::Ok(stmt) => {
                     statements.push(stmt);
@@ -39,7 +57,8 @@ impl<'a> Parser<'a> {
             | TokenKind::NumberLiteral
             | TokenKind::StringLiteral
             | TokenKind::InterpolatedStringHead
-            | TokenKind::Identifier => self
+            | TokenKind::Identifier
+            | TokenKind::If => self
                 .parse_expression()
                 .map(|expr| self.ast.expression_statement(expr)),
 

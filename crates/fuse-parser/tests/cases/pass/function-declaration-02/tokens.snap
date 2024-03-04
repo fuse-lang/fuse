@@ -1,0 +1,187 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+expression: tokens
+input_file: crates/fuse-parser/tests/cases/pass/function-declaration-02/case.fuse
+---
+[
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 0,
+        end: 8,
+      ),
+      kind: Function,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 8,
+          end: 9,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 9,
+        end: 13,
+      ),
+      kind: Identifier,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 13,
+        end: 14,
+      ),
+      kind: LParen,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 14,
+        end: 15,
+      ),
+      kind: Identifier,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 15,
+        end: 16,
+      ),
+      kind: Comma,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 16,
+          end: 17,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 17,
+        end: 18,
+      ),
+      kind: Identifier,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 18,
+        end: 19,
+      ),
+      kind: Comma,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 19,
+          end: 20,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 20,
+        end: 21,
+      ),
+      kind: Identifier,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 21,
+        end: 22,
+      ),
+      kind: Comma,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 22,
+        end: 23,
+      ),
+      kind: RParen,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 23,
+          end: 25,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 25,
+        end: 26,
+      ),
+      kind: Identifier,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 26,
+          end: 27,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 27,
+        end: 30,
+      ),
+      kind: End,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 30,
+          end: 31,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+]

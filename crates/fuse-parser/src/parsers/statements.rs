@@ -43,16 +43,17 @@ impl<'a> Parser<'a> {
                 .parse_expression()
                 .map(|expr| self.ast.expression_statement(expr)),
 
-            TokenKind::Function | TokenKind::Fn => match self.peek_token() {
-                // function declaration
-                Some(peek) if peek.kind() == TokenKind::Identifier => self
-                    .parse_function_declaration()
-                    .map(|func| self.ast.function_declaration_statement(func)),
-                // function expression
-                _ => self
-                    .parse_function_expression()
-                    .map(|expr| self.ast.expression_statement(expr)),
-            },
+            TokenKind::Function | TokenKind::Fn => {
+                if self.nth_kind(1) == TokenKind::Identifier {
+                    // function declaration
+                    self.parse_function_declaration()
+                        .map(|func| self.ast.function_declaration_statement(func))
+                } else {
+                    // function expression
+                    self.parse_function_expression()
+                        .map(|expr| self.ast.expression_statement(expr))
+                }
+            }
 
             kind if kind.is_trivial() => {
                 unreachable!("All trivial tokens should be eaten by a `TokenReference`.")

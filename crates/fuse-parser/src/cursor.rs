@@ -14,10 +14,6 @@ impl<'a> Parser<'a> {
         self.cur_token().kind
     }
 
-    pub(crate) fn peek_token(&self) -> Option<&TokenReference> {
-        self.lexer.peek()
-    }
-
     pub(crate) fn consume(&mut self) -> TokenReference {
         let token = self.lexer.consume();
         self.prev_token = token.clone();

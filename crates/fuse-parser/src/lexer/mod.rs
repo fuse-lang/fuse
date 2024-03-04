@@ -50,10 +50,6 @@ impl<'a> Lexer<'a> {
         &self.current_token
     }
 
-    pub fn peek(&self) -> Option<&TokenReference> {
-        self.lookahead.front().map(|next| &next.token)
-    }
-
     pub fn lookahead(&mut self, n: u8) -> &TokenReference {
         // Cache the new lookahead if it dosn't exists.
         self.ensure_lookahead(n);
@@ -108,14 +104,12 @@ impl<'a> Lexer<'a> {
             unsafe { self.source.set_position(lookahead.position) };
         }
 
-        let mut n = 0;
         for _ in self.lookahead.len()..n {
             let next = self.next_with_trivia();
             self.lookahead.push_back(Lookahead {
                 position: self.source.position(),
                 token: next,
             });
-            n += 1;
         }
 
         // SAFETY: Position is created at the begining of the function,

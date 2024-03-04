@@ -22,6 +22,12 @@ impl<'a> Lexer<'a> {
             '+' => {
                 "" => TokenKind::Plus,
             }
+            '(' => {
+                "" => TokenKind::LParen,
+            }
+            ')' => {
+                "" => TokenKind::RParen,
+            }
             '{' => {
                 "" => TokenKind::LCurly,
             }

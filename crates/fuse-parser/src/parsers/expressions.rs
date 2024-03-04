@@ -24,7 +24,7 @@ impl<'a> Parser<'a> {
             TokenKind::Function | TokenKind::Fn => self
                 .parse_function_expression()
                 .map(|func| Expression::Function(func)),
-            _ => Err(self.unexpected_error()),
+            _ => Err(Self::unexpected_error(self.cur_token())),
         }
     }
 
@@ -40,7 +40,8 @@ impl<'a> Parser<'a> {
     pub(crate) fn parse_function_expression(&mut self) -> ParserResult<Function> {
         let start = self.start_span();
         // Consume the keyword
-        self.consume();
+        let token = self.consume();
+        println!("{token:?}, {:?}", self.cur_kind());
         let params = self.parse_function_parameters()?;
         Ok(Function {
             span: self.end_span(start),
@@ -49,14 +50,25 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_function_parameters(&mut self) -> ParserResult<FunctionParameters> {
-        let rparen = self.consume_expect(TokenKind::RParen)?;
+        let open = self.consume_expect(TokenKind::LParen)?;
         // Empty function parameters
-        if let Some(lparen) = self.consume_if(TokenKind::LParen) {
-            return Ok(FunctionParameters { span: Span::new(rparen.start(), lparen.end()), items: Vec::new(), rest: None })
+        if let Some(close) = self.consume_if(TokenKind::RParen) {
+            return Ok(FunctionParameters {
+                span: Span::new(open.start(), close.end()),
+                items: Vec::new(),
+                rest: None,
+            });
         }
 
-        let mut params: Vec<FunctionParameter> = Vec::new();
+        let mut params = Vec::new();
+        let mut first_param = true;
         while self.at(TokenKind::Identifier) {
+            if first_param {
+                first_param = false;
+            } else {
+                self.consume_expect(TokenKind::Comma)?;
+            }
+
             let binding = self.parse_binding()?;
             match &binding {
                 BindingPattern {
@@ -72,15 +84,14 @@ impl<'a> Parser<'a> {
                 ),
             }
         }
+        // accept trailing commas.
+        self.consume_if(TokenKind::Comma);
 
-        let lparen = self.consume_expect(TokenKind::LParen)?;
-        Ok(
-            FunctionParameters {
-                span: Span::new(rparen.start(), lparen.end()),
-                items: params,
-                rest: None,
-            }
-        )
-
+        let close = self.consume_expect(TokenKind::RParen)?;
+        Ok(FunctionParameters {
+            span: Span::new(open.start(), close.end()),
+            items: params,
+            rest: None,
+        })
     }
 }

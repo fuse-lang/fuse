@@ -42,7 +42,7 @@ impl<'a> Parser<'a> {
         if self.at(kind) {
             Ok(())
         } else {
-            Err(self.unexpect_token_kind_error(kind))
+            Err(Self::unexpect_token_kind_error(self.cur_token(), kind))
         }
     }
 

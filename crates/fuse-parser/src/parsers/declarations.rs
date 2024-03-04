@@ -8,7 +8,7 @@ impl<'a> Parser<'a> {
             TokenKind::Let => VariableDeclarationKind::Let,
             TokenKind::Const => VariableDeclarationKind::Const,
             TokenKind::Global => VariableDeclarationKind::Global,
-            _ => return Err(self.unexpected_error()),
+            _ => return Err(Self::unexpected_error(self.cur_token())),
         };
 
         let start = self.start_span();

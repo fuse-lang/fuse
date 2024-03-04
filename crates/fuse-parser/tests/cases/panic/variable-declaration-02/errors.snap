@@ -7,20 +7,12 @@ input_file: crates/fuse-parser/tests/cases/panic/variable-declaration-02/case.fu
   UnexpectedError(TokenReference(
     token: Token(
       span: Span(
-        start: 0,
-        end: 5,
+        start: 6,
+        end: 7,
       ),
-      kind: Const,
+      kind: Eq,
     ),
     leading_trivia: [],
-    trailing_trivia: [
-      Token(
-        span: Span(
-          start: 5,
-          end: 6,
-        ),
-        kind: Whitespace,
-      ),
-    ],
+    trailing_trivia: [],
   )),
 ]

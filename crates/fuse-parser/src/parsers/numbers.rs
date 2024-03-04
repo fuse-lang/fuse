@@ -1,6 +1,6 @@
-use std::str::FromStr;
 use crate::{Parser, ParserResult};
 use fuse_ast::{IntType, NumberKind, NumberLiteral, NumberType};
+use std::str::FromStr;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_number_literal(&mut self) -> ParserResult<NumberLiteral> {
@@ -31,14 +31,14 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_hexadecimal_number(&self, str: &str) -> ParserResult<(NumberType, NumberKind)> {
-        let value =
-            IntType::from_str_radix(str, 16).map_err(|_| self.invalid_number_literal_error())?;
+        let value = IntType::from_str_radix(str, 16)
+            .map_err(|_| Self::invalid_number_literal_error(&self.prev_token))?;
         Ok((value as NumberType, NumberKind::Hexadecimal))
     }
 
     fn parse_binary_number(&self, str: &str) -> ParserResult<(NumberType, NumberKind)> {
-        let value =
-            IntType::from_str_radix(str, 2).map_err(|_| self.invalid_number_literal_error())?;
+        let value = IntType::from_str_radix(str, 2)
+            .map_err(|_| Self::invalid_number_literal_error(&self.prev_token))?;
         Ok((value as NumberType, NumberKind::Binary))
     }
 
@@ -46,7 +46,7 @@ impl<'a> Parser<'a> {
         let float = {
             let dots = str.match_indices('.').count();
             if dots > 1 {
-                return Err(self.unexpected_error());
+                return Err(Self::unexpected_error(&self.prev_token));
             }
             dots == 1
         };
@@ -56,12 +56,12 @@ impl<'a> Parser<'a> {
             match exponents.len() {
                 0 => None,
                 1 => exponents.pop(),
-                _ => return Err(self.unexpected_error()),
+                _ => return Err(Self::unexpected_error(&self.prev_token)),
             }
         };
 
         fn parse<T: FromStr>(parser: &Parser, s: &str) -> ParserResult<T> {
-            T::from_str(s).map_err(|_| parser.invalid_number_literal_error())
+            T::from_str(s).map_err(|_| Parser::invalid_number_literal_error(&parser.prev_token))
         }
 
         let value = if let Some((pos, _)) = exponent {

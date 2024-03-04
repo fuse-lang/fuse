@@ -22,18 +22,18 @@ pub enum Error {
 }
 
 impl<'a> Parser<'a> {
-    pub(crate) fn unexpected_error(&self) -> Error {
-        Error::UnexpectedError(self.prev_token.clone())
+    pub(crate) fn unexpected_error(token: &TokenReference) -> Error {
+        Error::UnexpectedError(token.clone())
     }
 
-    pub(crate) fn unexpect_token_kind_error(&self, expected: TokenKind) -> Error {
+    pub(crate) fn unexpect_token_kind_error(found: &TokenReference, expected: TokenKind) -> Error {
         Error::UnexpectedTokenKindError {
-            token: self.prev_token.clone(),
+            token: found.clone(),
             expected,
         }
     }
 
-    pub(crate) fn invalid_number_literal_error(&self) -> Error {
-        Error::UnexpectedError(self.prev_token.clone())
+    pub(crate) fn invalid_number_literal_error(token: &TokenReference) -> Error {
+        Error::UnexpectedError(token.clone())
     }
 }

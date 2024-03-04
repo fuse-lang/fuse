@@ -30,14 +30,14 @@ impl<'a> Parser<'a> {
 
     fn parse_binding_identifier_pattern(&mut self) -> ParserResult<BindingPattern> {
         if !self.cur_kind().is_valid_identifier() {
-            return Err(self.unexpected_error());
+            return Err(Self::unexpected_error(self.cur_token()));
         }
 
         let identifier = self.parse_binding_identifier();
         Ok(self.ast.binding_identifier_pattern(identifier, None, false))
     }
 
-    fn parse_binding_identifier(&mut self) -> BindingIdentifier {
+    pub(crate) fn parse_binding_identifier(&mut self) -> BindingIdentifier {
         let mut span = self.start_span();
         let token = self.consume();
         let name = self.view_token(*token);

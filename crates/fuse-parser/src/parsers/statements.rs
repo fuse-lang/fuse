@@ -49,7 +49,7 @@ impl<'a> Parser<'a> {
             kind if kind.is_trivial() => {
                 unreachable!("All trivial tokens should be eaten by a `TokenReference`.")
             }
-            _ => Err(self.unexpected_error()),
+            _ => Err(Self::unexpected_error(self.cur_token())),
         }
     }
 

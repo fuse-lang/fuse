@@ -10,11 +10,12 @@ macro_rules! flash_match {
     } => ({
         // Plus 1 to skip the first character position.
         let pos = $start as usize + 1;
+        let remaining_len = $source.remaining().len();
         match $first {
             $($head => {
                 match () {
                     $(
-                        _ if &$source.as_str()[pos..pos + $tail.len()] == $tail => {
+                        _ if remaining_len >= $tail.len() && &$source.as_str()[pos..pos + $tail.len()] == $tail => {
                             $source.advance_n($tail.len() as u8);
                             Some($value)
                         },

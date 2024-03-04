@@ -20,7 +20,7 @@ impl<'a> Lexer<'a> {
             }
             'e' => {
                 "lse" => TokenKind::Else,
-                "elseif" => TokenKind::ElseIf,
+                "lseif" => TokenKind::ElseIf,
                 "nd" => TokenKind::End,
                 "num" => TokenKind::Enum,
                 "xport" => TokenKind::Export,

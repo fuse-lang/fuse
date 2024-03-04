@@ -13,7 +13,7 @@ pub use string_data::{StringData, StringValue};
 pub use token::*;
 pub use token_kind::*;
 
-use fuse_common::{Span, SpanView};
+use fuse_common::{Span, SpanView, debug_println};
 use fuse_common_proc::serializable;
 
 use source::{Source, SourcePosition};
@@ -155,7 +155,13 @@ impl<'a> Lexer<'a> {
             {$(|)? $lex1:ident $(| $lexn:ident)*} => {
                 if let Some(token) = self.$lex1(start, first) {token}
                 $(else if let Some(token) = self.$lexn(start, first) {token})+
-                else { self.create(start, TokenKind::Undetermined) }
+                else {
+                    let token = self.create(start, TokenKind::Undetermined);
+                    debug_println!("Undetermined token found while lexing,\n\
+                                    Token: {token:?},\n\
+                                    Value: {}", self.view_token(token));
+                    token
+                }
             };
         }
 

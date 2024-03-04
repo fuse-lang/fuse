@@ -1,5 +1,4 @@
 use fuse_ast::{Block, Statement};
-use fuse_common::Span;
 
 use crate::{lexer::TokenKind, Parser, ParserResult};
 
@@ -33,18 +32,27 @@ impl<'a> Parser<'a> {
 
             TokenKind::Const | TokenKind::Let | TokenKind::Global => self
                 .parse_variable_declaration()
-                .map(|decl| self.ast.declaration_statement(decl)),
+                .map(|decl| self.ast.variable_declaration_statement(decl)),
 
             TokenKind::True
             | TokenKind::False
             | TokenKind::NumberLiteral
             | TokenKind::StringLiteral
             | TokenKind::InterpolatedStringHead
-            | TokenKind::Identifier
-            | TokenKind::Function
-            | TokenKind::Fn => self
+            | TokenKind::Identifier => self
                 .parse_expression()
                 .map(|expr| self.ast.expression_statement(expr)),
+
+            TokenKind::Function | TokenKind::Fn => match self.peek_token() {
+                // function declaration
+                Some(peek) if peek.kind() == TokenKind::Identifier => self
+                    .parse_function_declaration()
+                    .map(|func| self.ast.function_declaration_statement(func)),
+                // function expression
+                _ => self
+                    .parse_function_expression()
+                    .map(|expr| self.ast.expression_statement(expr)),
+            },
 
             kind if kind.is_trivial() => {
                 unreachable!("All trivial tokens should be eaten by a `TokenReference`.")

@@ -1,6 +1,7 @@
 mod binding;
 mod declarations;
 mod expressions;
+mod functions;
 mod numbers;
 mod statements;
 mod strings;

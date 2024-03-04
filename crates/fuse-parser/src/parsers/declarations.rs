@@ -1,6 +1,5 @@
 use crate::{lexer::TokenKind, Parser, ParserResult};
-use fuse_ast::{VariableDeclaration, VariableDeclarationKind};
-use fuse_common::Span;
+use fuse_ast::{Function, VariableDeclaration, VariableDeclarationKind};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_variable_declaration(&mut self) -> ParserResult<VariableDeclaration> {
@@ -25,5 +24,9 @@ impl<'a> Parser<'a> {
         Ok(self
             .ast
             .variable_declaration(self.end_span(start), decl_kind, binding, expression))
+    }
+
+    pub(crate) fn parse_function_declaration(&mut self) -> ParserResult<Function> {
+        self.parse_function(true)
     }
 }

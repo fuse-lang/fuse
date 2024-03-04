@@ -15,6 +15,7 @@ Some(Chunk(
           start: 0,
           end: 11,
         ),
+        identifier: None,
         params: FunctionParameters(
           span: Span(
             start: 9,

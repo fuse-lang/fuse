@@ -31,8 +31,12 @@ impl AstFactory {
         Statement::Empty(Box::from(EmptyStatement { span }))
     }
 
-    pub fn declaration_statement(&self, decl: VariableDeclaration) -> Statement {
+    pub fn variable_declaration_statement(&self, decl: VariableDeclaration) -> Statement {
         Statement::VariableDeclaration(Box::from(decl))
+    }
+
+    pub fn function_declaration_statement(&self, func: Function) -> Statement {
+        Statement::FunctionDeclaration(Box::from(func))
     }
 
     pub fn expression_statement(&self, expr: Expression) -> Statement {
@@ -52,6 +56,10 @@ impl AstFactory {
             binding,
             expression,
         }
+    }
+
+    pub fn function_declaration(&self) {
+
     }
 
     pub fn binding_identifier_pattern(

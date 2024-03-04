@@ -30,6 +30,8 @@ pub enum Statement {
     Expression(Box<Expression>),
     /// A variable declaration using const, let or global keywords.
     VariableDeclaration(Box<VariableDeclaration>),
+    /// A function declaration using function or fn keywords.
+    FunctionDeclaration(Box<Function>),
 }
 
 #[serializable]
@@ -170,6 +172,7 @@ pub struct Identifier {
 #[derive(Debug, PartialEq)]
 pub struct Function {
     pub span: Span,
+    pub identifier: Option<Identifier>,
     pub params: FunctionParameters,
     pub return_type: Option<TypeAnnotation>,
     pub body: FunctionBody,

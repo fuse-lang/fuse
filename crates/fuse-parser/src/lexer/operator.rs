@@ -9,17 +9,19 @@ impl<'a> Lexer<'a> {
                 "" => TokenKind::Comma,
             }
             '.' => {
-                "" => TokenKind::Dot,
-                "." => TokenKind::Dot2,
                 ".." => TokenKind::Dot3,
+                "." => TokenKind::Dot2,
+                "" => TokenKind::Dot,
             }
             '=' => {
+                ">" => TokenKind::Arrow,
                 "" => TokenKind::Eq,
             }
             ';' => {
                 "" => TokenKind::Semicolon,
             }
             '-' => {
+                ">" => TokenKind::ThinArrow,
                 "" => TokenKind::Minus,
             }
             '+' => {

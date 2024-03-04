@@ -19,26 +19,26 @@ impl<'a> Lexer<'a> {
                 "o" => TokenKind::Do,
             }
             'e' => {
-                "lse" => TokenKind::Else,
                 "lseif" => TokenKind::ElseIf,
-                "nd" => TokenKind::End,
-                "num" => TokenKind::Enum,
                 "xport" => TokenKind::Export,
+                "lse" => TokenKind::Else,
+                "num" => TokenKind::Enum,
+                "nd" => TokenKind::End,
             }
             'f' => {
-                "alse" => TokenKind::False,
-                "or" => TokenKind::For,
-                "rom" => TokenKind::From,
                 "unction" => TokenKind::Function,
+                "alse" => TokenKind::False,
+                "rom" => TokenKind::From,
+                "or" => TokenKind::For,
                 "n" => TokenKind::Fn,
             }
             'g' => {
                 "lobal" => TokenKind::Global,
             }
             'i' => {
-                "f" => TokenKind::If,
-                "mpl" => TokenKind::Impl,
                 "mport" => TokenKind::Import,
+                "mpl" => TokenKind::Impl,
+                "f" => TokenKind::If,
                 "n" => TokenKind::In,
             }
             'l' => {
@@ -63,28 +63,28 @@ impl<'a> Lexer<'a> {
                 "eturn" => TokenKind::Return,
             }
             's' => {
-                "elf" => TokenKind::LowSelf,
                 "tatic" => TokenKind::Static,
                 "truct" => TokenKind::Struct,
+                "elf" => TokenKind::LowSelf,
             }
             'S' => {
                 "elf" => TokenKind::CapSelf,
             }
             't' => {
-                "hen" => TokenKind::Then,
                 "rait" => TokenKind::Trait,
+                "hen" => TokenKind::Then,
                 "rue" => TokenKind::True,
                 "ype" => TokenKind::Type,
             }
             'u' => {
-                "nion" => TokenKind::Union,
                 "nknown" => TokenKind::Unknown,
-                "ntil" => TokenKind::Until,
                 "nsafe" => TokenKind::Unsafe,
+                "nion" => TokenKind::Union,
+                "ntil" => TokenKind::Until,
             }
             'w' => {
-                "hen" => TokenKind::When,
                 "hile" => TokenKind::While,
+                "hen" => TokenKind::When,
             }
         })?;
         Some(self.create(start, kind))

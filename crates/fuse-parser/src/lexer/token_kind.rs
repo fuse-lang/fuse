@@ -67,6 +67,9 @@ pub enum TokenKind {
     While,
 
     // Punctuations
+    Dot,
+    Dot2,
+    Dot3,
     Comma,
     Semicolon,
     LParen,

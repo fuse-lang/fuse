@@ -80,6 +80,7 @@ pub enum TokenKind {
     Minus,
     Plus,
     ThinArrow,
+    Arrow,
 }
 
 impl TokenKind {

@@ -28,11 +28,15 @@ impl AstFactory {
     }
 
     pub fn empty_statement(&self, span: Span) -> Statement {
-        Statement::Empty(EmptyStatement { span })
+        Statement::Empty(Box::from(EmptyStatement { span }))
     }
 
     pub fn declaration_statement(&self, decl: VariableDeclaration) -> Statement {
-        Statement::VariableDeclaration(decl)
+        Statement::VariableDeclaration(Box::from(decl))
+    }
+
+    pub fn expression_statement(&self, expr: Expression) -> Statement {
+        Statement::Expression(Box::from(expr))
     }
 
     pub fn variable_declaration(
@@ -84,5 +88,25 @@ impl AstFactory {
             value,
             kind,
         }
+    }
+
+    pub fn boolean_expression(&self, literal: BooleanLiteral) -> Expression {
+        Expression::BooleanLiteral(Box::from(literal))
+    }
+
+    pub fn number_expression(&self, literal: NumberLiteral) -> Expression {
+        Expression::NumberLiteral(Box::from(literal))
+    }
+
+    pub fn string_expression(&self, literal: StringLiteral) -> Expression {
+        Expression::StringLiteral(Box::from(literal))
+    }
+
+    pub fn identifier_expression(&self, ident: Identifier) -> Expression {
+        Expression::Identifier(Box::from(ident))
+    }
+
+    pub fn function_expression(&self, func: Function) -> Expression {
+        Expression::Function(Box::from(func))
     }
 }

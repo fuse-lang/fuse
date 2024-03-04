@@ -24,6 +24,7 @@ Some(Chunk(
           rest: None,
         ),
         return_type: None,
+        body: None,
       ))),
     ],
   ),

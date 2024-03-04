@@ -1,29 +1,41 @@
 use crate::{lexer::TokenKind, Parser, ParserResult};
 use fuse_ast::{
-    BindingPattern, BindingPatternKind, BooleanLiteral, Expression, Function, FunctionParameter,
-    FunctionParameters, Identifier, TypeAnnotation,
+    BindingPattern, BindingPatternKind, Block, BooleanLiteral, Expression, Function,
+    FunctionParameter, FunctionParameters, Identifier, TypeAnnotation,
 };
 use fuse_common::Span;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_expression(&mut self) -> ParserResult<Expression> {
         match self.cur_kind() {
-            TokenKind::True => Ok(Expression::BooleanLiteral(BooleanLiteral {
-                span: self.consume().span(),
-                value: true,
-            })),
-            TokenKind::False => Ok(Expression::BooleanLiteral(BooleanLiteral {
-                span: self.consume().span(),
-                value: false,
-            })),
-            TokenKind::NumberLiteral => Ok(Expression::NumberLiteral(self.parse_number_literal()?)),
-            TokenKind::StringLiteral | TokenKind::InterpolatedStringHead => {
-                Ok(Expression::StringLiteral(self.parse_string_literal()?))
+            TokenKind::True => {
+                let token = self.consume();
+                Ok(self.ast.boolean_expression(BooleanLiteral {
+                    span: token.span(),
+                    value: true,
+                }))
             }
-            TokenKind::Identifier => self.parse_identifier().map(|id| Expression::Identifier(id)),
+            TokenKind::False => {
+                let token = self.consume();
+                Ok(self.ast.boolean_expression(BooleanLiteral {
+                    span: token.span(),
+                    value: false,
+                }))
+            }
+            TokenKind::NumberLiteral => {
+                let expr = self.parse_number_literal()?;
+                Ok(self.ast.number_expression(expr))
+            }
+            TokenKind::StringLiteral | TokenKind::InterpolatedStringHead => {
+                let expr = self.parse_string_literal()?;
+                Ok(self.ast.string_expression(expr))
+            }
+            TokenKind::Identifier => self
+                .parse_identifier()
+                .map(|id| self.ast.identifier_expression(id)),
             TokenKind::Function | TokenKind::Fn => self
                 .parse_function_expression()
-                .map(|func| Expression::Function(func)),
+                .map(|func| self.ast.function_expression(func)),
             _ => Err(Self::unexpected_error(self.cur_token())),
         }
     }
@@ -48,6 +60,7 @@ impl<'a> Parser<'a> {
             span: self.end_span(start),
             params,
             return_type,
+            body: None,
         })
     }
 
@@ -102,5 +115,14 @@ impl<'a> Parser<'a> {
             return Ok(None);
         }
         self.parse_type_annotation().map(|t| Some(t))
+    }
+
+    fn parse_function_body(&mut self) -> ParserResult<Block> {
+        if let Some(_) = self.consume_if(TokenKind::Arrow) {
+            self.parse_expression();
+            todo!()
+        } else {
+            self.parse_block()
+        }
     }
 }

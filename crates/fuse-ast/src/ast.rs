@@ -10,7 +10,7 @@ pub struct Chunk {
 }
 
 #[serializable]
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Block {
     pub statements: Vec<Statement>,
 }
@@ -25,11 +25,11 @@ impl Block {
 #[derive(Debug, PartialEq)]
 pub enum Statement {
     /// Empty statement for example `;;`
-    Empty(EmptyStatement),
+    Empty(Box<EmptyStatement>),
     /// An expression statement.
-    Expression(Expression),
+    Expression(Box<Expression>),
     /// A variable declaration using const, let or global keywords.
-    VariableDeclaration(VariableDeclaration),
+    VariableDeclaration(Box<VariableDeclaration>),
 }
 
 #[serializable]
@@ -88,11 +88,11 @@ pub struct Atom(pub Rc<str>);
 #[serializable]
 #[derive(Debug, PartialEq)]
 pub enum Expression {
-    NumberLiteral(NumberLiteral),
-    StringLiteral(StringLiteral),
-    BooleanLiteral(BooleanLiteral),
-    Identifier(Identifier),
-    Function(Function),
+    NumberLiteral(Box<NumberLiteral>),
+    StringLiteral(Box<StringLiteral>),
+    BooleanLiteral(Box<BooleanLiteral>),
+    Identifier(Box<Identifier>),
+    Function(Box<Function>),
 }
 
 #[serializable]
@@ -172,6 +172,7 @@ pub struct Function {
     pub span: Span,
     pub params: FunctionParameters,
     pub return_type: Option<TypeAnnotation>,
+    pub body: Option<FunctionBody>,
 }
 
 #[serializable]
@@ -195,4 +196,11 @@ pub struct BindingRest {
     pub span: Span,
     pub binding: BindingIdentifier,
     pub type_annotation: Option<TypeAnnotation>,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub enum FunctionBody {
+    Block(Block),
+    Expression(Expression),
 }

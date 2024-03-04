@@ -223,5 +223,5 @@ pub struct If {
 #[derive(Debug, PartialEq)]
 pub enum Else {
     If(Box<If>),
-    Else(Box<Block>),
+    Block(Box<Block>),
 }

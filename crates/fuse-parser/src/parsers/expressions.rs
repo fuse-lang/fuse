@@ -1,7 +1,7 @@
 use crate::{lexer::TokenKind, Parser, ParserResult};
 use fuse_ast::{
     BindingPattern, BindingPatternKind, BooleanLiteral, Expression, Function, FunctionParameter,
-    FunctionParameters, Identifier,
+    FunctionParameters, Identifier, TypeAnnotation,
 };
 use fuse_common::Span;
 
@@ -40,13 +40,14 @@ impl<'a> Parser<'a> {
     pub(crate) fn parse_function_expression(&mut self) -> ParserResult<Function> {
         let start = self.start_span();
         // Consume the keyword
-        let token = self.consume();
-        println!("{token:?}, {:?}", self.cur_kind());
+        self.consume();
         let params = self.parse_function_parameters()?;
+        let return_type = self.parse_function_return_type()?;
         let end = self.consume_expect(TokenKind::End);
         Ok(Function {
             span: self.end_span(start),
             params,
+            return_type,
         })
     }
 
@@ -94,5 +95,12 @@ impl<'a> Parser<'a> {
             items: params,
             rest: None,
         })
+    }
+
+    fn parse_function_return_type(&mut self) -> ParserResult<Option<TypeAnnotation>> {
+        if self.consume_if(TokenKind::ThinArrow) == None {
+            return Ok(None);
+        }
+        self.parse_type_annotation().map(|t| Some(t))
     }
 }

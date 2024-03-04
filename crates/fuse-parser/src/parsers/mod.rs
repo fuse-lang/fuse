@@ -4,9 +4,10 @@ mod expressions;
 mod numbers;
 mod statements;
 mod strings;
+mod types;
 
-use fuse_ast::Chunk;
 use crate::{Parser, ParserResult};
+use fuse_ast::Chunk;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_chunk(&mut self) -> ParserResult<Chunk> {

@@ -79,6 +79,7 @@ pub enum TokenKind {
     Eq,
     Minus,
     Plus,
+    ThinArrow,
 }
 
 impl TokenKind {

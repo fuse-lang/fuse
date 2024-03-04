@@ -23,6 +23,7 @@ Some(Chunk(
           items: [],
           rest: None,
         ),
+        return_type: None,
       ))),
     ],
   ),

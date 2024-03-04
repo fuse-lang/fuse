@@ -1,0 +1,37 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+expression: parsed.chunk
+input_file: crates/fuse-parser/tests/cases/pass/function-expression-04/case.fuse
+---
+Some(Chunk(
+  span: Span(
+    start: 0,
+    end: 14,
+  ),
+  body: Block(
+    statements: [
+      Expression(Function(Function(
+        span: Span(
+          start: 0,
+          end: 13,
+        ),
+        params: FunctionParameters(
+          span: Span(
+            start: 2,
+            end: 4,
+          ),
+          items: [],
+          rest: None,
+        ),
+        return_type: None,
+        body: Expression(Identifier(Identifier(
+          span: Span(
+            start: 8,
+            end: 13,
+          ),
+          name: Atom("ident"),
+        ))),
+      ))),
+    ],
+  ),
+))

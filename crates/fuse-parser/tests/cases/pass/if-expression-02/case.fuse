@@ -1,0 +1,5 @@
+if cond then
+	true
+else
+	false
+end

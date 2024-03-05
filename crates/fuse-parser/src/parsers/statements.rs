@@ -6,7 +6,7 @@ impl<'a> Parser<'a> {
     /// Parse a block of statements until and including the `end` token.
     pub(crate) fn parse_block(&mut self) -> ParserResult<Block> {
         let result = self
-            .parse_statements(|kind| kind == TokenKind::End)
+            .parse_statements(|kind| kind != TokenKind::End)
             .map(|stmts| self.ast.block(stmts));
         // Eat the end token.
         self.consume();
@@ -28,7 +28,7 @@ impl<'a> Parser<'a> {
     ) -> ParserResult<Vec<Statement>> {
         let mut statements = Vec::new();
 
-        while !self.at(TokenKind::Eof) && !predicate(self.cur_kind()) {
+        while !self.at(TokenKind::Eof) && predicate(self.cur_kind()) {
             match self.parse_statement() {
                 ParserResult::Ok(stmt) => {
                     statements.push(stmt);

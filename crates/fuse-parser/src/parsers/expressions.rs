@@ -3,7 +3,7 @@ use crate::{
     Parser, ParserResult,
 };
 use fuse_ast::{
-    BindingPattern, BindingPatternKind, BooleanLiteral, Expression, Function, FunctionBody,
+    BindingPattern, BindingPatternKind, BooleanLiteral, Else, Expression, Function, FunctionBody,
     FunctionParameter, FunctionParameters, Identifier, If, TypeAnnotation,
 };
 use fuse_common::Span;
@@ -57,30 +57,43 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_if_expression(&mut self) -> ParserResult<Expression> {
+        self.parse_if().map(|expr| self.ast.if_expression(expr))
+    }
+
+    fn parse_if(&mut self) -> ParserResult<If> {
         let start = self.start_span();
         // Consume the keyword
         self.consume();
         let cond = self.parse_expression()?;
         self.consume_expect(TokenKind::Then)?;
         let body = self.parse_block_while(|kind| {
-            matches! {
+            println!("IF KIND {kind:?}");
+            !matches! {
                 kind,
                     | TokenKind::End
                     | TokenKind::Else
                     | TokenKind::ElseIf
             }
         })?;
-        let r#else = match self.consume().kind() {
-            TokenKind::End => None,
-            _ => todo!(),
+        let r#else = match self.cur_kind() {
+            TokenKind::End => {
+                self.consume();
+                None
+            }
+            TokenKind::ElseIf => Some(Else::If(Box::from(self.parse_if()?))),
+            TokenKind::Else => {
+                self.consume();
+                Some(Else::Block(Box::from(self.parse_block()?)))
+            }
+            _ => return Err(Self::unexpected_error(&self.prev_token)),
         };
         // how to detect end of block?
         // maybe via a predicate function?
-        Ok(self.ast.if_expression(If {
+        Ok(If {
             span: self.end_span(start),
             cond,
             body,
             r#else,
-        }))
+        })
     }
 }

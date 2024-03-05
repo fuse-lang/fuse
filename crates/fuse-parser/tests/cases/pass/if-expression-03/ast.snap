@@ -1,0 +1,89 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+expression: parsed.chunk
+input_file: crates/fuse-parser/tests/cases/pass/if-expression-03/case.fuse
+---
+Some(Chunk(
+  span: Span(
+    start: 0,
+    end: 83,
+  ),
+  body: Block(
+    statements: [
+      Expression(If(If(
+        span: Span(
+          start: 0,
+          end: 82,
+        ),
+        cond: Identifier(Identifier(
+          span: Span(
+            start: 3,
+            end: 8,
+          ),
+          name: Atom("cond1"),
+        )),
+        body: Block(
+          statements: [
+            Expression(StringLiteral(StringLiteral(
+              span: Span(
+                start: 15,
+                end: 25,
+              ),
+              segments: [
+                Literal(Unescaped(Span(
+                  start: 16,
+                  end: 25,
+                ))),
+              ],
+            ))),
+          ],
+        ),
+        else: Some(If(If(
+          span: Span(
+            start: 26,
+            end: 82,
+          ),
+          cond: Identifier(Identifier(
+            span: Span(
+              start: 33,
+              end: 38,
+            ),
+            name: Atom("cond2"),
+          )),
+          body: Block(
+            statements: [
+              Expression(StringLiteral(StringLiteral(
+                span: Span(
+                  start: 45,
+                  end: 59,
+                ),
+                segments: [
+                  Literal(Unescaped(Span(
+                    start: 46,
+                    end: 59,
+                  ))),
+                ],
+              ))),
+            ],
+          ),
+          else: Some(Block(Block(
+            statements: [
+              Expression(StringLiteral(StringLiteral(
+                span: Span(
+                  start: 66,
+                  end: 78,
+                ),
+                segments: [
+                  Literal(Unescaped(Span(
+                    start: 67,
+                    end: 78,
+                  ))),
+                ],
+              ))),
+            ],
+          ))),
+        ))),
+      ))),
+    ],
+  ),
+))

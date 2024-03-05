@@ -1,0 +1,7 @@
+if cond1 then
+	"If block"
+elseif cond2 then
+	"Elseif block"
+else
+	"Else block"
+end

@@ -62,6 +62,7 @@ impl<'a> Parser<'a> {
                 .parse_expression()
                 .map(|expr| self.ast.expression_statement(expr)),
 
+            // Short circuit the unary operators to prevent extra checks.
             TokenKind::Not | TokenKind::Plus | TokenKind::Minus => self
                 .parse_unary_operator_expression()
                 .map(|expr| self.ast.expression_statement(expr)),

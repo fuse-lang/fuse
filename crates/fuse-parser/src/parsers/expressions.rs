@@ -38,6 +38,11 @@ impl<'a> Parser<'a> {
                 .map(|id| self.ast.identifier_expression(id)),
             TokenKind::Function | TokenKind::Fn => self.parse_function_expression(),
             TokenKind::If => self.parse_if_expression(),
+
+            TokenKind::Not | TokenKind::Plus | TokenKind::Minus => {
+                self.parse_unary_operator_expression()
+            }
+
             _ => Err(Self::unexpected_error(self.cur_token())),
         }
     }

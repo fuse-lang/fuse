@@ -1,4 +1,4 @@
-use fuse_ast::UnaryOperator;
+use fuse_ast::{UnaryOperator, UnaryOperatorKind};
 
 use crate::{lexer::TokenKind, Parser, ParserResult};
 
@@ -15,17 +15,30 @@ impl<'a> Parser<'a> {
     fn parse_unary_not_operator(&mut self) -> ParserResult<UnaryOperator> {
         debug_assert!(self.at(TokenKind::Not));
         // Consume the keyword.
-        self.consume();
-        todo!()
+        let op = self.consume();
+        Ok(UnaryOperator {
+            kind: UnaryOperatorKind::Not(op.span()),
+            expression: self.parse_expression()?,
+        })
     }
 
     fn parse_unary_plus_operator(&mut self) -> ParserResult<UnaryOperator> {
         debug_assert!(self.at(TokenKind::Plus));
-        todo!()
+        // Consume the keyword.
+        let op = self.consume();
+        Ok(UnaryOperator {
+            kind: UnaryOperatorKind::Plus(op.span()),
+            expression: self.parse_expression()?,
+        })
     }
 
     fn parse_unary_minus_operator(&mut self) -> ParserResult<UnaryOperator> {
         debug_assert!(self.at(TokenKind::Minus));
-        todo!()
+        // Consume the keyword.
+        let op = self.consume();
+        Ok(UnaryOperator {
+            kind: UnaryOperatorKind::Minus(op.span()),
+            expression: self.parse_expression()?,
+        })
     }
 }

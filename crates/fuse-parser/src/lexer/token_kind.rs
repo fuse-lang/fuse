@@ -1,3 +1,4 @@
+use fuse_ast::Precedence;
 use fuse_common_proc::serializable;
 
 #[serializable]
@@ -93,6 +94,10 @@ pub enum TokenKind {
     LAngle,
     /// >
     RAngle,
+    /// <=
+    LtEq,
+    /// >=
+    GtEq,
     /// =
     Eq,
     /// ==
@@ -115,6 +120,8 @@ pub enum TokenKind {
     Slash,
     /// //
     Slash2,
+    /// %
+    Percent,
     /// =>
     Arrow,
     /// ->
@@ -188,15 +195,20 @@ impl TokenKind {
         }
     }
 
-    pub fn is_binary_operator(&self) -> bool {
+    pub fn to_precedence(self) -> Option<Precedence> {
+        use Precedence::*;
         use TokenKind::*;
-        matches! {
-            self,
-            | Plus
-            | Minus
-            | Star
-            | Slash
-            | Slash2
+        match self {
+            Or => Some(LogicalOr),
+            And => Some(LogicalAnd),
+            Pipe => Some(BitwiseOr),
+            Caret => Some(BitwiseXor),
+            Amp => Some(BitwiseAnd),
+            Eq2 | Neq => Some(Equality),
+            LAngle | RAngle | LtEq | GtEq | As | In => Some(Relational),
+            Plus | Minus => Some(Add),
+            Star | Slash | Slash2 | Percent => Some(Multiply),
+            _ => None,
         }
     }
 }

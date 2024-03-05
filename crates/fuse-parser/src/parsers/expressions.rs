@@ -1,9 +1,14 @@
 use crate::{lexer::TokenKind, Parser, ParserResult};
-use fuse_ast::{BooleanLiteral, Else, Expression, Identifier, If};
+use fuse_ast::{BooleanLiteral, Else, Expression, Identifier, If, Precedence};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_expression(&mut self) -> ParserResult<Expression> {
-        let expression = match self.cur_kind() {
+        let expr = self.parse_primary_expression()?;
+        self.parse_with_precedence(expr, Precedence::Expression)
+    }
+
+    pub(crate) fn parse_primary_expression(&mut self) -> ParserResult<Expression> {
+        match self.cur_kind() {
             TokenKind::True => {
                 let token = self.consume();
                 Ok(self.ast.boolean_expression(BooleanLiteral {
@@ -37,8 +42,7 @@ impl<'a> Parser<'a> {
             }
 
             _ => Err(Self::unexpected_error(self.cur_token())),
-        };
-        self.parse_proceding_operator(expression?)
+        }
     }
 
     pub(crate) fn parse_identifier(&mut self) -> ParserResult<Identifier> {

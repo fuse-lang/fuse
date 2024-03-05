@@ -240,3 +240,32 @@ pub enum UnaryOperatorKind {
     Minus(Span),
     Plus(Span),
 }
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct BinaryOperator {
+    pub kind: BinaryOperatorKind,
+    pub lhs: Expression,
+    pub rhs: Expression,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub enum BinaryOperatorKind {
+    LogicalOr(Span),
+    LogicalAnd(Span),
+    BitwiseOr(Span),
+    BitwiseAnd(Span),
+    Equality(Span),
+    NonEquality(Span),
+    LessThanEqual(Span),
+    LessThan(Span),
+    GreaterThanEqual(Span),
+    GreaterThan(Span),
+    Plus(Span),
+    Minus(Span),
+    Multiply(Span),
+    Division(Span),
+    FloorDivision(Span),
+    Modulo(Span),
+}

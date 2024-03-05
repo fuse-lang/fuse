@@ -1,6 +1,11 @@
-use fuse_ast::{Expression, UnaryOperator, UnaryOperatorKind};
+use fuse_ast::{
+    BinaryOperator, BinaryOperatorKind, Expression, Precedence, UnaryOperator, UnaryOperatorKind,
+};
 
-use crate::{lexer::TokenKind, Parser, ParserResult};
+use crate::{
+    lexer::{Token, TokenKind},
+    Parser, ParserResult,
+};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_unary_operator(&mut self) -> ParserResult<UnaryOperator> {
@@ -12,8 +17,12 @@ impl<'a> Parser<'a> {
         }
     }
 
-    pub(crate) fn parse_proceding_operator(&mut self, lhs: Expression) -> ParserResult<Expression> {
-        self.parse_proceding_operator_recursive(lhs)
+    pub(crate) fn parse_with_precedence(
+        &mut self,
+        lhs: Expression,
+        precedence: Precedence,
+    ) -> ParserResult<Expression> {
+        self.parse_proceding_operator_recursive(lhs, precedence)
     }
 
     fn parse_unary_not_operator(&mut self) -> ParserResult<UnaryOperator> {
@@ -46,11 +55,53 @@ impl<'a> Parser<'a> {
         })
     }
 
-    fn parse_proceding_operator_recursive(&mut self, lhs: Expression) -> ParserResult<Expression> {
+    fn parse_proceding_operator_recursive(
+        &mut self,
+        lhs: Expression,
+        precedence: Precedence,
+    ) -> ParserResult<Expression> {
         // early return if there is no proceding binary operator.
-        if !self.cur_kind().is_binary_operator() {
+        let Some(op_precedence) = self.cur_kind().to_precedence() else {
+            return Ok(lhs);
+        };
+
+        if op_precedence < precedence {
             return Ok(lhs);
         }
+
+        let op = self.parse_binary_operator_kind()?;
+
         todo!()
+    }
+
+    fn parse_binary_operator_kind(&mut self) -> ParserResult<BinaryOperatorKind> {
+        use TokenKind::*;
+        let token = self.consume();
+        macro_rules! match_op {
+            { $($kind:ident => $op:ident)+ } => (
+                match *token {
+                    $(Token { kind: $kind, span } => Ok(BinaryOperatorKind::$op(span)),)+
+                    _ => Err(Self::unexpected_error(&token)),
+                }
+            )
+        }
+        match_op!{
+            Or => LogicalOr
+            And => LogicalAnd
+            Pipe => BitwiseOr
+            Amp => BitwiseAnd
+            Eq2 => Equality
+            Neq => NonEquality
+            LAngle => LessThan
+            RAngle => GreaterThan
+            LtEq => LessThanEqual
+            GtEq => GreaterThanEqual
+            Plus => Plus
+            Minus => Minus
+            Star => Multiply
+            Slash => Division
+            Slash2 => FloorDivision
+            Percent => Modulo
+        }
     }
 }

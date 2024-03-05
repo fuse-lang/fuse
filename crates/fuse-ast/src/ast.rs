@@ -95,7 +95,8 @@ pub enum Expression {
     BooleanLiteral(Box<BooleanLiteral>),
     Identifier(Box<Identifier>),
     Function(Box<Function>),
-    If(Box<If>)
+    If(Box<If>),
+    UnaryOperator(Box<UnaryOperator>),
 }
 
 #[serializable]
@@ -218,10 +219,24 @@ pub struct If {
     pub r#else: Option<Else>,
 }
 
-
 #[serializable]
 #[derive(Debug, PartialEq)]
 pub enum Else {
     If(Box<If>),
     Block(Box<Block>),
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct UnaryOperator {
+    pub kind: UnaryOperatorKind,
+    pub expression: Expression,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub enum UnaryOperatorKind {
+    Not(Span),
+    Minus(Span),
+    Plus(Span),
 }

@@ -121,4 +121,8 @@ impl AstFactory {
     pub fn if_expression(&self, expr: If) -> Expression {
         Expression::If(Box::from(expr))
     }
+
+    pub fn unary_operator_expression(&self, op: UnaryOperator) -> Expression {
+        Expression::UnaryOperator(Box::from(op))
+    }
 }

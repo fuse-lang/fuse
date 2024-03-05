@@ -3,6 +3,7 @@ mod declarations;
 mod expressions;
 mod functions;
 mod numbers;
+mod operators;
 mod statements;
 mod strings;
 mod types;

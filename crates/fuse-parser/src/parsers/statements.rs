@@ -62,6 +62,10 @@ impl<'a> Parser<'a> {
                 .parse_expression()
                 .map(|expr| self.ast.expression_statement(expr)),
 
+            TokenKind::Not | TokenKind::Plus | TokenKind::Minus => self
+                .parse_unary_operator_expression()
+                .map(|expr| self.ast.expression_statement(expr)),
+
             TokenKind::Function | TokenKind::Fn => {
                 if self.nth_kind(1) == TokenKind::Identifier {
                     // function declaration

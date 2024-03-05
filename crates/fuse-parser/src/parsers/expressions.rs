@@ -43,6 +43,7 @@ impl<'a> Parser<'a> {
     }
 
     pub(crate) fn parse_identifier(&mut self) -> ParserResult<Identifier> {
+        debug_assert!(self.at(TokenKind::Identifier));
         let token = self.consume();
         let view = self.view_token(*token);
         Ok(Identifier {
@@ -61,6 +62,7 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_if(&mut self) -> ParserResult<If> {
+        debug_assert!(matches!(self.cur_kind(), TokenKind::If | TokenKind::ElseIf));
         let start = self.start_span();
         // Consume the keyword
         self.consume();
@@ -95,5 +97,10 @@ impl<'a> Parser<'a> {
             body,
             r#else,
         })
+    }
+
+    pub(crate) fn parse_unary_operator_expression(&mut self) -> ParserResult<Expression> {
+        self.parse_unary_operator()
+            .map(|op| self.ast.unary_operator_expression(op))
     }
 }

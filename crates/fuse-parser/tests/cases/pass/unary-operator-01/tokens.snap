@@ -1,0 +1,45 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+expression: tokens
+input_file: crates/fuse-parser/tests/cases/pass/unary-operator-01/case.fuse
+---
+[
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 0,
+        end: 3,
+      ),
+      kind: Not,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 3,
+          end: 4,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 4,
+        end: 8,
+      ),
+      kind: True,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 8,
+          end: 9,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+]

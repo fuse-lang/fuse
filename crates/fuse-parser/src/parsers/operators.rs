@@ -1,4 +1,4 @@
-use fuse_ast::{UnaryOperator, UnaryOperatorKind};
+use fuse_ast::{Expression, UnaryOperator, UnaryOperatorKind};
 
 use crate::{lexer::TokenKind, Parser, ParserResult};
 
@@ -10,6 +10,10 @@ impl<'a> Parser<'a> {
             TokenKind::Minus => self.parse_unary_minus_operator(),
             _ => Err(Self::unexpected_error(self.cur_token())),
         }
+    }
+
+    pub(crate) fn parse_proceding_operator(&mut self, lhs: Expression) -> ParserResult<Expression> {
+        self.parse_proceding_operator_recursive(lhs)
     }
 
     fn parse_unary_not_operator(&mut self) -> ParserResult<UnaryOperator> {
@@ -40,5 +44,13 @@ impl<'a> Parser<'a> {
             kind: UnaryOperatorKind::Minus(op.span()),
             expression: self.parse_expression()?,
         })
+    }
+
+    fn parse_proceding_operator_recursive(&mut self, lhs: Expression) -> ParserResult<Expression> {
+        // early return if there is no proceding binary operator.
+        if !self.cur_kind().is_binary_operator() {
+            return Ok(lhs);
+        }
+        todo!()
     }
 }

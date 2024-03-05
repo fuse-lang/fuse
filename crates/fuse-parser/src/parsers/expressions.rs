@@ -1,16 +1,9 @@
-use crate::{
-    lexer::{TokenKind, TokenReference},
-    Parser, ParserResult,
-};
-use fuse_ast::{
-    BindingPattern, BindingPatternKind, BooleanLiteral, Else, Expression, Function, FunctionBody,
-    FunctionParameter, FunctionParameters, Identifier, If, TypeAnnotation,
-};
-use fuse_common::Span;
+use crate::{lexer::TokenKind, Parser, ParserResult};
+use fuse_ast::{BooleanLiteral, Else, Expression, Identifier, If};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_expression(&mut self) -> ParserResult<Expression> {
-        match self.cur_kind() {
+        let expression = match self.cur_kind() {
             TokenKind::True => {
                 let token = self.consume();
                 Ok(self.ast.boolean_expression(BooleanLiteral {
@@ -44,7 +37,8 @@ impl<'a> Parser<'a> {
             }
 
             _ => Err(Self::unexpected_error(self.cur_token())),
-        }
+        };
+        self.parse_proceding_operator(expression?)
     }
 
     pub(crate) fn parse_identifier(&mut self) -> ParserResult<Identifier> {

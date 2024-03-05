@@ -67,20 +67,58 @@ pub enum TokenKind {
     While,
 
     // Punctuations
+    /// .
     Dot,
+    /// ..
     Dot2,
+    /// ...
     Dot3,
+    /// ,
     Comma,
+    /// ;
     Semicolon,
+    /// (
     LParen,
+    /// )
     RParen,
+    /// {
     LCurly,
+    /// }
     RCurly,
+    /// [
+    LBrack,
+    /// ]
+    RBrack,
+    /// <
+    LAngle,
+    /// >
+    RAngle,
+    /// =
     Eq,
+    /// ==
+    Eq2,
+    /// !=
+    Neq,
+    /// -
     Minus,
+    /// +
     Plus,
-    ThinArrow,
+    /// &
+    Amp,
+    /// ^
+    Caret,
+    /// |
+    Pipe,
+    /// *
+    Star,
+    /// /
+    Slash,
+    /// //
+    Slash2,
+    /// =>
     Arrow,
+    /// ->
+    ThinArrow,
 }
 
 impl TokenKind {
@@ -147,6 +185,18 @@ impl TokenKind {
             | Unsafe
             | When
             | While
+        }
+    }
+
+    pub fn is_binary_operator(&self) -> bool {
+        use TokenKind::*;
+        matches! {
+            self,
+            | Plus
+            | Minus
+            | Star
+            | Slash
+            | Slash2
         }
     }
 }

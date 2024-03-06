@@ -23,7 +23,7 @@ impl<'a> Parser<'a> {
         let op = self.consume();
         Ok(UnaryOperator {
             kind: UnaryOperatorKind::Not(op.span()),
-            expression: self.parse_expression()?,
+            expression: self.parse_primary_expression()?,
         })
     }
 
@@ -33,7 +33,7 @@ impl<'a> Parser<'a> {
         let op = self.consume();
         Ok(UnaryOperator {
             kind: UnaryOperatorKind::Plus(op.span()),
-            expression: self.parse_expression()?,
+            expression: self.parse_primary_expression()?,
         })
     }
 
@@ -43,7 +43,7 @@ impl<'a> Parser<'a> {
         let op = self.consume();
         Ok(UnaryOperator {
             kind: UnaryOperatorKind::Minus(op.span()),
-            expression: self.parse_expression()?,
+            expression: self.parse_primary_expression()?,
         })
     }
 

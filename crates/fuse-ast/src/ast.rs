@@ -97,6 +97,7 @@ pub enum Expression {
     Function(Box<Function>),
     If(Box<If>),
     UnaryOperator(Box<UnaryOperator>),
+    BinaryOperator(Box<BinaryOperator>),
 }
 
 #[serializable]

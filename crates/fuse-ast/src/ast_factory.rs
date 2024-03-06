@@ -125,4 +125,8 @@ impl AstFactory {
     pub fn unary_operator_expression(&self, op: UnaryOperator) -> Expression {
         Expression::UnaryOperator(Box::from(op))
     }
+
+    pub fn binary_operator_expression(&self, op: BinaryOperator) -> Expression {
+        Expression::BinaryOperator(Box::from(op))
+    }
 }

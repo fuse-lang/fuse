@@ -20,12 +20,19 @@ impl<'a> Lexer<'a> {
             ';' => {
                 "" => TokenKind::Semicolon,
             }
+            '+' => {
+                "" => TokenKind::Plus,
+            }
             '-' => {
                 ">" => TokenKind::ThinArrow,
                 "" => TokenKind::Minus,
             }
-            '+' => {
-                "" => TokenKind::Plus,
+            '*' => {
+                "" => TokenKind::Star,
+            }
+            '/' => {
+                "/" => TokenKind::Slash2,
+                "" => TokenKind::Slash,
             }
             '(' => {
                 "" => TokenKind::LParen,
@@ -38,6 +45,14 @@ impl<'a> Lexer<'a> {
             }
             '}' => {
                 "" => TokenKind::RCurly,
+            }
+            '<' => {
+                "=" => TokenKind::LtEq,
+                "" => TokenKind::LAngle,
+            }
+            '>' => {
+                "=" => TokenKind::GtEq,
+                "" => TokenKind::RAngle,
             }
         })?;
 

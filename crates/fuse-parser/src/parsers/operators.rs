@@ -70,6 +70,16 @@ impl<'a> Parser<'a> {
         }
 
         let op = self.parse_binary_operator_kind()?;
+        // how to know we are at a expression.
+        let mut rhs = self.parse_primary_expression()?;
+        while let Some(next_precedence) = self.cur_kind().to_precedence() {
+            let precedence = if next_precedence > op_precedence {
+                op_precedence + 1
+            } else {
+                break;
+            };
+            rhs = self.parse_proceding_operator_recursive(rhs, precedence)?;
+        }
 
         todo!()
     }
@@ -85,7 +95,7 @@ impl<'a> Parser<'a> {
                 }
             )
         }
-        match_op!{
+        match_op! {
             Or => LogicalOr
             And => LogicalAnd
             Pipe => BitwiseOr

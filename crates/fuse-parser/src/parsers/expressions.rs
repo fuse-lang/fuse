@@ -1,47 +1,56 @@
 use crate::{lexer::TokenKind, Parser, ParserResult};
-use fuse_ast::{BooleanLiteral, Else, Expression, Identifier, If, Precedence};
+use fuse_ast::{BinaryOperator, BooleanLiteral, Else, Expression, Identifier, If, Precedence};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_expression(&mut self) -> ParserResult<Expression> {
         let expr = self.parse_primary_expression()?;
-        self.parse_with_precedence(expr, Precedence::Expression)
+        self.parse_expression_with_precedence(expr, Precedence::Expression)
     }
 
     pub(crate) fn parse_primary_expression(&mut self) -> ParserResult<Expression> {
+        if let Some(result) = self.try_parse_primary_expression() {
+            result
+        } else {
+            Err(Self::unexpected_error(self.cur_token()))
+        }
+    }
+
+    pub(crate) fn try_parse_primary_expression(&mut self) -> Option<ParserResult<Expression>> {
         match self.cur_kind() {
             TokenKind::True => {
                 let token = self.consume();
-                Ok(self.ast.boolean_expression(BooleanLiteral {
+                Some(Ok(self.ast.boolean_expression(BooleanLiteral {
                     span: token.span(),
                     value: true,
-                }))
+                })))
             }
             TokenKind::False => {
                 let token = self.consume();
-                Ok(self.ast.boolean_expression(BooleanLiteral {
+                Some(Ok(self.ast.boolean_expression(BooleanLiteral {
                     span: token.span(),
                     value: false,
-                }))
+                })))
             }
-            TokenKind::NumberLiteral => {
-                let expr = self.parse_number_literal()?;
-                Ok(self.ast.number_expression(expr))
-            }
-            TokenKind::StringLiteral | TokenKind::InterpolatedStringHead => {
-                let expr = self.parse_string_literal()?;
-                Ok(self.ast.string_expression(expr))
-            }
-            TokenKind::Identifier => self
-                .parse_identifier()
-                .map(|id| self.ast.identifier_expression(id)),
-            TokenKind::Function | TokenKind::Fn => self.parse_function_expression(),
-            TokenKind::If => self.parse_if_expression(),
+            TokenKind::NumberLiteral => Some(
+                self.parse_number_literal()
+                    .map(|expr| self.ast.number_expression(expr)),
+            ),
+            TokenKind::StringLiteral | TokenKind::InterpolatedStringHead => Some(
+                self.parse_string_literal()
+                    .map(|expr| self.ast.string_expression(expr)),
+            ),
+            TokenKind::Identifier => Some(
+                self.parse_identifier()
+                    .map(|id| self.ast.identifier_expression(id)),
+            ),
+            TokenKind::Function | TokenKind::Fn => Some(self.parse_function_expression()),
+            TokenKind::If => Some(self.parse_if_expression()),
 
             TokenKind::Not | TokenKind::Plus | TokenKind::Minus => {
-                self.parse_unary_operator_expression()
+                Some(self.parse_unary_operator_expression())
             }
 
-            _ => Err(Self::unexpected_error(self.cur_token())),
+            _ => None,
         }
     }
 
@@ -105,5 +114,50 @@ impl<'a> Parser<'a> {
     pub(crate) fn parse_unary_operator_expression(&mut self) -> ParserResult<Expression> {
         self.parse_unary_operator()
             .map(|op| self.ast.unary_operator_expression(op))
+    }
+
+    fn parse_expression_with_precedence(
+        &mut self,
+        lhs: Expression,
+        min_precedence: Precedence,
+    ) -> ParserResult<Expression> {
+        let mut lhs = lhs;
+        loop {
+            // early return if there is no proceding binary operator.
+            let Some(op_precedence) = self.cur_kind().to_precedence() else {
+                return Ok(lhs);
+            };
+
+            if op_precedence < min_precedence {
+                return Ok(lhs);
+            }
+
+            let kind = self.parse_binary_operator_kind()?;
+
+            let mut rhs = {
+                let Some(rhs) = self.try_parse_primary_expression() else {
+                    // TODO: message Expected expression, found `{token}`.
+                    self.push_error(Self::unexpected_error(self.cur_token()));
+                    return Ok(lhs);
+                };
+                rhs?
+            };
+
+            while let Some(next_precedence) = self.cur_kind().to_precedence() {
+                let search_precedence = if next_precedence > op_precedence {
+                    op_precedence + 1
+                } else if next_precedence.is_right_associative() && next_precedence == op_precedence
+                {
+                    op_precedence
+                } else {
+                    break;
+                };
+                rhs = self.parse_expression_with_precedence(rhs, search_precedence)?;
+            }
+
+            lhs = self
+                .ast
+                .binary_operator_expression(BinaryOperator { kind, lhs, rhs })
+        }
     }
 }

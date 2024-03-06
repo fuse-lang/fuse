@@ -17,14 +17,6 @@ impl<'a> Parser<'a> {
         }
     }
 
-    pub(crate) fn parse_with_precedence(
-        &mut self,
-        lhs: Expression,
-        precedence: Precedence,
-    ) -> ParserResult<Expression> {
-        self.parse_proceding_operator_recursive(lhs, precedence)
-    }
-
     fn parse_unary_not_operator(&mut self) -> ParserResult<UnaryOperator> {
         debug_assert!(self.at(TokenKind::Not));
         // Consume the keyword.
@@ -55,36 +47,7 @@ impl<'a> Parser<'a> {
         })
     }
 
-    fn parse_proceding_operator_recursive(
-        &mut self,
-        lhs: Expression,
-        precedence: Precedence,
-    ) -> ParserResult<Expression> {
-        // early return if there is no proceding binary operator.
-        let Some(op_precedence) = self.cur_kind().to_precedence() else {
-            return Ok(lhs);
-        };
-
-        if op_precedence < precedence {
-            return Ok(lhs);
-        }
-
-        let op = self.parse_binary_operator_kind()?;
-        // how to know we are at a expression.
-        let mut rhs = self.parse_primary_expression()?;
-        while let Some(next_precedence) = self.cur_kind().to_precedence() {
-            let precedence = if next_precedence > op_precedence {
-                op_precedence + 1
-            } else {
-                break;
-            };
-            rhs = self.parse_proceding_operator_recursive(rhs, precedence)?;
-        }
-
-        todo!()
-    }
-
-    fn parse_binary_operator_kind(&mut self) -> ParserResult<BinaryOperatorKind> {
+    pub(crate) fn parse_binary_operator_kind(&mut self) -> ParserResult<BinaryOperatorKind> {
         use TokenKind::*;
         let token = self.consume();
         macro_rules! match_op {

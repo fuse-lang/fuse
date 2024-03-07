@@ -1,3 +1,5 @@
+// This module is inspired by `oxc` project.
+// https://github.com/oxc-project/oxc/blob/aef593fb50c22bf06ea5ee3a5e4e7d688f71b893/crates/oxc_parser/src/lexer/source.rs
 use std::{marker::PhantomData, slice};
 
 use fuse_common::{Span, SpanView};

@@ -1,0 +1,43 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+expression: parsed.chunk
+input_file: crates/fuse-parser/tests/cases/pass/variable-declaration-04/case.fuse
+---
+Some(Chunk(
+  span: Span(
+    start: 0,
+    end: 16,
+  ),
+  body: Block(
+    statements: [
+      VariableDeclaration(VariableDeclaration(
+        span: Span(
+          start: 0,
+          end: 15,
+        ),
+        kind: Const,
+        binding: BindingPattern(
+          kind: Identifier(BindingIdentifier(
+            span: Span(
+              start: 6,
+              end: 8,
+            ),
+            atom: Atom("PI"),
+            mutable: false,
+          )),
+          type_annotation: None,
+          optional: false,
+        ),
+        expression: Some(NumberLiteral(NumberLiteral(
+          span: Span(
+            start: 11,
+            end: 15,
+          ),
+          raw: Atom("3.14"),
+          value: 3.14,
+          kind: Float,
+        ))),
+      )),
+    ],
+  ),
+))

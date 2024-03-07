@@ -1,0 +1,39 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+expression: parsed.chunk
+input_file: crates/fuse-parser/tests/cases/pass/binary-operator-12/case.fuse
+---
+Some(Chunk(
+  span: Span(
+    start: 0,
+    end: 12,
+  ),
+  body: Block(
+    statements: [
+      Expression(BinaryOperator(BinaryOperator(
+        kind: ShiftRight(Span(
+          start: 7,
+          end: 9,
+        )),
+        lhs: NumberLiteral(NumberLiteral(
+          span: Span(
+            start: 0,
+            end: 6,
+          ),
+          raw: Atom("0b0101"),
+          value: 5.0,
+          kind: Binary,
+        )),
+        rhs: NumberLiteral(NumberLiteral(
+          span: Span(
+            start: 10,
+            end: 11,
+          ),
+          raw: Atom("1"),
+          value: 1.0,
+          kind: Decimal,
+        )),
+      ))),
+    ],
+  ),
+))

@@ -1,0 +1,64 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+expression: tokens
+input_file: crates/fuse-parser/tests/cases/pass/binary-operator-11/case.fuse
+---
+[
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 0,
+        end: 6,
+      ),
+      kind: NumberLiteral,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 6,
+          end: 7,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 7,
+        end: 9,
+      ),
+      kind: LShift,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 9,
+          end: 10,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 10,
+        end: 11,
+      ),
+      kind: NumberLiteral,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 11,
+          end: 12,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+]

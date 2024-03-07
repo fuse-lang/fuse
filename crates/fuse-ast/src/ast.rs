@@ -99,6 +99,7 @@ pub enum Expression {
     If(Box<If>),
     UnaryOperator(Box<UnaryOperator>),
     BinaryOperator(Box<BinaryOperator>),
+    ArrayExpression(Box<ArrayExpression>),
 }
 
 #[serializable]
@@ -274,4 +275,25 @@ pub enum BinaryOperatorKind {
     Modulo(Span),
     ShiftLeft(Span),
     ShiftRight(Span),
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct ArrayExpression {
+    pub span: Span,
+    pub elements: Vec<ArrayExpressionElement>,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub enum ArrayExpressionElement {
+    Expression(Expression),
+    Spread(SpreadElement),
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct SpreadElement {
+    pub span: Span,
+    pub element: Expression,
 }

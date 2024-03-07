@@ -58,9 +58,7 @@ impl AstFactory {
         }
     }
 
-    pub fn function_declaration(&self) {
-
-    }
+    pub fn function_declaration(&self) {}
 
     pub fn binding_identifier_pattern(
         &self,
@@ -76,7 +74,11 @@ impl AstFactory {
     }
 
     pub fn binding_identifier(&self, span: Span, atom: Atom, mutable: bool) -> BindingIdentifier {
-        BindingIdentifier { span, atom, mutable }
+        BindingIdentifier {
+            span,
+            atom,
+            mutable,
+        }
     }
 
     pub fn atom(&self, value: &str) -> Atom {
@@ -128,5 +130,13 @@ impl AstFactory {
 
     pub fn binary_operator_expression(&self, op: BinaryOperator) -> Expression {
         Expression::BinaryOperator(Box::from(op))
+    }
+
+    pub fn array_expression(
+        &self,
+        span: Span,
+        elements: Vec<ArrayExpressionElement>,
+    ) -> Expression {
+        Expression::ArrayExpression(Box::from(ArrayExpression { span, elements }))
     }
 }

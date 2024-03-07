@@ -1,5 +1,8 @@
 use crate::{lexer::TokenKind, Parser, ParserResult};
-use fuse_ast::{BinaryOperator, BooleanLiteral, Else, Expression, Identifier, If, Precedence};
+use fuse_ast::{
+    ArrayExpressionElement, BinaryOperator, BooleanLiteral, Else, Expression, Identifier, If,
+    Precedence, SpreadElement,
+};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_expression(&mut self) -> ParserResult<Expression> {
@@ -16,39 +19,40 @@ impl<'a> Parser<'a> {
     }
 
     pub(crate) fn try_parse_primary_expression(&mut self) -> Option<ParserResult<Expression>> {
+        use TokenKind::*;
         match self.cur_kind() {
-            TokenKind::True => {
+            True => {
                 let token = self.consume();
                 Some(Ok(self.ast.boolean_expression(BooleanLiteral {
                     span: token.span(),
                     value: true,
                 })))
             }
-            TokenKind::False => {
+            False => {
                 let token = self.consume();
                 Some(Ok(self.ast.boolean_expression(BooleanLiteral {
                     span: token.span(),
                     value: false,
                 })))
             }
-            TokenKind::NumberLiteral => Some(
+            NumberLiteral => Some(
                 self.parse_number_literal()
                     .map(|expr| self.ast.number_expression(expr)),
             ),
-            TokenKind::StringLiteral | TokenKind::InterpolatedStringHead => Some(
+            StringLiteral | InterpolatedStringHead => Some(
                 self.parse_string_literal()
                     .map(|expr| self.ast.string_expression(expr)),
             ),
-            TokenKind::Identifier => Some(
+            Identifier => Some(
                 self.parse_identifier()
                     .map(|id| self.ast.identifier_expression(id)),
             ),
-            TokenKind::Function | TokenKind::Fn => Some(self.parse_function_expression()),
-            TokenKind::If => Some(self.parse_if_expression()),
+            Function | TokenKind::Fn => Some(self.parse_function_expression()),
+            If => Some(self.parse_if_expression()),
 
-            TokenKind::Not | TokenKind::Plus | TokenKind::Minus => {
-                Some(self.parse_unary_operator_expression())
-            }
+            Not | Plus | Minus => Some(self.parse_unary_operator_expression()),
+
+            LBrack => Some(self.parse_array_expression()),
 
             _ => None,
         }
@@ -114,6 +118,39 @@ impl<'a> Parser<'a> {
     pub(crate) fn parse_unary_operator_expression(&mut self) -> ParserResult<Expression> {
         self.parse_unary_operator()
             .map(|op| self.ast.unary_operator_expression(op))
+    }
+
+    fn parse_array_expression(&mut self) -> ParserResult<Expression> {
+        let start = self.start_span();
+        // consume the opening bracket
+        self.consume();
+        let mut elements: Vec<ArrayExpressionElement> = Vec::new();
+        loop {
+            let element = match self.cur_kind() {
+                TokenKind::Dot3 => ArrayExpressionElement::Spread(self.parse_spread_element()?),
+                _ => ArrayExpressionElement::Expression(self.parse_expression()?),
+            };
+
+            elements.push(element);
+
+            if !self.at(TokenKind::Comma) {
+                break;
+            }
+        }
+
+        Ok(self.ast.array_expression(self.end_span(start), elements))
+    }
+
+    fn parse_spread_element(&mut self) -> ParserResult<SpreadElement> {
+        debug_assert!(self.at(TokenKind::Dot3));
+        let start = self.start_span();
+        // eat the spread operator.
+        self.consume();
+        let expression = self.parse_expression()?;
+        Ok(SpreadElement {
+            span: self.end_span(start),
+            element: expression,
+        })
     }
 
     fn parse_expression_with_precedence(

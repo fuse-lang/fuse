@@ -23,6 +23,7 @@ Some(Chunk(
               end: 6,
             ),
             atom: Atom("id"),
+            mutable: false,
           )),
           type_annotation: None,
           optional: false,

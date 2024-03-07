@@ -77,6 +77,7 @@ pub enum BindingPatternKind {
 pub struct BindingIdentifier {
     pub span: Span,
     pub atom: Atom,
+    pub mutable: bool,
 }
 
 #[serializable]

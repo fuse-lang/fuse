@@ -44,8 +44,10 @@ impl<'a> Parser<'a> {
 
         span = self.end_span(span);
 
+        let mutable = self.consume_if(TokenKind::Mut).is_some();
+
         let atom = self.ast.atom(name);
 
-        self.ast.binding_identifier(span, atom)
+        self.ast.binding_identifier(span, atom, mutable)
     }
 }

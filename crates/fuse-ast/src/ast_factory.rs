@@ -75,8 +75,8 @@ impl AstFactory {
         }
     }
 
-    pub fn binding_identifier(&self, span: Span, atom: Atom) -> BindingIdentifier {
-        BindingIdentifier { span, atom }
+    pub fn binding_identifier(&self, span: Span, atom: Atom, mutable: bool) -> BindingIdentifier {
+        BindingIdentifier { span, atom, mutable }
     }
 
     pub fn atom(&self, value: &str) -> Atom {

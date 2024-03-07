@@ -43,11 +43,13 @@ pub enum TokenKind {
     In,
     Let,
     Match,
+    Mut,
     Never,
     Nil,
     Not,
     Pub,
     Or,
+    Own,
     Repeat,
     Return,
     /// Lower case `self`

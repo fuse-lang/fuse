@@ -34,6 +34,7 @@ Some(Chunk(
                     end: 8,
                   ),
                   atom: Atom("value"),
+                  mutable: false,
                 )),
                 type_annotation: None,
                 optional: false,

@@ -46,6 +46,7 @@ impl<'a> Lexer<'a> {
             }
             'm' => {
                 "atch" => TokenKind::Match,
+                "ut" => TokenKind::Mut,
             }
             'n' => {
                 "ever" => TokenKind::Never,

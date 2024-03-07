@@ -1,6 +1,5 @@
 use crate::{lexer::TokenKind, Parser, ParserResult};
-use fuse_ast::{Atom, BindingIdentifier, BindingPattern, BindingPatternKind};
-use fuse_common::Span;
+use fuse_ast::{BindingIdentifier, BindingPattern, BindingPatternKind};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_binding(&mut self) -> ParserResult<BindingPattern> {

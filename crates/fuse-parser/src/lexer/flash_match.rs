@@ -1,4 +1,6 @@
 /// A quick match between lexer's source characters and given expressions.
+/// It is a dirty implementation for prototype and
+/// depends on longer tail values to come before the short ones.
 #[macro_export]
 macro_rules! flash_match {
     {(

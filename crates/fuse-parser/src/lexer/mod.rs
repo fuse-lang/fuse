@@ -120,7 +120,6 @@ impl<'a> Lexer<'a> {
 
     fn next_with_trivia(&mut self) -> TokenReference {
         let mut leading_trivia = Vec::new();
-        let mut errors: Option<Vec<LexerError>> = None;
 
         let token = loop {
             let next = self.next();

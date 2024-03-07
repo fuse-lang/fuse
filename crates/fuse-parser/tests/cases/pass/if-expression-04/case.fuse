@@ -1,0 +1,7 @@
+if x or y and z then
+  123
+elseif x and y or z then
+  321
+else
+  0
+end

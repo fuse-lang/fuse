@@ -26,7 +26,7 @@ impl<'a> Source<'a> {
         assert!(
             src.len() <= crate::MAX_SOURCE_SIZE,
             "Input source code can not be larger than {} bytes.",
-            src.len()
+            crate::MAX_SOURCE_SIZE
         );
         let start = src.as_ptr();
         // SAFETY: Start of source + length of it gives us the end pointer.

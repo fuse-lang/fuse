@@ -52,19 +52,6 @@ impl<'a> Parser<'a> {
                 .parse_variable_declaration()
                 .map(|decl| self.ast.variable_declaration_statement(decl)),
 
-            TokenKind::True
-            | TokenKind::False
-            | TokenKind::NumberLiteral
-            | TokenKind::StringLiteral
-            | TokenKind::InterpolatedStringHead
-            | TokenKind::Identifier
-            | TokenKind::If
-            | TokenKind::Not
-            | TokenKind::Plus
-            | TokenKind::Minus => self
-                .parse_expression()
-                .map(|expr| self.ast.expression_statement(expr)),
-
             TokenKind::Function | TokenKind::Fn => {
                 if self.nth_kind(1) == TokenKind::Identifier {
                     // function declaration
@@ -80,7 +67,10 @@ impl<'a> Parser<'a> {
             kind if kind.is_trivial() => {
                 unreachable!("All trivial tokens should be eaten by a `TokenReference`.")
             }
-            _ => Err(Self::unexpected_error(self.cur_token())),
+
+            _ => self
+                .parse_expression()
+                .map(|expr| self.ast.expression_statement(expr)),
         }
     }
 

@@ -62,6 +62,7 @@ impl<'a> Parser<'a> {
             Or => LogicalOr
             And => LogicalAnd
             Pipe => BitwiseOr
+            Caret => BitwiseXor
             Amp => BitwiseAnd
             Eq2 => Equality
             Neq => NonEquality
@@ -72,9 +73,12 @@ impl<'a> Parser<'a> {
             Plus => Plus
             Minus => Minus
             Star => Multiply
+            Star2 => Exponential
             Slash => Division
             Slash2 => FloorDivision
             Percent => Modulo
+            LShift => ShiftLeft
+            RShift => ShiftRight
         }
     }
 }

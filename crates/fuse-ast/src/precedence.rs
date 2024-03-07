@@ -17,6 +17,7 @@ pub enum Precedence {
     Shift,
     Add,
     Multiply,
+    Exponential,
 }
 
 impl Precedence {

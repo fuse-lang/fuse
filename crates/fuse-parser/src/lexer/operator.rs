@@ -28,11 +28,21 @@ impl<'a> Lexer<'a> {
                 "" => TokenKind::Minus,
             }
             '*' => {
+                "*" => TokenKind::Star2,
                 "" => TokenKind::Star,
             }
             '/' => {
                 "/" => TokenKind::Slash2,
                 "" => TokenKind::Slash,
+            }
+            '&' => {
+                "" => TokenKind::Amp,
+            }
+            '^' => {
+                "" => TokenKind::Caret,
+            }
+            '|' => {
+                "" => TokenKind::Pipe,
             }
             '(' => {
                 "" => TokenKind::LParen,
@@ -47,10 +57,12 @@ impl<'a> Lexer<'a> {
                 "" => TokenKind::RCurly,
             }
             '<' => {
+                "<" => TokenKind::LShift,
                 "=" => TokenKind::LtEq,
                 "" => TokenKind::LAngle,
             }
             '>' => {
+                ">" => TokenKind::RShift,
                 "=" => TokenKind::GtEq,
                 "" => TokenKind::RAngle,
             }

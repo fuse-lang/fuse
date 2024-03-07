@@ -108,20 +108,26 @@ pub enum TokenKind {
     Minus,
     /// +
     Plus,
-    /// &
-    Amp,
-    /// ^
-    Caret,
-    /// |
-    Pipe,
     /// *
     Star,
+    /// **
+    Star2,
     /// /
     Slash,
     /// //
     Slash2,
     /// %
     Percent,
+    /// &
+    Amp,
+    /// ^
+    Caret,
+    /// |
+    Pipe,
+    /// <<
+    LShift,
+    /// >>
+    RShift,
     /// =>
     Arrow,
     /// ->
@@ -206,8 +212,10 @@ impl TokenKind {
             Amp => Some(BitwiseAnd),
             Eq2 | Neq => Some(Equality),
             LAngle | RAngle | LtEq | GtEq | As | In => Some(Relational),
+            LShift | RShift => Some(Shift),
             Plus | Minus => Some(Add),
             Star | Slash | Slash2 | Percent => Some(Multiply),
+            Star2 => Some(Exponential),
             _ => None,
         }
     }

@@ -256,6 +256,7 @@ pub enum BinaryOperatorKind {
     LogicalOr(Span),
     LogicalAnd(Span),
     BitwiseOr(Span),
+    BitwiseXor(Span),
     BitwiseAnd(Span),
     Equality(Span),
     NonEquality(Span),
@@ -266,7 +267,10 @@ pub enum BinaryOperatorKind {
     Plus(Span),
     Minus(Span),
     Multiply(Span),
+    Exponential(Span),
     Division(Span),
     FloorDivision(Span),
     Modulo(Span),
+    ShiftLeft(Span),
+    ShiftRight(Span),
 }

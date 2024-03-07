@@ -28,7 +28,7 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_binding_identifier_pattern(&mut self) -> ParserResult<BindingPattern> {
-        if !self.cur_kind().is_valid_identifier() {
+        if !self.cur_kind().is_valid_identifier() && !self.at(TokenKind::Mut) {
             return Err(Self::unexpected_error(self.cur_token()));
         }
 
@@ -38,12 +38,11 @@ impl<'a> Parser<'a> {
 
     pub(crate) fn parse_binding_identifier(&mut self) -> BindingIdentifier {
         let mut span = self.start_span();
+        let mutable = self.consume_if(TokenKind::Mut).is_some();
         let token = self.consume();
         let name = self.view_token(*token);
 
         span = self.end_span(span);
-
-        let mutable = self.consume_if(TokenKind::Mut).is_some();
 
         let atom = self.ast.atom(name);
 

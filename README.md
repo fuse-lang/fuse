@@ -29,7 +29,7 @@ Fuse has started as an alternative to [Luau](https://luau-lang.org/) that can co
 ### Possible use-cases
 
 Fuse is easy to learn while keeping most of the good techniques used in functional languages. It comes with `immutable` variables by default but has native support for `mutability` and also would allow you to define global variables. We also have an ownership system similar to Rust's borrow checker but it is much simpler since we have no lifetimes or references* to worry about.
-We also have exhaustive pattern matching and Optional types instead of exposing `nil` which would help with writing more safe code in general.
+In addition to the features mentioned above we have exhaustive pattern matching and Optional types instead of exposing `nil` which would help with writing more safe code in general.
 
 Because of our interoperability with Lua, we are aiming to provide a drop-in replacement for projects that are using `Lua` for scripting and extendability. It is also useful when writing libraries that need to be compatible with a range of different runtimes such as LuaJIT and Lua5.4.
 

@@ -47,11 +47,11 @@ impl<'a> Parser<'a> {
                 self.parse_identifier()
                     .map(|id| self.ast.identifier_expression(id)),
             ),
+
             Function | TokenKind::Fn => Some(self.parse_function_expression()),
             If => Some(self.parse_if_expression()),
 
             Not | Plus | Minus => Some(self.parse_unary_operator_expression()),
-
             LBrack => Some(self.parse_array_expression()),
             LParen => Some(self.parse_tuple_expression()),
 
@@ -129,7 +129,7 @@ impl<'a> Parser<'a> {
 
         // return early for empty arrays
         if self.consume_if(TokenKind::RBrack).is_some() {
-            return Ok(self.ast.array_expression(self.end_span(start), elements))
+            return Ok(self.ast.array_expression(self.end_span(start), elements));
         }
 
         loop {
@@ -158,7 +158,7 @@ impl<'a> Parser<'a> {
 
         // return early for empty tuples
         if self.consume_if(TokenKind::RParen).is_some() {
-            return Ok(self.ast.tuple_expression(self.end_span(start), elements))
+            return Ok(self.ast.tuple_expression(self.end_span(start), elements));
         }
 
         loop {

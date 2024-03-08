@@ -42,6 +42,7 @@ pub enum TokenKind {
     Import,
     In,
     Let,
+    Local,
     Match,
     Mut,
     Never,
@@ -207,6 +208,7 @@ impl TokenKind {
         use Precedence::*;
         use TokenKind::*;
         match self {
+            Eq => Some(Assignment),
             Or => Some(LogicalOr),
             And => Some(LogicalAnd),
             Pipe => Some(BitwiseOr),

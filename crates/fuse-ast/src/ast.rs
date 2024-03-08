@@ -258,6 +258,7 @@ pub struct BinaryOperator {
 #[serializable]
 #[derive(Debug, PartialEq)]
 pub enum BinaryOperatorKind {
+    Assignment(Span),
     LogicalOr(Span),
     LogicalAnd(Span),
     BitwiseOr(Span),

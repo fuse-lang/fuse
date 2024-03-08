@@ -1,0 +1,37 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+expression: parsed.chunk
+input_file: crates/fuse-parser/tests/cases/pass/variable-assignment-01/case.fuse
+---
+Some(Chunk(
+  span: Span(
+    start: 0,
+    end: 8,
+  ),
+  body: Block(
+    statements: [
+      Expression(BinaryOperator(BinaryOperator(
+        kind: Assignment(Span(
+          start: 2,
+          end: 3,
+        )),
+        lhs: Identifier(Identifier(
+          span: Span(
+            start: 0,
+            end: 1,
+          ),
+          name: Atom("x"),
+        )),
+        rhs: NumberLiteral(NumberLiteral(
+          span: Span(
+            start: 4,
+            end: 7,
+          ),
+          raw: Atom("123"),
+          value: 123.0,
+          kind: Decimal,
+        )),
+      ))),
+    ],
+  ),
+))

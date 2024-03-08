@@ -42,6 +42,7 @@ impl<'a> Lexer<'a> {
                 "n" => TokenKind::In,
             }
             'l' => {
+                "ocal" => TokenKind::Local,
                 "et" => TokenKind::Let,
             }
             'm' => {

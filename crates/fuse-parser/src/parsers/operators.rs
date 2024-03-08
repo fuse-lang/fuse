@@ -59,6 +59,7 @@ impl<'a> Parser<'a> {
             )
         }
         match_op! {
+            Eq => Assignment
             Or => LogicalOr
             And => LogicalAnd
             Pipe => BitwiseOr

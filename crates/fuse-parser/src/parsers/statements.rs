@@ -48,7 +48,7 @@ impl<'a> Parser<'a> {
         match cur_kind {
             TokenKind::Semicolon => ParserResult::Ok(self.parse_empty_statement()),
 
-            TokenKind::Const | TokenKind::Let | TokenKind::Global => self
+            TokenKind::Const | TokenKind::Let | TokenKind::Global | TokenKind::Local => self
                 .parse_variable_declaration()
                 .map(|decl| self.ast.variable_declaration_statement(decl)),
 
@@ -63,6 +63,10 @@ impl<'a> Parser<'a> {
                         .map(|expr| self.ast.expression_statement(expr))
                 }
             }
+
+            TokenKind::Enum => self
+                .parse_enum_declaration()
+                .map(|decl| self.ast.enum_declaration_statement(decl)),
 
             kind if kind.is_trivial() => {
                 unreachable!("All trivial tokens should be eaten by a `TokenReference`.")

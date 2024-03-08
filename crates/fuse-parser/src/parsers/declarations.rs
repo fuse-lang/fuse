@@ -1,5 +1,5 @@
 use crate::{lexer::TokenKind, Parser, ParserResult};
-use fuse_ast::{Function, VariableDeclaration, VariableDeclarationKind};
+use fuse_ast::{EnumDeclaration, Function, VariableDeclaration, VariableDeclarationKind};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_variable_declaration(&mut self) -> ParserResult<VariableDeclaration> {
@@ -7,6 +7,10 @@ impl<'a> Parser<'a> {
             TokenKind::Let => VariableDeclarationKind::Let,
             TokenKind::Const => VariableDeclarationKind::Const,
             TokenKind::Global => VariableDeclarationKind::Global,
+            TokenKind::Local => {
+                self.push_error(Self::unexpected_error(self.cur_token()));
+                VariableDeclarationKind::Let
+            }
             _ => return Err(Self::unexpected_error(self.cur_token())),
         };
 
@@ -29,5 +33,14 @@ impl<'a> Parser<'a> {
 
     pub(crate) fn parse_function_declaration(&mut self) -> ParserResult<Function> {
         self.parse_function(true)
+    }
+
+    pub(crate) fn parse_enum_declaration(&mut self) -> ParserResult<EnumDeclaration> {
+        debug_assert!(self.at(TokenKind::Enum));
+        // Consume the enum keyword.
+        self.consume();
+
+        let identifier = self.parse_identifier()?;
+        todo!()
     }
 }

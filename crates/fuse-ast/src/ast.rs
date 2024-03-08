@@ -32,6 +32,8 @@ pub enum Statement {
     VariableDeclaration(Box<VariableDeclaration>),
     /// A function declaration using function or fn keywords.
     FunctionDeclaration(Box<Function>),
+    /// A enum declaration using enum keyword.
+    EnumDeclaration(Box<EnumDeclaration>),
 }
 
 #[serializable]
@@ -311,4 +313,19 @@ pub enum TupleExpressionElement {
 pub struct SpreadElement {
     pub span: Span,
     pub element: Expression,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct EnumDeclaration {
+    pub span: Span,
+    pub identifier: Identifier,
+    pub variants: Vec<EnumVariant>,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct EnumVariant {
+    pub identifier: Identifier,
+    pub value: Option<Expression>,
 }

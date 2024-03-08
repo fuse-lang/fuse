@@ -39,6 +39,10 @@ impl AstFactory {
         Statement::FunctionDeclaration(Box::from(func))
     }
 
+    pub fn enum_declaration_statement(&self, decl: EnumDeclaration) -> Statement {
+        Statement::EnumDeclaration(Box::from(decl))
+    }
+
     pub fn expression_statement(&self, expr: Expression) -> Statement {
         Statement::Expression(Box::from(expr))
     }

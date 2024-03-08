@@ -1,5 +1,6 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
+description: "0b0101 | 0b1010\n"
 expression: tokens
 input_file: crates/fuse-parser/tests/cases/pass/binary-operator-09/case.fuse
 ---

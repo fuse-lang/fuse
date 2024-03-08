@@ -1,5 +1,6 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
+description: "0b0101 << 1\n"
 expression: parsed.chunk
 input_file: crates/fuse-parser/tests/cases/pass/binary-operator-11/case.fuse
 ---

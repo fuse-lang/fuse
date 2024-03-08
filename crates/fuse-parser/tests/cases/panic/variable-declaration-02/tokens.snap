@@ -1,5 +1,6 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
+description: "const == 1123\n"
 expression: tokens
 input_file: crates/fuse-parser/tests/cases/panic/variable-declaration-02/case.fuse
 ---

@@ -1,5 +1,6 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
+description: "[1, 2, 3, 4, 5]\n"
 expression: tokens
 input_file: crates/fuse-parser/tests/cases/pass/array-initializer-01/case.fuse
 ---

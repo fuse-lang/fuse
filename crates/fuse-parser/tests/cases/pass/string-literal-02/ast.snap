@@ -1,5 +1,6 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
+description: "\"Hello,\nWorld\"\n"
 expression: parsed.chunk
 input_file: crates/fuse-parser/tests/cases/pass/string-literal-02/case.fuse
 ---

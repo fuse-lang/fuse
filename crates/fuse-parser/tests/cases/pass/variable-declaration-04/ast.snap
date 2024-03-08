@@ -1,5 +1,6 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
+description: "const PI = 3.14\n"
 expression: parsed.chunk
 input_file: crates/fuse-parser/tests/cases/pass/variable-declaration-04/case.fuse
 ---

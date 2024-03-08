@@ -1,5 +1,6 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
+description: "fn()\n\t\"Hello world\"\nend\n"
 expression: parsed.chunk
 input_file: crates/fuse-parser/tests/cases/pass/function-expression-02/case.fuse
 ---

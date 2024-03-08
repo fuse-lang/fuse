@@ -1,5 +1,6 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
+description: "ident_name\n"
 expression: parsed.chunk
 input_file: crates/fuse-parser/tests/cases/pass/identifier-01/case.fuse
 ---

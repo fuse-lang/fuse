@@ -1,5 +1,6 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
+description: "123_456\n"
 expression: parsed.chunk
 input_file: crates/fuse-parser/tests/cases/pass/number-literal-06/case.fuse
 ---

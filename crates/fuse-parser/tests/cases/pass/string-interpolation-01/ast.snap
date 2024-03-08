@@ -1,7 +1,8 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
+description: "\"Hello ${123}\"\n"
 expression: parsed.chunk
-input_file: crates/fuse-parser/tests/cases/pass/string-literal-04/case.fuse
+input_file: crates/fuse-parser/tests/cases/pass/string-interpolation-01/case.fuse
 ---
 Some(Chunk(
   span: Span(

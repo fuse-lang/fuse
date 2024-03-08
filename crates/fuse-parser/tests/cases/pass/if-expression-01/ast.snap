@@ -1,5 +1,6 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
+description: "if expr then true end\n"
 expression: parsed.chunk
 input_file: crates/fuse-parser/tests/cases/pass/if-expression-01/case.fuse
 ---

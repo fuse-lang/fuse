@@ -1,7 +1,8 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
+description: "123\n"
 expression: tokens
-input_file: crates/fuse-parser/tests/cases/panic/number-literal-01/case.fuse
+input_file: crates/fuse-parser/tests/cases/pass/number-literal-01/case.fuse
 ---
 [
   TokenReference(

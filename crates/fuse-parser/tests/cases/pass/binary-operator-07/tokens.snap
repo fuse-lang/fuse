@@ -1,5 +1,6 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
+description: "-x * 2\n"
 expression: tokens
 input_file: crates/fuse-parser/tests/cases/pass/binary-operator-07/case.fuse
 ---

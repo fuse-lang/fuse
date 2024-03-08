@@ -1,5 +1,6 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
+description: "x < max and x >= min\n"
 expression: tokens
 input_file: crates/fuse-parser/tests/cases/pass/binary-operator-06/case.fuse
 ---

@@ -1,5 +1,6 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
+description: "+123\n"
 expression: parsed.chunk
 input_file: crates/fuse-parser/tests/cases/pass/unary-operator-03/case.fuse
 ---

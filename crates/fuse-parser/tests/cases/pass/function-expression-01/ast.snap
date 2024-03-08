@@ -1,5 +1,6 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
+description: "function () end\n"
 expression: parsed.chunk
 input_file: crates/fuse-parser/tests/cases/pass/function-expression-01/case.fuse
 ---

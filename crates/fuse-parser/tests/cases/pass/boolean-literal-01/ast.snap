@@ -1,5 +1,6 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
+description: "true\n"
 expression: parsed.chunk
 input_file: crates/fuse-parser/tests/cases/pass/boolean-literal-01/case.fuse
 ---

@@ -1,5 +1,6 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
+description: "(1, 2, 3, ...(4, 5, ...(6, 7, 8)))\n"
 expression: parsed.chunk
 input_file: crates/fuse-parser/tests/cases/pass/tuple-initializer-02/case.fuse
 ---

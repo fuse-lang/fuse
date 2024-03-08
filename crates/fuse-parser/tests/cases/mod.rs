@@ -102,40 +102,44 @@ fn load_cases(ctx: &Context) -> Vec<PathBuf> {
 fn run(ctx: &Context, case_dir: PathBuf, expect_error: bool, expect_panic: bool) {
     let mut settings = ctx.settings();
     let source_path = case_dir.join(ctx.source_name);
+    let path_str = source_path.to_str().unwrap_or("unknown source");
+    let source = read_source_normalized(source_path.as_os_str()).unwrap();
 
     settings.set_input_file(&source_path);
     settings.set_snapshot_path(case_dir);
+    // if case source code is small include it in the snapshot.
+    if source.lines().count() <= 5 {
+        settings.set_description(source.clone());
+    }
     settings.set_prepend_module_to_snapshot(false);
 
     let _guard = settings.bind_to_scope();
-    test_parser(source_path.as_os_str(), expect_error, expect_panic);
-    test_lexer(source_path.as_os_str());
+    test_parser(path_str, source.clone(), expect_error, expect_panic);
+    test_lexer(path_str, source);
 }
 
-fn test_lexer(src_path: &OsStr) {
-    let source = read_source_normalized(src_path).unwrap();
+fn test_lexer(path: &str, source: String) {
     let reference = source.clone();
     let tokens: Vec<_> = Lexer::new(&source).collect();
 
     expect_eq!(
         source, reference,
         "Lexer changes the content of the original source buffer.",
-        path: src_path.to_str().unwrap_or("unknown source"),
+        path: path,
         dump: tokens,
     );
 
     insta::assert_ron_snapshot!("tokens", tokens);
 }
 
-fn test_parser(path: &OsStr, expect_error: bool, expect_panic: bool) {
-    let source = read_source_normalized(path).unwrap();
+fn test_parser(path: &str, source: String, expect_error: bool, expect_panic: bool) {
     let reference = source.clone();
     let parsed = parse(source.as_str());
 
     expect_eq!(
         source, reference,
         "Lexer changes the content of the original source buffer.",
-        path: path.to_str().unwrap_or("unknown case!"),
+        path: path,
         dump: parsed,
     );
 
@@ -143,7 +147,7 @@ fn test_parser(path: &OsStr, expect_error: bool, expect_panic: bool) {
         expect_panic,
         parsed.paniced,
         "Panic state ({}) was different from the expected value ({}).",
-        path: path.to_str().unwrap_or("unknown case!"),
+        path: path,
         dump: parsed,
         parsed.paniced,
         expect_panic,
@@ -153,7 +157,7 @@ fn test_parser(path: &OsStr, expect_error: bool, expect_panic: bool) {
         expect_error,
         !parsed.errors.is_empty(),
         "Error vector is different from expectations.",
-        path: path.to_str().unwrap_or("unknown case!"),
+        path: path,
         dump: parsed,
     );
 

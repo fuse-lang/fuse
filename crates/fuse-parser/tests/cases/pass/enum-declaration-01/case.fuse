@@ -1,0 +1,4 @@
+enum EnumName
+	VariantA
+	VariantB
+end

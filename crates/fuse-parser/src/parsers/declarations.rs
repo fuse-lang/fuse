@@ -1,5 +1,7 @@
 use crate::{lexer::TokenKind, Parser, ParserResult};
-use fuse_ast::{EnumDeclaration, Function, VariableDeclaration, VariableDeclarationKind};
+use fuse_ast::{
+    EnumDeclaration, EnumVariant, Function, VariableDeclaration, VariableDeclarationKind,
+};
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_variable_declaration(&mut self) -> ParserResult<VariableDeclaration> {
@@ -37,10 +39,25 @@ impl<'a> Parser<'a> {
 
     pub(crate) fn parse_enum_declaration(&mut self) -> ParserResult<EnumDeclaration> {
         debug_assert!(self.at(TokenKind::Enum));
+        let start = self.start_span();
         // Consume the enum keyword.
         self.consume();
 
         let identifier = self.parse_identifier()?;
-        todo!()
+        let mut variants: Vec<EnumVariant> = Vec::new();
+        while !self.at(TokenKind::End) {
+            let identifier = self.parse_identifier()?;
+            let value = self
+                .try_parse_expression()
+                .map_or(Ok(None), |v| v.map(Some))?;
+            variants.push(EnumVariant { identifier, value })
+        }
+        // consume the end token
+        self.consume();
+        Ok(EnumDeclaration {
+            span: self.end_span(start),
+            identifier,
+            variants,
+        })
     }
 }

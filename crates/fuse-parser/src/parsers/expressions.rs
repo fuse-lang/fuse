@@ -10,6 +10,15 @@ impl<'a> Parser<'a> {
         self.parse_expression_with_precedence(expr, Precedence::Expression)
     }
 
+    pub(crate) fn try_parse_expression(&mut self) -> Option<ParserResult<Expression>> {
+        let result = self.try_parse_primary_expression()?;
+        Some(
+            result.and_then(|expr| {
+                self.parse_expression_with_precedence(expr, Precedence::Expression)
+            }),
+        )
+    }
+
     pub(crate) fn parse_primary_expression(&mut self) -> ParserResult<Expression> {
         if let Some(result) = self.try_parse_primary_expression() {
             result

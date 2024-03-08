@@ -1,1 +1,1 @@
-x < max and x >= min
+x = x < max and x >= min

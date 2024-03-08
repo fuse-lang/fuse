@@ -1,6 +1,6 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
-description: "a and b or c\n"
+description: "x = a and b or c\n"
 expression: tokens
 input_file: crates/fuse-parser/tests/cases/pass/binary-operator-03/case.fuse
 ---
@@ -28,9 +28,28 @@ input_file: crates/fuse-parser/tests/cases/pass/binary-operator-03/case.fuse
     token: Token(
       span: Span(
         start: 2,
+        end: 3,
+      ),
+      kind: Eq,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 3,
+          end: 4,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 4,
         end: 5,
       ),
-      kind: And,
+      kind: Identifier,
     ),
     leading_trivia: [],
     trailing_trivia: [
@@ -47,16 +66,16 @@ input_file: crates/fuse-parser/tests/cases/pass/binary-operator-03/case.fuse
     token: Token(
       span: Span(
         start: 6,
-        end: 7,
+        end: 9,
       ),
-      kind: Identifier,
+      kind: And,
     ),
     leading_trivia: [],
     trailing_trivia: [
       Token(
         span: Span(
-          start: 7,
-          end: 8,
+          start: 9,
+          end: 10,
         ),
         kind: Whitespace,
       ),
@@ -65,8 +84,27 @@ input_file: crates/fuse-parser/tests/cases/pass/binary-operator-03/case.fuse
   TokenReference(
     token: Token(
       span: Span(
-        start: 8,
-        end: 10,
+        start: 10,
+        end: 11,
+      ),
+      kind: Identifier,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 11,
+          end: 12,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 12,
+        end: 14,
       ),
       kind: Or,
     ),
@@ -74,8 +112,8 @@ input_file: crates/fuse-parser/tests/cases/pass/binary-operator-03/case.fuse
     trailing_trivia: [
       Token(
         span: Span(
-          start: 10,
-          end: 11,
+          start: 14,
+          end: 15,
         ),
         kind: Whitespace,
       ),
@@ -84,8 +122,8 @@ input_file: crates/fuse-parser/tests/cases/pass/binary-operator-03/case.fuse
   TokenReference(
     token: Token(
       span: Span(
-        start: 11,
-        end: 12,
+        start: 15,
+        end: 16,
       ),
       kind: Identifier,
     ),
@@ -93,8 +131,8 @@ input_file: crates/fuse-parser/tests/cases/pass/binary-operator-03/case.fuse
     trailing_trivia: [
       Token(
         span: Span(
-          start: 12,
-          end: 13,
+          start: 16,
+          end: 17,
         ),
         kind: Whitespace,
       ),

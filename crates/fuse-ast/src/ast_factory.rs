@@ -155,4 +155,8 @@ impl AstFactory {
     ) -> Expression {
         Expression::TupleExpression(Box::from(TupleExpression { span, elements }))
     }
+
+    pub fn parenthesized_expression(&self, span: Span, expression: Expression) -> Expression {
+        Expression::ParenthesizedExpression(Box::from(ParenthesizedExpression { span, expression }))
+    }
 }

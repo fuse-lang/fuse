@@ -105,6 +105,7 @@ pub enum Expression {
     BinaryOperator(Box<BinaryOperator>),
     ArrayExpression(Box<ArrayExpression>),
     TupleExpression(Box<TupleExpression>),
+    ParenthesizedExpression(Box<ParenthesizedExpression>),
 }
 
 #[serializable]
@@ -354,4 +355,11 @@ pub struct StructField {
 pub enum VisibilityModifier {
     Private,
     Public(Span),
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct ParenthesizedExpression {
+    pub span: Span,
+    pub expression: Expression,
 }

@@ -7,6 +7,7 @@ pub enum Precedence {
     /// used as 0 value of enum.
     Expression,
     Assignment,
+    Construction,
     LogicalOr,
     LogicalAnd,
     BitwiseOr,
@@ -22,7 +23,7 @@ pub enum Precedence {
 
 impl Precedence {
     pub fn is_right_associative(&self) -> bool {
-        matches!(self, Self::Assignment)
+        matches!(self, Self::Assignment | Self::Construction)
     }
 
     pub fn is_left_associative(&self) -> bool {

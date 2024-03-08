@@ -211,6 +211,7 @@ impl TokenKind {
         use TokenKind::*;
         match self {
             Eq => Some(Assignment),
+            LCurly => Some(Construction),
             Or => Some(LogicalOr),
             And => Some(LogicalAnd),
             Pipe => Some(BitwiseOr),

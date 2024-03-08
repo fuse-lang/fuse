@@ -7,6 +7,7 @@ use fuse_ast::{
 impl<'a> Parser<'a> {
     pub(crate) fn parse_expression(&mut self) -> ParserResult<Expression> {
         let expr = self.parse_primary_expression()?;
+        let expr = self.parse_expression_with_suffix(expr)?;
         self.parse_expression_with_precedence(expr, Precedence::Expression)
     }
 
@@ -53,7 +54,7 @@ impl<'a> Parser<'a> {
 
             Not | Plus | Minus => Some(self.parse_unary_operator_expression()),
             LBrack => Some(self.parse_array_expression()),
-            LParen => Some(self.parse_tuple_expression()),
+            LParen => Some(self.parse_tuple_or_parenthesized_expression()),
 
             _ => None,
         }
@@ -150,7 +151,7 @@ impl<'a> Parser<'a> {
         Ok(self.ast.array_expression(self.end_span(start), elements))
     }
 
-    fn parse_tuple_expression(&mut self) -> ParserResult<Expression> {
+    fn parse_tuple_or_parenthesized_expression(&mut self) -> ParserResult<Expression> {
         let start = self.start_span();
         // consume the opening parentheses.
         self.consume();
@@ -161,6 +162,7 @@ impl<'a> Parser<'a> {
             return Ok(self.ast.tuple_expression(self.end_span(start), elements));
         }
 
+        let mut met_comma = false;
         loop {
             let element = match self.cur_kind() {
                 TokenKind::Dot3 => TupleExpressionElement::Spread(self.parse_spread_element()?),
@@ -171,12 +173,31 @@ impl<'a> Parser<'a> {
 
             if self.consume_if(TokenKind::Comma).is_none() {
                 break;
+            } else {
+                met_comma = true;
             }
         }
 
         self.consume_expect(TokenKind::RParen)?;
 
-        Ok(self.ast.tuple_expression(self.end_span(start), elements))
+        let span = self.end_span(start);
+        if met_comma {
+            Ok(self.ast.tuple_expression(span, elements))
+        } else {
+            debug_assert_eq!(elements.len(), 1);
+            match elements[0] {
+                TupleExpressionElement::Spread(..) => {
+                    // accept parenthesized spread expressions as tuples.
+                    Ok(self.ast.tuple_expression(span, elements))
+                }
+                TupleExpressionElement::Expression(..) => {
+                    let TupleExpressionElement::Expression(expr) = elements.remove(0) else {
+                        unreachable!("Enum variant already got checked");
+                    };
+                    Ok(self.ast.parenthesized_expression(span, expr))
+                }
+            }
+        }
     }
 
     fn parse_spread_element(&mut self) -> ParserResult<SpreadElement> {
@@ -189,6 +210,25 @@ impl<'a> Parser<'a> {
             span: self.end_span(start),
             element: expression,
         })
+    }
+
+    fn parse_expression_with_suffix(&mut self, expr: Expression) -> ParserResult<Expression> {
+        if !matches!(
+            expr,
+            Expression::Identifier(..) | Expression::ParenthesizedExpression(..)
+        ) {
+            return Ok(expr);
+        }
+
+        match self.cur_kind() {
+            TokenKind::LCurly => {
+                todo!("parse construction")
+            }
+            TokenKind::LParen => {
+                todo!("parse call expression")
+            }
+            _ => Ok(expr),
+        }
     }
 
     fn parse_expression_with_precedence(

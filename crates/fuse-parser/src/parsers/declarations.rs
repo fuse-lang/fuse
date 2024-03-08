@@ -47,9 +47,11 @@ impl<'a> Parser<'a> {
         let mut variants: Vec<EnumVariant> = Vec::new();
         while !self.at(TokenKind::End) {
             let identifier = self.parse_identifier()?;
-            let value = self
-                .try_parse_expression()
-                .map_or(Ok(None), |v| v.map(Some))?;
+            let value = if self.consume_if(TokenKind::Eq).is_some() {
+                Some(self.parse_expression()?)
+            } else {
+                None
+            };
             variants.push(EnumVariant { identifier, value })
         }
         // consume the end token

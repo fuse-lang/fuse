@@ -32,13 +32,17 @@ Some(Chunk(
               ),
               name: Atom("VariantA"),
             ),
-            value: Some(Identifier(Identifier(
+            value: None,
+          ),
+          EnumVariant(
+            identifier: Identifier(
               span: Span(
                 start: 25,
                 end: 33,
               ),
               name: Atom("VariantB"),
-            ))),
+            ),
+            value: None,
           ),
         ],
       )),

@@ -56,6 +56,12 @@ impl<'a> Lexer<'a> {
             '}' => {
                 "" => TokenKind::RCurly,
             }
+            '[' => {
+                "" => TokenKind::LBrack,
+            }
+            ']' => {
+                "" => TokenKind::RBrack,
+            }
             '<' => {
                 "<" => TokenKind::LShift,
                 "=" => TokenKind::LtEq,

@@ -133,10 +133,12 @@ impl<'a> Parser<'a> {
 
             elements.push(element);
 
-            if !self.at(TokenKind::Comma) {
+            if self.consume_if(TokenKind::Comma).is_none() {
                 break;
             }
         }
+
+        self.consume_expect(TokenKind::RBrack)?;
 
         Ok(self.ast.array_expression(self.end_span(start), elements))
     }

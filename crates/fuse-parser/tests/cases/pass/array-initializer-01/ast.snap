@@ -1,0 +1,68 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+expression: parsed.chunk
+input_file: crates/fuse-parser/tests/cases/pass/array-initializer-01/case.fuse
+---
+Some(Chunk(
+  span: Span(
+    start: 0,
+    end: 16,
+  ),
+  body: Block(
+    statements: [
+      Expression(ArrayExpression(ArrayExpression(
+        span: Span(
+          start: 0,
+          end: 15,
+        ),
+        elements: [
+          Expression(NumberLiteral(NumberLiteral(
+            span: Span(
+              start: 1,
+              end: 2,
+            ),
+            raw: Atom("1"),
+            value: 1.0,
+            kind: Decimal,
+          ))),
+          Expression(NumberLiteral(NumberLiteral(
+            span: Span(
+              start: 4,
+              end: 5,
+            ),
+            raw: Atom("2"),
+            value: 2.0,
+            kind: Decimal,
+          ))),
+          Expression(NumberLiteral(NumberLiteral(
+            span: Span(
+              start: 7,
+              end: 8,
+            ),
+            raw: Atom("3"),
+            value: 3.0,
+            kind: Decimal,
+          ))),
+          Expression(NumberLiteral(NumberLiteral(
+            span: Span(
+              start: 10,
+              end: 11,
+            ),
+            raw: Atom("4"),
+            value: 4.0,
+            kind: Decimal,
+          ))),
+          Expression(NumberLiteral(NumberLiteral(
+            span: Span(
+              start: 13,
+              end: 14,
+            ),
+            raw: Atom("5"),
+            value: 5.0,
+            kind: Decimal,
+          ))),
+        ],
+      ))),
+    ],
+  ),
+))

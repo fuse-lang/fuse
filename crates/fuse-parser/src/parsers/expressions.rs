@@ -163,7 +163,7 @@ impl<'a> Parser<'a> {
         }
 
         let mut met_comma = false;
-        loop {
+        while !self.at(TokenKind::RParen) {
             let element = match self.cur_kind() {
                 TokenKind::Dot3 => TupleExpressionElement::Spread(self.parse_spread_element()?),
                 _ => TupleExpressionElement::Expression(self.parse_expression()?),
@@ -178,7 +178,7 @@ impl<'a> Parser<'a> {
             }
         }
 
-        self.consume_expect(TokenKind::RParen)?;
+        self.consume();
 
         let span = self.end_span(start);
         if met_comma {

@@ -1,6 +1,6 @@
 use crate::{lexer::TokenKind, Parser, ParserResult};
 use fuse_ast::{
-    EnumDeclaration, EnumVariant, Function, VariableDeclaration, VariableDeclarationKind,
+    EnumDeclaration, EnumVariant, Function, StructDeclaration, StructField, VariableDeclaration, VariableDeclarationKind
 };
 
 impl<'a> Parser<'a> {
@@ -60,6 +60,30 @@ impl<'a> Parser<'a> {
             span: self.end_span(start),
             identifier,
             variants,
+        })
+    }
+
+    pub(crate) fn parse_struct_declaration(&mut self) -> ParserResult<StructDeclaration> {
+        debug_assert!(self.at(TokenKind::Struct));
+        let start = self.start_span();
+        // Consume the struct keyword.
+        self.consume();
+
+        let identifier = self.parse_identifier()?;
+        let mut fields: Vec<StructField> = Vec::new();
+        while !self.at(TokenKind::End) {
+            let modifier = self.try_parse_visibility_modifier();
+            let identifier = self.parse_identifier()?;
+            self.consume_expect(TokenKind::Colon)?;
+            let type_annotation = self.parse_type_annotation()?;
+            fields.push(StructField { modifier, identifier, type_annotation })
+        }
+        // consume the end token
+        self.consume();
+        Ok(StructDeclaration {
+            span: self.end_span(start),
+            identifier,
+            fields,
         })
     }
 }

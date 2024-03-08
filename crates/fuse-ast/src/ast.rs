@@ -32,8 +32,10 @@ pub enum Statement {
     VariableDeclaration(Box<VariableDeclaration>),
     /// A function declaration using function or fn keywords.
     FunctionDeclaration(Box<Function>),
-    /// A enum declaration using enum keyword.
+    /// An enum declaration using enum keyword.
     EnumDeclaration(Box<EnumDeclaration>),
+    /// A struct declaration using struct keyword.
+    StructDeclaration(Box<StructDeclaration>),
 }
 
 #[serializable]
@@ -329,4 +331,27 @@ pub struct EnumDeclaration {
 pub struct EnumVariant {
     pub identifier: Identifier,
     pub value: Option<Expression>,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct StructDeclaration {
+    pub span: Span,
+    pub identifier: Identifier,
+    pub fields: Vec<StructField>,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct StructField {
+    pub modifier: VisibilityModifier,
+    pub identifier: Identifier,
+    pub type_annotation: TypeAnnotation,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub enum VisibilityModifier {
+    Private,
+    Public(Span),
 }

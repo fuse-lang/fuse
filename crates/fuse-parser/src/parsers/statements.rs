@@ -67,6 +67,9 @@ impl<'a> Parser<'a> {
             TokenKind::Enum => self
                 .parse_enum_declaration()
                 .map(|decl| self.ast.enum_declaration_statement(decl)),
+            TokenKind::Struct => self
+                .parse_struct_declaration()
+                .map(|decl| self.ast.struct_declaration_statement(decl)),
 
             kind if kind.is_trivial() => {
                 unreachable!("All trivial tokens should be eaten by a `TokenReference`.")

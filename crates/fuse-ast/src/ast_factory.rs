@@ -43,6 +43,10 @@ impl AstFactory {
         Statement::EnumDeclaration(Box::from(decl))
     }
 
+    pub fn struct_declaration_statement(&self, decl: StructDeclaration) -> Statement {
+        Statement::StructDeclaration(Box::from(decl))
+    }
+
     pub fn expression_statement(&self, expr: Expression) -> Statement {
         Statement::Expression(Box::from(expr))
     }

@@ -17,6 +17,9 @@ impl<'a> Lexer<'a> {
                 ">" => TokenKind::Arrow,
                 "" => TokenKind::Eq,
             }
+            ':' => {
+                "" => TokenKind::Colon,
+            }
             ';' => {
                 "" => TokenKind::Semicolon,
             }

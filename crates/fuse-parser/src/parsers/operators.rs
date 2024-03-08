@@ -1,5 +1,6 @@
 use fuse_ast::{
     BinaryOperator, BinaryOperatorKind, Expression, Precedence, UnaryOperator, UnaryOperatorKind,
+    VisibilityModifier,
 };
 
 use crate::{
@@ -80,6 +81,13 @@ impl<'a> Parser<'a> {
             Percent => Modulo
             LShift => ShiftLeft
             RShift => ShiftRight
+        }
+    }
+
+    pub(crate) fn try_parse_visibility_modifier(&mut self) -> VisibilityModifier {
+        match self.consume_if(TokenKind::Pub) {
+            Some(token) => VisibilityModifier::Public(token.span()),
+            None => VisibilityModifier::Private,
         }
     }
 }

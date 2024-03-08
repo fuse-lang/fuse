@@ -79,6 +79,8 @@ pub enum TokenKind {
     Dot3,
     /// ,
     Comma,
+    /// :
+    Colon,
     /// ;
     Semicolon,
     /// (

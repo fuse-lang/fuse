@@ -1,0 +1,34 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+description: "(\"hello\")\n"
+expression: parsed.chunk
+input_file: crates/fuse-parser/tests/cases/pass/parenthesized-expression-01/case.fuse
+---
+Some(Chunk(
+  span: Span(
+    start: 0,
+    end: 10,
+  ),
+  body: Block(
+    statements: [
+      Expression(ParenthesizedExpression(ParenthesizedExpression(
+        span: Span(
+          start: 0,
+          end: 9,
+        ),
+        expression: StringLiteral(StringLiteral(
+          span: Span(
+            start: 1,
+            end: 8,
+          ),
+          segments: [
+            Literal(Unescaped(Span(
+              start: 2,
+              end: 8,
+            ))),
+          ],
+        )),
+      ))),
+    ],
+  ),
+))

@@ -100,6 +100,7 @@ pub enum Expression {
     UnaryOperator(Box<UnaryOperator>),
     BinaryOperator(Box<BinaryOperator>),
     ArrayExpression(Box<ArrayExpression>),
+    TupleExpression(Box<TupleExpression>),
 }
 
 #[serializable]
@@ -287,6 +288,20 @@ pub struct ArrayExpression {
 #[serializable]
 #[derive(Debug, PartialEq)]
 pub enum ArrayExpressionElement {
+    Expression(Expression),
+    Spread(SpreadElement),
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct TupleExpression {
+    pub span: Span,
+    pub elements: Vec<TupleExpressionElement>,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub enum TupleExpressionElement {
     Expression(Expression),
     Spread(SpreadElement),
 }

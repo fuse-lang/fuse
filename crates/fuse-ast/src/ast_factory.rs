@@ -139,4 +139,12 @@ impl AstFactory {
     ) -> Expression {
         Expression::ArrayExpression(Box::from(ArrayExpression { span, elements }))
     }
+
+    pub fn tuple_expression(
+        &self,
+        span: Span,
+        elements: Vec<TupleExpressionElement>,
+    ) -> Expression {
+        Expression::TupleExpression(Box::from(TupleExpression { span, elements }))
+    }
 }

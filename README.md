@@ -8,8 +8,8 @@
 
 ```rust
 struct Point
-  x: Number
-  y: Number
+  x: number
+  y: number
 end
 
 let point_a = Point { x: 10, y: 20 }

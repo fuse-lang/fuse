@@ -1,7 +1,7 @@
 use crate::{lexer::TokenKind, Parser, ParserResult};
 use fuse_ast::{
     ArrayExpressionElement, BinaryOperator, BooleanLiteral, ConstructionExpression, Else,
-    Expression, Identifier, If, Precedence, SpreadArgument, TupleExpressionElement,
+    Expression, Identifier, If, Precedence, SpreadArgument, TupleExpressionElement, TypeAnnotation,
 };
 
 impl<'a> Parser<'a> {
@@ -252,9 +252,8 @@ impl<'a> Parser<'a> {
 
     fn parse_struct_construction_expression(
         &mut self,
-        expr: Expression,
+        target: Expression,
     ) -> ParserResult<Expression> {
-        let target = self.parse_type_annotation()?;
         let construction = self.parse_construction_expression()?;
         Ok(self
             .ast

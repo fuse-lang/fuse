@@ -175,7 +175,7 @@ impl AstFactory {
 
     pub fn struct_construction_expression(
         &self,
-        target: TypeAnnotation,
+        target: Expression,
         construction: ConstructionExpression,
     ) -> Expression {
         Expression::StructConstructionExpression(Box::from(StructConstructionExpression {

@@ -33,7 +33,15 @@ Some(Chunk(
               ),
               name: Atom("field1"),
             ),
-            type_annotation: TypeAnnotation(),
+            type_annotation: TypeAnnotation(
+              identifier: Identifier(
+                span: Span(
+                  start: 25,
+                  end: 31,
+                ),
+                name: Atom("number"),
+              ),
+            ),
           ),
           StructField(
             modifier: Private,
@@ -44,7 +52,15 @@ Some(Chunk(
               ),
               name: Atom("field2"),
             ),
-            type_annotation: TypeAnnotation(),
+            type_annotation: TypeAnnotation(
+              identifier: Identifier(
+                span: Span(
+                  start: 41,
+                  end: 47,
+                ),
+                name: Atom("string"),
+              ),
+            ),
           ),
           StructField(
             modifier: Private,
@@ -55,7 +71,15 @@ Some(Chunk(
               ),
               name: Atom("field3"),
             ),
-            type_annotation: TypeAnnotation(),
+            type_annotation: TypeAnnotation(
+              identifier: Identifier(
+                span: Span(
+                  start: 57,
+                  end: 64,
+                ),
+                name: Atom("boolean"),
+              ),
+            ),
           ),
         ],
       )),

@@ -86,7 +86,10 @@ pub struct BindingIdentifier {
 
 #[serializable]
 #[derive(Debug, PartialEq)]
-pub struct TypeAnnotation {}
+pub struct TypeAnnotation {
+    // TODO: at the moment we treat type annotation like identifiers.
+    pub identifier: Identifier,
+}
 
 #[serializable]
 #[derive(Debug, PartialEq)]
@@ -387,7 +390,7 @@ pub struct CallExpression {
 #[serializable]
 #[derive(Debug, PartialEq)]
 pub struct StructConstructionExpression {
-    pub target: TypeAnnotation,
+    pub target: Expression,
     pub construction: ConstructionExpression,
 }
 

@@ -198,4 +198,13 @@ impl AstFactory {
     ) -> ConstructionExpression {
         ConstructionExpression { span, fields }
     }
+
+    pub fn key_value_argument(
+        &self,
+        span: Span,
+        key: Identifier,
+        value: Expression,
+    ) -> KeyValueArgument {
+        KeyValueArgument { span, key, value }
+    }
 }

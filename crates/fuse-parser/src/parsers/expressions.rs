@@ -1,7 +1,8 @@
 use crate::{lexer::TokenKind, Parser, ParserResult};
 use fuse_ast::{
-    ArrayExpressionElement, BinaryOperator, BooleanLiteral, ConstructionExpression, Else,
-    Expression, Identifier, If, Precedence, SpreadArgument, TupleExpressionElement, TypeAnnotation,
+    ArrayExpressionElement, BinaryOperator, BooleanLiteral, ConstructionExpression,
+    ConstructionField, Else, Expression, Identifier, If, KeyValueArgument, Precedence,
+    SpreadArgument, TupleExpressionElement,
 };
 
 impl<'a> Parser<'a> {
@@ -270,8 +271,49 @@ impl<'a> Parser<'a> {
         let start = self.start_span();
         // consume openning curly
         self.consume();
-        loop {}
-        todo!()
+
+        // return early for construction with no field.
+        if self.consume_if(TokenKind::RCurly).is_some() {
+            return Ok(self
+                .ast
+                .construction_expression(self.end_span(start), Vec::default()));
+        }
+
+        let (fields, _) = self
+            .parse_comma_seperated_expressions(|parser| Some(parser.parse_construction_field()))?;
+
+        self.consume_expect(TokenKind::RCurly)?;
+
+        Ok(self
+            .ast
+            .construction_expression(self.end_span(start), fields))
+    }
+
+    fn parse_construction_field(&mut self) -> ParserResult<ConstructionField> {
+        match self.cur_kind() {
+            // key value argument
+            TokenKind::Identifier if self.nth_kind(1) == TokenKind::Colon => self
+                .parse_key_value_argument()
+                .map(|kv| ConstructionField::KeyValueArgument(kv)),
+            TokenKind::Dot3 => self
+                .parse_spread_element()
+                .map(|spread| ConstructionField::Spread(spread)),
+            _ => self
+                .parse_expression()
+                .map(|expr| ConstructionField::Expression(expr)),
+        }
+    }
+
+    fn parse_key_value_argument(&mut self) -> ParserResult<KeyValueArgument> {
+        let start = self.start_span();
+        let identifier = self.parse_identifier()?;
+        // consume colon
+        self.consume();
+        let expression = self.parse_expression()?;
+
+        Ok(self
+            .ast
+            .key_value_argument(self.end_span(start), identifier, expression))
     }
 
     fn parse_call_expression(&mut self, expr: Expression) -> ParserResult<Expression> {

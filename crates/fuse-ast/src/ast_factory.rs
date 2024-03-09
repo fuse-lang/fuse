@@ -47,6 +47,10 @@ impl AstFactory {
         Statement::StructDeclaration(Box::from(decl))
     }
 
+    pub fn impl_statement(&self, r#impl: ImplStatement) -> Statement {
+        Statement::ImplStatement(Box::from(r#impl))
+    }
+
     pub fn expression_statement(&self, expr: Expression) -> Statement {
         Statement::Expression(Box::from(expr))
     }

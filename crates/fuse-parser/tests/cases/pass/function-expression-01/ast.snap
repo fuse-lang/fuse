@@ -16,16 +16,22 @@ Some(Chunk(
           start: 0,
           end: 15,
         ),
-        identifier: None,
-        params: FunctionParameters(
+        signature: FunctionSignature(
           span: Span(
-            start: 9,
+            start: 0,
             end: 11,
           ),
-          items: [],
-          rest: None,
+          identifier: None,
+          params: FunctionParameters(
+            span: Span(
+              start: 9,
+              end: 11,
+            ),
+            items: [],
+            rest: None,
+          ),
+          return_type: None,
         ),
-        return_type: None,
         body: Block(Block(
           statements: [],
         )),

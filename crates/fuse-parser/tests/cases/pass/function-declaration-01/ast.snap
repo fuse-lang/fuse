@@ -16,22 +16,28 @@ Some(Chunk(
           start: 0,
           end: 19,
         ),
-        identifier: Some(Identifier(
+        signature: FunctionSignature(
           span: Span(
-            start: 9,
-            end: 13,
-          ),
-          name: Atom("test"),
-        )),
-        params: FunctionParameters(
-          span: Span(
-            start: 13,
+            start: 0,
             end: 15,
           ),
-          items: [],
-          rest: None,
+          identifier: Some(Identifier(
+            span: Span(
+              start: 9,
+              end: 13,
+            ),
+            name: Atom("test"),
+          )),
+          params: FunctionParameters(
+            span: Span(
+              start: 13,
+              end: 15,
+            ),
+            items: [],
+            rest: None,
+          ),
+          return_type: None,
         ),
-        return_type: None,
         body: Block(Block(
           statements: [],
         )),

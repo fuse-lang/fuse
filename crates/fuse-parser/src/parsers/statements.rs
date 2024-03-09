@@ -1,4 +1,4 @@
-use fuse_ast::{Block, Statement};
+use fuse_ast::{Block, Function, FunctionSignature, ImplMethod, ImplStatement, Statement};
 
 use crate::{lexer::TokenKind, Parser, ParserResult};
 
@@ -70,6 +70,7 @@ impl<'a> Parser<'a> {
             TokenKind::Struct => self
                 .parse_struct_declaration()
                 .map(|decl| self.ast.struct_declaration_statement(decl)),
+            TokenKind::Impl => self.parse_impl_statement(),
 
             kind if kind.is_trivial() => {
                 unreachable!("All trivial tokens should be eaten by a `TokenReference`.")
@@ -87,5 +88,28 @@ impl<'a> Parser<'a> {
         self.consume();
         let span = self.end_span(start);
         self.ast.empty_statement(span)
+    }
+
+    fn parse_impl_statement(&mut self) -> ParserResult<Statement> {
+        debug_assert!(self.at(TokenKind::Trait));
+        let start = self.start_span();
+        // Consume the struct keyword.
+        self.consume();
+
+        let target = self.parse_type_annotation()?;
+        let mut methods: Vec<ImplMethod> = Vec::new();
+        while !self.at(TokenKind::End) {
+            let modifier = self.try_parse_visibility_modifier();
+            let function = self.parse_function(true)?;
+            methods.push(ImplMethod { modifier, function });
+        }
+        // consume the end token
+        self.consume();
+        Ok(self.ast.impl_statement(ImplStatement {
+            span: self.end_span(start),
+            target,
+            r#trait: None,
+            methods,
+        }))
     }
 }

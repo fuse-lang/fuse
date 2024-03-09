@@ -16,53 +16,59 @@ Some(Chunk(
           start: 0,
           end: 15,
         ),
-        identifier: None,
-        params: FunctionParameters(
+        signature: FunctionSignature(
           span: Span(
-            start: 2,
+            start: 0,
             end: 8,
           ),
-          items: [
-            FunctionParameter(
-              span: Span(
-                start: 3,
-                end: 4,
-              ),
-              pattern: BindingPattern(
-                kind: Identifier(BindingIdentifier(
-                  span: Span(
-                    start: 3,
-                    end: 4,
-                  ),
-                  atom: Atom("a"),
-                  mutable: false,
-                )),
-                type_annotation: None,
-                optional: false,
-              ),
+          identifier: None,
+          params: FunctionParameters(
+            span: Span(
+              start: 2,
+              end: 8,
             ),
-            FunctionParameter(
-              span: Span(
-                start: 6,
-                end: 7,
+            items: [
+              FunctionParameter(
+                span: Span(
+                  start: 3,
+                  end: 4,
+                ),
+                pattern: BindingPattern(
+                  kind: Identifier(BindingIdentifier(
+                    span: Span(
+                      start: 3,
+                      end: 4,
+                    ),
+                    atom: Atom("a"),
+                    mutable: false,
+                  )),
+                  type_annotation: None,
+                  optional: false,
+                ),
               ),
-              pattern: BindingPattern(
-                kind: Identifier(BindingIdentifier(
-                  span: Span(
-                    start: 6,
-                    end: 7,
-                  ),
-                  atom: Atom("b"),
-                  mutable: false,
-                )),
-                type_annotation: None,
-                optional: false,
+              FunctionParameter(
+                span: Span(
+                  start: 6,
+                  end: 7,
+                ),
+                pattern: BindingPattern(
+                  kind: Identifier(BindingIdentifier(
+                    span: Span(
+                      start: 6,
+                      end: 7,
+                    ),
+                    atom: Atom("b"),
+                    mutable: false,
+                  )),
+                  type_annotation: None,
+                  optional: false,
+                ),
               ),
-            ),
-          ],
-          rest: None,
+            ],
+            rest: None,
+          ),
+          return_type: None,
         ),
-        return_type: None,
         body: Block(Block(
           statements: [
             Expression(Identifier(Identifier(

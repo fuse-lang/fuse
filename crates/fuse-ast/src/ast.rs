@@ -36,6 +36,8 @@ pub enum Statement {
     EnumDeclaration(Box<EnumDeclaration>),
     /// A struct declaration using struct keyword.
     StructDeclaration(Box<StructDeclaration>),
+    /// A struct declaration using struct keyword.
+    ImplStatement(Box<ImplStatement>),
 }
 
 #[serializable]
@@ -189,10 +191,17 @@ pub struct Identifier {
 #[derive(Debug, PartialEq)]
 pub struct Function {
     pub span: Span,
+    pub signature: FunctionSignature,
+    pub body: FunctionBody,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct FunctionSignature {
+    pub span: Span,
     pub identifier: Option<Identifier>,
     pub params: FunctionParameters,
     pub return_type: Option<TypeAnnotation>,
-    pub body: FunctionBody,
 }
 
 #[serializable]
@@ -407,4 +416,20 @@ pub enum ConstructionField {
     Expression(Expression),
     KeyValueArgument(KeyValueArgument),
     Spread(SpreadArgument),
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct ImplStatement {
+    pub span: Span,
+    pub target: TypeAnnotation,
+    pub r#trait: Option<()>,
+    pub methods: Vec<ImplMethod>,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct ImplMethod {
+    pub modifier: VisibilityModifier,
+    pub function: Function,
 }

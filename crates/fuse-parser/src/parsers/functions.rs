@@ -4,11 +4,25 @@ use crate::{
 };
 use fuse_ast::{
     BindingPattern, BindingPatternKind, Function, FunctionBody, FunctionParameter,
-    FunctionParameters, TypeAnnotation,
+    FunctionParameters, FunctionSignature, TypeAnnotation,
 };
 use fuse_common::Span;
 impl<'a> Parser<'a> {
     pub(crate) fn parse_function(&mut self, expect_identifier: bool) -> ParserResult<Function> {
+        let start = self.start_span();
+        let signature = self.parse_function_signature(expect_identifier)?;
+        let body = self.parse_function_body()?;
+        Ok(Function {
+            span: self.end_span(start),
+            signature,
+            body,
+        })
+    }
+
+    pub(crate) fn parse_function_signature(
+        &mut self,
+        expect_identifier: bool,
+    ) -> ParserResult<FunctionSignature> {
         let start = self.start_span();
         // Consume the keyword
         self.consume();
@@ -19,15 +33,15 @@ impl<'a> Parser<'a> {
         };
         let params = self.parse_function_parameters()?;
         let return_type = self.parse_function_return_type()?;
-        let body = self.parse_function_body()?;
-        Ok(Function {
+
+        Ok(FunctionSignature {
             span: self.end_span(start),
             identifier,
             params,
             return_type,
-            body,
         })
     }
+
     pub(crate) fn parse_function_parameters(&mut self) -> ParserResult<FunctionParameters> {
         let open = self.consume_expect(TokenKind::LParen)?;
         // Empty function parameters

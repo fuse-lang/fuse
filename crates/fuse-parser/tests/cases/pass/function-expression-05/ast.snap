@@ -16,35 +16,41 @@ Some(Chunk(
           start: 0,
           end: 19,
         ),
-        identifier: None,
-        params: FunctionParameters(
+        signature: FunctionSignature(
           span: Span(
-            start: 2,
+            start: 0,
             end: 10,
           ),
-          items: [
-            FunctionParameter(
-              span: Span(
-                start: 3,
-                end: 8,
-              ),
-              pattern: BindingPattern(
-                kind: Identifier(BindingIdentifier(
-                  span: Span(
-                    start: 3,
-                    end: 8,
-                  ),
-                  atom: Atom("value"),
-                  mutable: false,
-                )),
-                type_annotation: None,
-                optional: false,
-              ),
+          identifier: None,
+          params: FunctionParameters(
+            span: Span(
+              start: 2,
+              end: 10,
             ),
-          ],
-          rest: None,
+            items: [
+              FunctionParameter(
+                span: Span(
+                  start: 3,
+                  end: 8,
+                ),
+                pattern: BindingPattern(
+                  kind: Identifier(BindingIdentifier(
+                    span: Span(
+                      start: 3,
+                      end: 8,
+                    ),
+                    atom: Atom("value"),
+                    mutable: false,
+                  )),
+                  type_annotation: None,
+                  optional: false,
+                ),
+              ),
+            ],
+            rest: None,
+          ),
+          return_type: None,
         ),
-        return_type: None,
         body: Expression(Identifier(Identifier(
           span: Span(
             start: 14,

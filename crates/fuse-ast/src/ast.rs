@@ -423,7 +423,7 @@ pub enum ConstructionField {
 pub struct ImplStatement {
     pub span: Span,
     pub target: TypeAnnotation,
-    pub r#trait: Option<()>,
+    pub r#trait: Option<TypeAnnotation>,
     pub methods: Vec<ImplMethod>,
 }
 

@@ -1,0 +1,103 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+description: "impl Trait for Test\nend\n"
+expression: tokens
+input_file: crates/fuse-parser/tests/cases/pass/impl-statement-02/case.fuse
+---
+[
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 0,
+        end: 4,
+      ),
+      kind: Impl,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 4,
+          end: 5,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 5,
+        end: 10,
+      ),
+      kind: Identifier,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 10,
+          end: 11,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 11,
+        end: 14,
+      ),
+      kind: For,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 14,
+          end: 15,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 15,
+        end: 19,
+      ),
+      kind: Identifier,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 19,
+          end: 20,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 20,
+        end: 23,
+      ),
+      kind: End,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 23,
+          end: 24,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+]

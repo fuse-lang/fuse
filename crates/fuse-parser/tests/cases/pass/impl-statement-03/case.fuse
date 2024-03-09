@@ -1,0 +1,7 @@
+impl Test
+	fn test()
+	end
+
+	fn test2(foo: number, bar: number) -> Type
+	end
+end

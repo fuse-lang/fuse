@@ -33,7 +33,15 @@ impl<'a> Parser<'a> {
         }
 
         let identifier = self.parse_binding_identifier();
-        Ok(self.ast.binding_identifier_pattern(identifier, None, false))
+        let type_annotation = if self.consume_if(TokenKind::Colon).is_some() {
+            Some(self.parse_type_annotation()?)
+        } else {
+            None
+        };
+
+        Ok(self
+            .ast
+            .binding_identifier_pattern(identifier, type_annotation, false))
     }
 
     pub(crate) fn parse_binding_identifier(&mut self) -> BindingIdentifier {

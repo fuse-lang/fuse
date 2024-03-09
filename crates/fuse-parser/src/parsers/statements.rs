@@ -91,12 +91,18 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_impl_statement(&mut self) -> ParserResult<Statement> {
-        debug_assert!(self.at(TokenKind::Trait));
+        debug_assert!(self.at(TokenKind::Impl));
         let start = self.start_span();
         // Consume the struct keyword.
         self.consume();
 
-        let target = self.parse_type_annotation()?;
+        let (target, r#trait) = {
+            let first_type = self.parse_type_annotation()?;
+            match self.consume_if(TokenKind::For) {
+                Some(_) => (self.parse_type_annotation()?, Some(first_type)),
+                None => (first_type, None),
+            }
+        };
         let mut methods: Vec<ImplMethod> = Vec::new();
         while !self.at(TokenKind::End) {
             let modifier = self.try_parse_visibility_modifier();
@@ -108,7 +114,7 @@ impl<'a> Parser<'a> {
         Ok(self.ast.impl_statement(ImplStatement {
             span: self.end_span(start),
             target,
-            r#trait: None,
+            r#trait,
             methods,
         }))
     }

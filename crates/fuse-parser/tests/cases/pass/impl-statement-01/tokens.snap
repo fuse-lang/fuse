@@ -1,0 +1,65 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+description: "impl Test\nend\n"
+expression: tokens
+input_file: crates/fuse-parser/tests/cases/pass/impl-statement-01/case.fuse
+---
+[
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 0,
+        end: 4,
+      ),
+      kind: Impl,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 4,
+          end: 5,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 5,
+        end: 9,
+      ),
+      kind: Identifier,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 9,
+          end: 10,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 10,
+        end: 13,
+      ),
+      kind: End,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 13,
+          end: 14,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+]

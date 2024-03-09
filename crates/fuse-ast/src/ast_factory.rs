@@ -172,4 +172,30 @@ impl AstFactory {
             arguments,
         }))
     }
+
+    pub fn struct_construction_expression(
+        &self,
+        target: TypeAnnotation,
+        construction: ConstructionExpression,
+    ) -> Expression {
+        Expression::StructConstructionExpression(Box::from(StructConstructionExpression {
+            target,
+            construction,
+        }))
+    }
+
+    pub fn table_construction_expression(
+        &self,
+        construction: ConstructionExpression,
+    ) -> Expression {
+        Expression::TableConstructionExpression(Box::from(construction))
+    }
+
+    pub fn construction_expression(
+        &self,
+        span: Span,
+        fields: Vec<ConstructionField>,
+    ) -> ConstructionExpression {
+        ConstructionExpression { span, fields }
+    }
 }

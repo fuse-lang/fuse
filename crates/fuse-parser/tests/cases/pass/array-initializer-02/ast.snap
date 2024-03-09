@@ -53,7 +53,7 @@ Some(Chunk(
             value: 4.0,
             kind: Decimal,
           ))),
-          Spread(SpreadElement(
+          Spread(SpreadArgument(
             span: Span(
               start: 13,
               end: 36,
@@ -91,7 +91,7 @@ Some(Chunk(
                   value: 7.0,
                   kind: Decimal,
                 ))),
-                Spread(SpreadElement(
+                Spread(SpreadArgument(
                   span: Span(
                     start: 26,
                     end: 35,

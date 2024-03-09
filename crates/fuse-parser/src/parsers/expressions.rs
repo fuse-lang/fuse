@@ -1,7 +1,7 @@
 use crate::{lexer::TokenKind, Parser, ParserResult};
 use fuse_ast::{
-    ArrayExpressionElement, BinaryOperator, BooleanLiteral, Else, Expression, Identifier, If,
-    Precedence, SpreadElement, TupleExpressionElement,
+    ArrayExpressionElement, BinaryOperator, BooleanLiteral, ConstructionExpression, Else,
+    Expression, Identifier, If, Precedence, SpreadArgument, TupleExpressionElement,
 };
 
 impl<'a> Parser<'a> {
@@ -51,6 +51,7 @@ impl<'a> Parser<'a> {
             Not | Plus | Minus => self.parse_unary_operator_expression(),
             LBrack => self.parse_array_expression(),
             LParen => self.parse_tuple_or_parenthesized_expression(),
+            LCurly => self.parse_table_construction_expression(),
 
             _ => return None,
         };
@@ -127,25 +128,27 @@ impl<'a> Parser<'a> {
         let start = self.start_span();
         // consume the opening bracket
         self.consume();
-        let mut elements: Vec<ArrayExpressionElement> = Vec::new();
 
         // return early for empty arrays
         if self.consume_if(TokenKind::RBrack).is_some() {
-            return Ok(self.ast.array_expression(self.end_span(start), elements));
+            return Ok(self
+                .ast
+                .array_expression(self.end_span(start), Vec::default()));
         }
 
-        loop {
-            let element = match self.cur_kind() {
-                TokenKind::Dot3 => ArrayExpressionElement::Spread(self.parse_spread_element()?),
-                _ => ArrayExpressionElement::Expression(self.parse_expression()?),
-            };
-
-            elements.push(element);
-
-            if self.consume_if(TokenKind::Comma).is_none() {
-                break;
-            }
-        }
+        let (elements, _) =
+            self.parse_comma_seperated_expressions(|parser| match parser.cur_kind() {
+                TokenKind::Dot3 => Some(
+                    parser
+                        .parse_spread_element()
+                        .map(|expr| ArrayExpressionElement::Spread(expr)),
+                ),
+                _ => Some(
+                    parser
+                        .parse_expression()
+                        .map(|expr| ArrayExpressionElement::Expression(expr)),
+                ),
+            })?;
 
         self.consume_expect(TokenKind::RBrack)?;
 
@@ -201,16 +204,35 @@ impl<'a> Parser<'a> {
         }
     }
 
-    fn parse_spread_element(&mut self) -> ParserResult<SpreadElement> {
+    fn parse_spread_element(&mut self) -> ParserResult<SpreadArgument> {
         debug_assert!(self.at(TokenKind::Dot3));
         let start = self.start_span();
         // eat the spread operator.
         self.consume();
         let expression = self.parse_expression()?;
-        Ok(SpreadElement {
+        Ok(SpreadArgument {
             span: self.end_span(start),
             element: expression,
         })
+    }
+
+    fn parse_comma_seperated_expressions<R, F: Fn(&mut Parser<'a>) -> Option<ParserResult<R>>>(
+        &mut self,
+        parser: F,
+    ) -> ParserResult<(Vec<R>, bool)> {
+        let mut expressions = Vec::new();
+        let mut met_comma = false;
+
+        while let Some(expr) = parser(self) {
+            expressions.push(expr?);
+            if self.consume_if(TokenKind::Comma).is_none() {
+                break;
+            } else {
+                met_comma = true;
+            }
+        }
+
+        Ok((expressions, met_comma))
     }
 
     fn parse_expression_with_suffix(&mut self, expr: Expression) -> ParserResult<Expression> {
@@ -222,50 +244,65 @@ impl<'a> Parser<'a> {
         }
 
         match self.cur_kind() {
-            TokenKind::LCurly => {
-                todo!("parse construction")
-            }
+            TokenKind::LCurly => self.parse_struct_construction_expression(expr),
             TokenKind::LParen => self.parse_call_expression(expr),
             _ => Ok(expr),
         }
     }
 
-    fn parse_call_expression(&mut self, lhs: Expression) -> ParserResult<Expression> {
+    fn parse_struct_construction_expression(
+        &mut self,
+        expr: Expression,
+    ) -> ParserResult<Expression> {
+        let target = self.parse_type_annotation()?;
+        let construction = self.parse_construction_expression()?;
+        Ok(self
+            .ast
+            .struct_construction_expression(target, construction))
+    }
+
+    fn parse_table_construction_expression(&mut self) -> ParserResult<Expression> {
+        self.parse_construction_expression()
+            .map(|expr| self.ast.table_construction_expression(expr))
+    }
+
+    fn parse_construction_expression(&mut self) -> ParserResult<ConstructionExpression> {
+        debug_assert!(self.at(TokenKind::LCurly));
+        let start = self.start_span();
+        // consume openning curly
+        self.consume();
+        loop {}
+        todo!()
+    }
+
+    fn parse_call_expression(&mut self, expr: Expression) -> ParserResult<Expression> {
         let start = self.start_span();
         // consume the open parentheses
         self.consume();
-        let mut arguments: Vec<Expression> = Vec::new();
 
         // return early for calls with no arguments.
         if self.consume_if(TokenKind::RParen).is_some() {
             return Ok(self
                 .ast
-                .call_expression(self.end_span(start), lhs, arguments));
+                .call_expression(self.end_span(start), expr, Vec::default()));
         }
 
-        loop {
-            let argument = self.parse_expression()?;
-
-            arguments.push(argument);
-
-            if self.consume_if(TokenKind::Comma).is_none() {
-                break;
-            }
-        }
+        let (arguments, _) =
+            self.parse_comma_seperated_expressions(|parser| Some(parser.parse_expression()))?;
 
         self.consume_expect(TokenKind::RParen)?;
 
         Ok(self
             .ast
-            .call_expression(self.end_span(start), lhs, arguments))
+            .call_expression(self.end_span(start), expr, arguments))
     }
 
     fn parse_expression_with_precedence(
         &mut self,
-        lhs: Expression,
+        expr: Expression,
         min_precedence: Precedence,
     ) -> ParserResult<Expression> {
-        let mut lhs = lhs;
+        let mut lhs = expr;
         loop {
             // early return if there is no proceding binary operator.
             let Some(op_precedence) = self.cur_kind().to_precedence() else {

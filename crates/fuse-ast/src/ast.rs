@@ -107,6 +107,8 @@ pub enum Expression {
     TupleExpression(Box<TupleExpression>),
     ParenthesizedExpression(Box<ParenthesizedExpression>),
     CallExpression(Box<CallExpression>),
+    TableConstructionExpression(Box<ConstructionExpression>),
+    StructConstructionExpression(Box<StructConstructionExpression>),
 }
 
 #[serializable]
@@ -297,7 +299,7 @@ pub struct ArrayExpression {
 #[derive(Debug, PartialEq)]
 pub enum ArrayExpressionElement {
     Expression(Expression),
-    Spread(SpreadElement),
+    Spread(SpreadArgument),
 }
 
 #[serializable]
@@ -311,14 +313,22 @@ pub struct TupleExpression {
 #[derive(Debug, PartialEq)]
 pub enum TupleExpressionElement {
     Expression(Expression),
-    Spread(SpreadElement),
+    Spread(SpreadArgument),
 }
 
 #[serializable]
 #[derive(Debug, PartialEq)]
-pub struct SpreadElement {
+pub struct SpreadArgument {
     pub span: Span,
     pub element: Expression,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct KeyValueArgument {
+    pub span: Span,
+    pub key: Identifier,
+    pub value: Expression,
 }
 
 #[serializable]
@@ -372,4 +382,26 @@ pub struct CallExpression {
     pub span: Span,
     pub target: Expression,
     pub arguments: Vec<Expression>,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct StructConstructionExpression {
+    pub target: TypeAnnotation,
+    pub construction: ConstructionExpression,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct ConstructionExpression {
+    pub span: Span,
+    pub fields: Vec<ConstructionField>,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub enum ConstructionField {
+    Expression(Expression),
+    KeyValueArgument(KeyValueArgument),
+    Spread(SpreadArgument),
 }

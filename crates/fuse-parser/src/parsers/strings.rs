@@ -11,7 +11,6 @@ use fuse_common::Span;
 
 impl<'a> Parser<'a> {
     pub(crate) fn parse_string_literal(&mut self) -> ParserResult<StringLiteral> {
-        println!("MEM {:?}", self.cur_token());
         if self.at(TokenKind::InterpolatedStringHead) {
             return self.parse_string_interpolation();
         }

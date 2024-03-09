@@ -89,7 +89,6 @@ impl<'a> Parser<'a> {
         let cond = self.parse_expression()?;
         self.consume_expect(TokenKind::Then)?;
         let body = self.parse_block_while(|kind| {
-            println!("IF KIND {kind:?}");
             !matches! {
                 kind,
                     | TokenKind::End

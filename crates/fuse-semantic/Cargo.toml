@@ -1,11 +1,12 @@
 [package]
-name = "fusec"
-description = "The official compiler for the Fuse programming language."
+name = "fuse_semantic"
 version = "0.0.0"
+description.workspace = true
 authors.workspace = true
 license.workspace = true
 repository.workspace = true
 edition.workspace = true
 
 [dependencies]
-fuse_parser = { workspace = true }
+fuse_ast = { workspace = true }
+fuse_common = { workspace = true }

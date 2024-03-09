@@ -159,4 +159,17 @@ impl AstFactory {
     pub fn parenthesized_expression(&self, span: Span, expression: Expression) -> Expression {
         Expression::ParenthesizedExpression(Box::from(ParenthesizedExpression { span, expression }))
     }
+
+    pub fn call_expression(
+        &self,
+        span: Span,
+        target: Expression,
+        arguments: Vec<Expression>,
+    ) -> Expression {
+        Expression::CallExpression(Box::from(CallExpression {
+            span,
+            target,
+            arguments,
+        }))
+    }
 }

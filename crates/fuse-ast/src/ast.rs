@@ -106,6 +106,7 @@ pub enum Expression {
     ArrayExpression(Box<ArrayExpression>),
     TupleExpression(Box<TupleExpression>),
     ParenthesizedExpression(Box<ParenthesizedExpression>),
+    CallExpression(Box<CallExpression>),
 }
 
 #[serializable]
@@ -282,6 +283,7 @@ pub enum BinaryOperatorKind {
     Modulo(Span),
     ShiftLeft(Span),
     ShiftRight(Span),
+    Member(Span),
 }
 
 #[serializable]
@@ -362,4 +364,12 @@ pub enum VisibilityModifier {
 pub struct ParenthesizedExpression {
     pub span: Span,
     pub expression: Expression,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub struct CallExpression {
+    pub span: Span,
+    pub target: Expression,
+    pub arguments: Vec<Expression>,
 }

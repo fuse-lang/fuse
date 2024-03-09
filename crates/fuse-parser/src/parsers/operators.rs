@@ -81,6 +81,7 @@ impl<'a> Parser<'a> {
             Percent => Modulo
             LShift => ShiftLeft
             RShift => ShiftRight
+            Dot => Member
         }
     }
 

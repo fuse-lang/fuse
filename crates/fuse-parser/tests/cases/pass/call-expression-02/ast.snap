@@ -1,0 +1,52 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+description: "test(a, b, c)\n"
+expression: parsed.chunk
+input_file: crates/fuse-parser/tests/cases/pass/call-expression-02/case.fuse
+---
+Some(Chunk(
+  span: Span(
+    start: 0,
+    end: 14,
+  ),
+  body: Block(
+    statements: [
+      Expression(CallExpression(CallExpression(
+        span: Span(
+          start: 4,
+          end: 13,
+        ),
+        target: Identifier(Identifier(
+          span: Span(
+            start: 0,
+            end: 4,
+          ),
+          name: Atom("test"),
+        )),
+        arguments: [
+          Identifier(Identifier(
+            span: Span(
+              start: 5,
+              end: 6,
+            ),
+            name: Atom("a"),
+          )),
+          Identifier(Identifier(
+            span: Span(
+              start: 8,
+              end: 9,
+            ),
+            name: Atom("b"),
+          )),
+          Identifier(Identifier(
+            span: Span(
+              start: 11,
+              end: 12,
+            ),
+            name: Atom("c"),
+          )),
+        ],
+      ))),
+    ],
+  ),
+))

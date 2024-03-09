@@ -7,7 +7,6 @@ use fuse_ast::{
 impl<'a> Parser<'a> {
     pub(crate) fn parse_expression(&mut self) -> ParserResult<Expression> {
         let expr = self.parse_primary_expression()?;
-        let expr = self.parse_expression_with_suffix(expr)?;
         self.parse_expression_with_precedence(expr, Precedence::Expression)
     }
 
@@ -21,43 +20,46 @@ impl<'a> Parser<'a> {
 
     pub(crate) fn try_parse_primary_expression(&mut self) -> Option<ParserResult<Expression>> {
         use TokenKind::*;
-        match self.cur_kind() {
+        let expr = match self.cur_kind() {
             True => {
                 let token = self.consume();
-                Some(Ok(self.ast.boolean_expression(BooleanLiteral {
+                Ok(self.ast.boolean_expression(BooleanLiteral {
                     span: token.span(),
                     value: true,
-                })))
+                }))
             }
             False => {
                 let token = self.consume();
-                Some(Ok(self.ast.boolean_expression(BooleanLiteral {
+                Ok(self.ast.boolean_expression(BooleanLiteral {
                     span: token.span(),
                     value: false,
-                })))
+                }))
             }
-            NumberLiteral => Some(
-                self.parse_number_literal()
-                    .map(|expr| self.ast.number_expression(expr)),
-            ),
-            StringLiteral | InterpolatedStringHead => Some(
-                self.parse_string_literal()
-                    .map(|expr| self.ast.string_expression(expr)),
-            ),
-            Identifier => Some(
-                self.parse_identifier()
-                    .map(|id| self.ast.identifier_expression(id)),
-            ),
+            NumberLiteral => self
+                .parse_number_literal()
+                .map(|expr| self.ast.number_expression(expr)),
+            StringLiteral | InterpolatedStringHead => self
+                .parse_string_literal()
+                .map(|expr| self.ast.string_expression(expr)),
+            Identifier => self
+                .parse_identifier()
+                .map(|id| self.ast.identifier_expression(id)),
 
-            Function | TokenKind::Fn => Some(self.parse_function_expression()),
-            If => Some(self.parse_if_expression()),
+            Function | TokenKind::Fn => self.parse_function_expression(),
+            If => self.parse_if_expression(),
 
-            Not | Plus | Minus => Some(self.parse_unary_operator_expression()),
-            LBrack => Some(self.parse_array_expression()),
-            LParen => Some(self.parse_tuple_or_parenthesized_expression()),
+            Not | Plus | Minus => self.parse_unary_operator_expression(),
+            LBrack => self.parse_array_expression(),
+            LParen => self.parse_tuple_or_parenthesized_expression(),
 
-            _ => None,
-        }
+            _ => return None,
+        };
+
+        let Ok(expr) = expr else {
+            return Some(expr);
+        };
+
+        Some(self.parse_expression_with_suffix(expr))
     }
 
     pub(crate) fn parse_identifier(&mut self) -> ParserResult<Identifier> {
@@ -224,11 +226,39 @@ impl<'a> Parser<'a> {
             TokenKind::LCurly => {
                 todo!("parse construction")
             }
-            TokenKind::LParen => {
-                todo!("parse call expression")
-            }
+            TokenKind::LParen => self.parse_call_expression(expr),
             _ => Ok(expr),
         }
+    }
+
+    fn parse_call_expression(&mut self, lhs: Expression) -> ParserResult<Expression> {
+        let start = self.start_span();
+        // consume the open parentheses
+        self.consume();
+        let mut arguments: Vec<Expression> = Vec::new();
+
+        // return early for calls with no arguments.
+        if self.consume_if(TokenKind::RParen).is_some() {
+            return Ok(self
+                .ast
+                .call_expression(self.end_span(start), lhs, arguments));
+        }
+
+        loop {
+            let argument = self.parse_expression()?;
+
+            arguments.push(argument);
+
+            if self.consume_if(TokenKind::Comma).is_none() {
+                break;
+            }
+        }
+
+        self.consume_expect(TokenKind::RParen)?;
+
+        Ok(self
+            .ast
+            .call_expression(self.end_span(start), lhs, arguments))
     }
 
     fn parse_expression_with_precedence(

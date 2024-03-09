@@ -211,7 +211,6 @@ impl TokenKind {
         use TokenKind::*;
         match self {
             Eq => Some(Assignment),
-            LCurly => Some(Construction),
             Or => Some(LogicalOr),
             And => Some(LogicalAnd),
             Pipe => Some(BitwiseOr),
@@ -223,6 +222,7 @@ impl TokenKind {
             Plus | Minus => Some(Add),
             Star | Slash | Slash2 | Percent => Some(Multiply),
             Star2 => Some(Exponential),
+            Dot => Some(Member),
             _ => None,
         }
     }

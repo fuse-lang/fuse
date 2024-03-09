@@ -1,0 +1,30 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+description: "test()\n"
+expression: parsed.chunk
+input_file: crates/fuse-parser/tests/cases/pass/call-expression-01/case.fuse
+---
+Some(Chunk(
+  span: Span(
+    start: 0,
+    end: 7,
+  ),
+  body: Block(
+    statements: [
+      Expression(CallExpression(CallExpression(
+        span: Span(
+          start: 4,
+          end: 6,
+        ),
+        target: Identifier(Identifier(
+          span: Span(
+            start: 0,
+            end: 4,
+          ),
+          name: Atom("test"),
+        )),
+        arguments: [],
+      ))),
+    ],
+  ),
+))

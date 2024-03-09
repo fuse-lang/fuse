@@ -1,0 +1,63 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+description: "foo.bar().baz()\n"
+expression: parsed.chunk
+input_file: crates/fuse-parser/tests/cases/pass/call-expression-03/case.fuse
+---
+Some(Chunk(
+  span: Span(
+    start: 0,
+    end: 16,
+  ),
+  body: Block(
+    statements: [
+      Expression(BinaryOperator(BinaryOperator(
+        kind: Member(Span(
+          start: 3,
+          end: 4,
+        )),
+        lhs: Identifier(Identifier(
+          span: Span(
+            start: 0,
+            end: 3,
+          ),
+          name: Atom("foo"),
+        )),
+        rhs: BinaryOperator(BinaryOperator(
+          kind: Member(Span(
+            start: 9,
+            end: 10,
+          )),
+          lhs: CallExpression(CallExpression(
+            span: Span(
+              start: 7,
+              end: 9,
+            ),
+            target: Identifier(Identifier(
+              span: Span(
+                start: 4,
+                end: 7,
+              ),
+              name: Atom("bar"),
+            )),
+            arguments: [],
+          )),
+          rhs: CallExpression(CallExpression(
+            span: Span(
+              start: 13,
+              end: 15,
+            ),
+            target: Identifier(Identifier(
+              span: Span(
+                start: 10,
+                end: 13,
+              ),
+              name: Atom("baz"),
+            )),
+            arguments: [],
+          )),
+        )),
+      ))),
+    ],
+  ),
+))

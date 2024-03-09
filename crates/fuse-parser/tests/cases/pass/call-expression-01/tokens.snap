@@ -1,0 +1,49 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+description: "test()\n"
+expression: tokens
+input_file: crates/fuse-parser/tests/cases/pass/call-expression-01/case.fuse
+---
+[
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 0,
+        end: 4,
+      ),
+      kind: Identifier,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 4,
+        end: 5,
+      ),
+      kind: LParen,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 5,
+        end: 6,
+      ),
+      kind: RParen,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 6,
+          end: 7,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+]

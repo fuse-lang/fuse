@@ -30,6 +30,32 @@ pub trait Visitor<'ast>: Sized {
         walk_statement(self, &statement)
     }
 
+    fn visit_variable_declaration(&mut self, decl: &'ast VariableDeclaration) {
+        walk_variable_declaration(self, &decl)
+    }
+
+    fn visit_function_declaration(&mut self, decl: &'ast Function) {
+        walk_function(self, &decl)
+    }
+
+    fn visit_enum_declaration(&mut self, decl: &'ast EnumDeclaration) {
+        walk_enum_declaration(self, &decl)
+    }
+
+    fn visit_enum_variant(&mut self, var: &'ast EnumVariant) {
+        walk_enum_variant(self, &var)
+    }
+
+    fn visit_struct_declaration(&mut self, decl: &'ast StructDeclaration) {
+        walk_struct_declaration(self, &decl)
+    }
+
+    fn visit_struct_field(&mut self, field: &'ast StructField) {
+        walk_struct_field(self, &field)
+    }
+
+    fn visit_visibility_modifier(&mut self, _: &'ast VisibilityModifier) {}
+
     fn visit_expression(&mut self, expression: &'ast Expression) {
         walk_expression(self, &expression)
     }
@@ -87,7 +113,7 @@ pub trait Visitor<'ast>: Sized {
     }
 
     fn visit_table_construction_expression(&mut self, expr: &'ast ConstructionExpression) {
-        walk_table_construction_expression(self, expr)
+        walk_construction_expression(self, expr)
     }
 
     fn visit_struct_construction_expression(&mut self, expr: &'ast StructConstructionExpression) {
@@ -141,14 +167,24 @@ pub fn walk_block<'ast, V: Visitor<'ast>>(visitor: &mut V, block: &'ast Block) {
 
 pub fn walk_statement<'ast, V: Visitor<'ast>>(visitor: &mut V, statement: &'ast Statement) {
     match statement {
-    Statement::Empty(_) => {},
-    Statement::Expression(expr) => visit!(visitor.visit_expression(expr)),
-    _ => todo!()
-    // Statement::VariableDeclaration(Box<VariableDeclaration>),
-    // Statement::FunctionDeclaration(Box<Function>),
-    // Statement::EnumDeclaration(Box<EnumDeclaration>),
-    // Statement::StructDeclaration(Box<StructDeclaration>),
-    // Statement::ImplStatement(Box<ImplStatement>),
+        Statement::Empty(_) => {}
+        Statement::Expression(expr) => visit!(visitor.visit_expression(expr)),
+        Statement::VariableDeclaration(decl) => visit!(visitor.visit_variable_declaration(decl)),
+        Statement::FunctionDeclaration(func) => visit!(visitor.visit_function_declaration(func)),
+        Statement::EnumDeclaration(decl) => visit!(visitor.visit_enum_declaration(decl)),
+        // Statement::StructDeclaration(Box<StructDeclaration>),
+        // Statement::ImplStatement(Box<ImplStatement>),
+        _ => todo!(),
+    }
+}
+
+pub fn walk_variable_declaration<'ast, V: Visitor<'ast>>(
+    visitor: &mut V,
+    decl: &'ast VariableDeclaration,
+) {
+    visit!(visitor.visit_binding_pattern(&decl.binding));
+    if let Some(decl) = &decl.expression {
+        visit!(visitor.visit_expression(decl));
     }
 }
 
@@ -221,6 +257,32 @@ pub fn walk_function_body<'ast, V: Visitor<'ast>>(visitor: &mut V, body: &'ast F
     }
 }
 
+pub fn walk_enum_declaration<'ast, V: Visitor<'ast>>(visitor: &mut V, decl: &'ast EnumDeclaration) {
+    visit!(visitor.visit_identifier(&decl.identifier));
+    visit_list!(visitor.visit_enum_variant(&decl.variants));
+}
+
+pub fn walk_enum_variant<'ast, V: Visitor<'ast>>(visitor: &mut V, var: &'ast EnumVariant) {
+    visit!(visitor.visit_identifier(&var.identifier));
+    if let Some(value) = &var.value {
+        visit!(visitor.visit_expression(value));
+    }
+}
+
+pub fn walk_struct_declaration<'ast, V: Visitor<'ast>>(
+    visitor: &mut V,
+    decl: &'ast StructDeclaration,
+) {
+    visit!(visitor.visit_identifier(&decl.identifier));
+    visit_list!(visitor.visit_struct_field(&decl.fields));
+}
+
+pub fn walk_struct_field<'ast, V: Visitor<'ast>>(visitor: &mut V, decl: &'ast StructField) {
+    visit!(visitor.visit_visibility_modifier(&decl.modifier));
+    visit!(visitor.visit_identifier(&decl.identifier));
+    visit!(visitor.visit_type_annotation(&decl.type_annotation));
+}
+
 pub fn walk_if<'ast, V: Visitor<'ast>>(visitor: &mut V, r#if: &'ast If) {
     visit!(visitor.visit_expression(&r#if.cond));
     visit!(visitor.visit_block(&r#if.body));
@@ -257,13 +319,6 @@ pub fn walk_parenthesized_expression<'ast, V: Visitor<'ast>>(
     expr: &'ast ParenthesizedExpression,
 ) {
     visit!(visitor.visit_expression(&expr.expression))
-}
-
-pub fn walk_table_construction_expression<'ast, V: Visitor<'ast>>(
-    visitor: &mut V,
-    expr: &'ast ConstructionExpression,
-) {
-    visit!(visitor.visit_construction_expression(&expr));
 }
 
 pub fn walk_struct_construction_expression<'ast, V: Visitor<'ast>>(

@@ -96,13 +96,10 @@ impl<'a> Parser<'a> {
         // Consume the struct keyword.
         self.consume();
 
-        let (target, r#trait) = {
-            let first_type = self.parse_type_annotation()?;
-            match self.consume_if(TokenKind::For) {
-                Some(_) => (self.parse_type_annotation()?, Some(first_type)),
-                None => (first_type, None),
-            }
-        };
+        let r#trait = self.parse_type_annotation()?;
+        self.consume_expect(TokenKind::For)?;
+        let target = self.parse_type_annotation()?;
+
         let mut methods: Vec<ImplMethod> = Vec::new();
         while !self.at(TokenKind::End) {
             let modifier = self.try_parse_visibility_modifier();

@@ -1,20 +1,19 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
-description: "impl Trait for Test\nend\n"
 expression: parsed.chunk
 input_file: crates/fuse-parser/tests/cases/pass/impl-statement-02/case.fuse
 ---
 Some(Chunk(
   span: Span(
     start: 0,
-    end: 24,
+    end: 90,
   ),
   body: Block(
     statements: [
       ImplStatement(ImplStatement(
         span: Span(
           start: 0,
-          end: 23,
+          end: 89,
         ),
         target: TypeAnnotation(
           identifier: Identifier(
@@ -25,7 +24,7 @@ Some(Chunk(
             name: Atom("Test"),
           ),
         ),
-        trait: Some(TypeAnnotation(
+        trait: TypeAnnotation(
           identifier: Identifier(
             span: Span(
               start: 5,
@@ -33,8 +32,150 @@ Some(Chunk(
             ),
             name: Atom("Trait"),
           ),
-        )),
-        methods: [],
+        ),
+        methods: [
+          ImplMethod(
+            modifier: Private,
+            function: Function(
+              span: Span(
+                start: 21,
+                end: 35,
+              ),
+              signature: FunctionSignature(
+                span: Span(
+                  start: 21,
+                  end: 30,
+                ),
+                identifier: Some(Identifier(
+                  span: Span(
+                    start: 24,
+                    end: 28,
+                  ),
+                  name: Atom("test"),
+                )),
+                params: FunctionParameters(
+                  span: Span(
+                    start: 28,
+                    end: 30,
+                  ),
+                  items: [],
+                  rest: None,
+                ),
+                return_type: None,
+              ),
+              body: Block(Block(
+                statements: [],
+              )),
+            ),
+          ),
+          ImplMethod(
+            modifier: Private,
+            function: Function(
+              span: Span(
+                start: 38,
+                end: 85,
+              ),
+              signature: FunctionSignature(
+                span: Span(
+                  start: 38,
+                  end: 80,
+                ),
+                identifier: Some(Identifier(
+                  span: Span(
+                    start: 41,
+                    end: 46,
+                  ),
+                  name: Atom("test2"),
+                )),
+                params: FunctionParameters(
+                  span: Span(
+                    start: 46,
+                    end: 72,
+                  ),
+                  items: [
+                    FunctionParameter(
+                      span: Span(
+                        start: 47,
+                        end: 50,
+                      ),
+                      pattern: BindingPattern(
+                        kind: Identifier(BindingIdentifier(
+                          span: Span(
+                            start: 47,
+                            end: 50,
+                          ),
+                          identifier: Identifier(
+                            span: Span(
+                              start: 47,
+                              end: 50,
+                            ),
+                            name: Atom("foo"),
+                          ),
+                          mutable: false,
+                        )),
+                        type_annotation: Some(TypeAnnotation(
+                          identifier: Identifier(
+                            span: Span(
+                              start: 52,
+                              end: 58,
+                            ),
+                            name: Atom("number"),
+                          ),
+                        )),
+                        optional: false,
+                      ),
+                    ),
+                    FunctionParameter(
+                      span: Span(
+                        start: 60,
+                        end: 63,
+                      ),
+                      pattern: BindingPattern(
+                        kind: Identifier(BindingIdentifier(
+                          span: Span(
+                            start: 60,
+                            end: 63,
+                          ),
+                          identifier: Identifier(
+                            span: Span(
+                              start: 60,
+                              end: 63,
+                            ),
+                            name: Atom("bar"),
+                          ),
+                          mutable: false,
+                        )),
+                        type_annotation: Some(TypeAnnotation(
+                          identifier: Identifier(
+                            span: Span(
+                              start: 65,
+                              end: 71,
+                            ),
+                            name: Atom("number"),
+                          ),
+                        )),
+                        optional: false,
+                      ),
+                    ),
+                  ],
+                  rest: None,
+                ),
+                return_type: Some(TypeAnnotation(
+                  identifier: Identifier(
+                    span: Span(
+                      start: 76,
+                      end: 80,
+                    ),
+                    name: Atom("Type"),
+                  ),
+                )),
+              ),
+              body: Block(Block(
+                statements: [],
+              )),
+            ),
+          ),
+        ],
       )),
     ],
   ),

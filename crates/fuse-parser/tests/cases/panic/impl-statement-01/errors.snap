@@ -1,0 +1,30 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+description: "impl Test\nend\n"
+expression: parsed.errors
+input_file: crates/fuse-parser/tests/cases/panic/impl-statement-01/case.fuse
+---
+[
+  UnexpectedTokenKindError(
+    token: TokenReference(
+      token: Token(
+        span: Span(
+          start: 10,
+          end: 13,
+        ),
+        kind: End,
+      ),
+      leading_trivia: [],
+      trailing_trivia: [
+        Token(
+          span: Span(
+            start: 13,
+            end: 14,
+          ),
+          kind: Whitespace,
+        ),
+      ],
+    ),
+    expected: For,
+  ),
+]

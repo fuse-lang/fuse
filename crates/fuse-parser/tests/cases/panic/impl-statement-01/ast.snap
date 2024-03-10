@@ -1,39 +1,31 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
-description: "impl Trait for Test\nend\n"
+description: "impl Test\nend\n"
 expression: parsed.chunk
 input_file: crates/fuse-parser/tests/cases/pass/impl-statement-01/case.fuse
 ---
 Some(Chunk(
   span: Span(
     start: 0,
-    end: 24,
+    end: 14,
   ),
   body: Block(
     statements: [
       ImplStatement(ImplStatement(
         span: Span(
           start: 0,
-          end: 23,
+          end: 13,
         ),
         target: TypeAnnotation(
           identifier: Identifier(
             span: Span(
-              start: 15,
-              end: 19,
+              start: 5,
+              end: 9,
             ),
             name: Atom("Test"),
           ),
         ),
-        trait: TypeAnnotation(
-          identifier: Identifier(
-            span: Span(
-              start: 5,
-              end: 10,
-            ),
-            name: Atom("Trait"),
-          ),
-        ),
+        trait: None,
         methods: [],
       )),
     ],

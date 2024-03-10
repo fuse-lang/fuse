@@ -1,2 +1,2 @@
-impl Test
+impl Trait for Test
 end

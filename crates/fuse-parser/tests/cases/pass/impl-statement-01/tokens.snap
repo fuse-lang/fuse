@@ -1,8 +1,8 @@
 ---
 source: crates/fuse-parser/tests/cases/mod.rs
-description: "impl Test\nend\n"
+description: "impl Trait for Test\nend\n"
 expression: tokens
-input_file: crates/fuse-parser/tests/cases/pass/impl-statement-01/case.fuse
+input_file: crates/fuse-parser/tests/cases/pass/impl-statement-02/case.fuse
 ---
 [
   TokenReference(
@@ -28,7 +28,7 @@ input_file: crates/fuse-parser/tests/cases/pass/impl-statement-01/case.fuse
     token: Token(
       span: Span(
         start: 5,
-        end: 9,
+        end: 10,
       ),
       kind: Identifier,
     ),
@@ -36,8 +36,8 @@ input_file: crates/fuse-parser/tests/cases/pass/impl-statement-01/case.fuse
     trailing_trivia: [
       Token(
         span: Span(
-          start: 9,
-          end: 10,
+          start: 10,
+          end: 11,
         ),
         kind: Whitespace,
       ),
@@ -46,8 +46,46 @@ input_file: crates/fuse-parser/tests/cases/pass/impl-statement-01/case.fuse
   TokenReference(
     token: Token(
       span: Span(
-        start: 10,
-        end: 13,
+        start: 11,
+        end: 14,
+      ),
+      kind: For,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 14,
+          end: 15,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 15,
+        end: 19,
+      ),
+      kind: Identifier,
+    ),
+    leading_trivia: [],
+    trailing_trivia: [
+      Token(
+        span: Span(
+          start: 19,
+          end: 20,
+        ),
+        kind: Whitespace,
+      ),
+    ],
+  ),
+  TokenReference(
+    token: Token(
+      span: Span(
+        start: 20,
+        end: 23,
       ),
       kind: End,
     ),
@@ -55,8 +93,8 @@ input_file: crates/fuse-parser/tests/cases/pass/impl-statement-01/case.fuse
     trailing_trivia: [
       Token(
         span: Span(
-          start: 13,
-          end: 14,
+          start: 23,
+          end: 24,
         ),
         kind: Whitespace,
       ),

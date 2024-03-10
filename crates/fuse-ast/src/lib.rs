@@ -1,6 +1,7 @@
 mod ast;
 mod ast_factory;
 mod precedence;
+mod visit;
 
 pub use ast::*;
 pub use ast_factory::*;

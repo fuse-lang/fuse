@@ -10,7 +10,7 @@ macro_rules! visit {
 }
 
 macro_rules! visit_list {
-    ($visitor:ident, $method:ident, $list:expr $(, $($extra_args:expr), *)?) => {
+    ($visitor:ident.$method:ident($list:expr $(, $($extra_args:expr), *)?)) => {
         for elem in $list {
             visit!($visitor.$method(elem $(, $($extra_args),*)?))
         }
@@ -62,6 +62,54 @@ pub trait Visitor<'ast>: Sized {
         walk_function_body(self, &body)
     }
 
+    fn visit_if(&mut self, r#if: &'ast If) {
+        walk_if(self, &r#if)
+    }
+
+    fn visit_else(&mut self, r#else: &'ast Else) {
+        walk_else(self, &r#else)
+    }
+
+    fn visit_unary_operator(&mut self, op: &'ast UnaryOperator) {
+        walk_unary_operator(self, op)
+    }
+
+    fn visit_binary_operator(&mut self, op: &'ast BinaryOperator) {
+        walk_binary_operator(self, op)
+    }
+
+    fn visit_array_expression(&mut self, array: &'ast ArrayExpression) {
+        walk_array_expression(self, array)
+    }
+
+    fn visit_parenthesized_expression(&mut self, expr: &'ast ParenthesizedExpression) {
+        walk_parenthesized_expression(self, expr)
+    }
+
+    fn visit_table_construction_expression(&mut self, expr: &'ast ConstructionExpression) {
+        walk_table_construction_expression(self, expr)
+    }
+
+    fn visit_struct_construction_expression(&mut self, expr: &'ast StructConstructionExpression) {
+        walk_struct_construction_expression(self, expr)
+    }
+
+    fn visit_construction_expression(&mut self, expr: &'ast ConstructionExpression) {
+        walk_construction_expression(self, expr)
+    }
+
+    fn visit_construction_field(&mut self, field: &'ast ConstructionField) {
+        walk_construction_field(self, field)
+    }
+
+    fn visit_call_expression(&mut self, call: &'ast CallExpression) {
+        walk_call_expression(self, call)
+    }
+
+    fn visit_array_expression_element(&mut self, element: &'ast ArrayExpressionElement) {
+        walk_array_expression_element(self, element)
+    }
+
     fn visit_binding_pattern(&mut self, pattern: &'ast BindingPattern) {
         walk_binding_pattern(self, &pattern)
     }
@@ -70,8 +118,16 @@ pub trait Visitor<'ast>: Sized {
         walk_binding_identifier(self, &pattern)
     }
 
-    fn visit_binding_rest(&mut self, rest: &'ast BindingRest) {
-        walk_binding_rest(self, &rest)
+    fn visit_binding_rest(&mut self, arg: &'ast BindingRest) {
+        walk_binding_rest(self, &arg)
+    }
+
+    fn visit_key_value_argument(&mut self, arg: &'ast KeyValueArgument) {
+        walk_key_value_argument(self, &arg)
+    }
+
+    fn visit_spread_argument(&mut self, arg: &'ast SpreadArgument) {
+        walk_spread_argument(self, &arg)
     }
 
     fn visit_type_annotation(&mut self, annotation: &'ast TypeAnnotation) {
@@ -80,7 +136,7 @@ pub trait Visitor<'ast>: Sized {
 }
 
 pub fn walk_block<'ast, V: Visitor<'ast>>(visitor: &mut V, block: &'ast Block) {
-    visit_list!(visitor, visit_statement, &block.statements)
+    visit_list!(visitor.visit_statement(&block.statements))
 }
 
 pub fn walk_statement<'ast, V: Visitor<'ast>>(visitor: &mut V, statement: &'ast Statement) {
@@ -98,22 +154,26 @@ pub fn walk_statement<'ast, V: Visitor<'ast>>(visitor: &mut V, statement: &'ast 
 
 pub fn walk_expression<'ast, V: Visitor<'ast>>(visitor: &mut V, expression: &'ast Expression) {
     match expression {
-        Expression::NumberLiteral(lit) => visit!(visitor.visit_number_literal(lit)),
-        Expression::StringLiteral(lit) => visit!(visitor.visit_string_literal(lit)),
-        Expression::BooleanLiteral(lit) => visit!(visitor.visit_boolean_literal(lit)),
-        Expression::Identifier(ident) => visit!(visitor.visit_identifier(ident)),
-        Expression::Function(func) => visit!(visitor.visit_function(func)),
-
-        // Expression::If(e),
-        // Expression::UnaryOperator(e),
-        // Expression::BinaryOperator(e),
-        // Expression::ArrayExpression(e),
-        // Expression::TupleExpression(e),
-        // Expression::ParenthesizedExpression(e),
-        // Expression::CallExpression(e),
-        // Expression::TableConstructionExpression(e),
-        // Expression::StructConstructionExpression(e),
-        _ => todo!(),
+        Expression::NumberLiteral(expr) => visit!(visitor.visit_number_literal(expr)),
+        Expression::StringLiteral(expr) => visit!(visitor.visit_string_literal(expr)),
+        Expression::BooleanLiteral(expr) => visit!(visitor.visit_boolean_literal(expr)),
+        Expression::Identifier(expr) => visit!(visitor.visit_identifier(expr)),
+        Expression::Function(expr) => visit!(visitor.visit_function(expr)),
+        Expression::If(expr) => visit!(visitor.visit_if(expr)),
+        Expression::UnaryOperator(expr) => visit!(visitor.visit_unary_operator(expr)),
+        Expression::BinaryOperator(expr) => visit!(visitor.visit_binary_operator(expr)),
+        Expression::ArrayExpression(expr) => visit!(visitor.visit_array_expression(expr)),
+        Expression::TupleExpression(..) => todo!(),
+        Expression::ParenthesizedExpression(expr) => {
+            visit!(visitor.visit_parenthesized_expression(expr))
+        }
+        Expression::CallExpression(expr) => visit!(visitor.visit_call_expression(expr)),
+        Expression::TableConstructionExpression(expr) => {
+            visit!(visitor.visit_table_construction_expression(expr))
+        }
+        Expression::StructConstructionExpression(expr) => {
+            visit!(visitor.visit_struct_construction_expression(expr))
+        }
     }
 }
 
@@ -161,6 +221,92 @@ pub fn walk_function_body<'ast, V: Visitor<'ast>>(visitor: &mut V, body: &'ast F
     }
 }
 
+pub fn walk_if<'ast, V: Visitor<'ast>>(visitor: &mut V, r#if: &'ast If) {
+    visit!(visitor.visit_expression(&r#if.cond));
+    visit!(visitor.visit_block(&r#if.body));
+    if let Some(r#else) = &r#if.r#else {
+        visit!(visitor.visit_else(r#else));
+    }
+}
+
+pub fn walk_else<'ast, V: Visitor<'ast>>(visitor: &mut V, r#else: &'ast Else) {
+    match r#else {
+        Else::If(r#if) => visit!(visitor.visit_if(r#if)),
+        Else::Block(block) => visit!(visitor.visit_block(block)),
+    }
+}
+
+pub fn walk_unary_operator<'ast, V: Visitor<'ast>>(visitor: &mut V, op: &'ast UnaryOperator) {
+    visit!(visitor.visit_expression(&op.expression))
+}
+
+pub fn walk_binary_operator<'ast, V: Visitor<'ast>>(visitor: &mut V, op: &'ast BinaryOperator) {
+    visit!(visitor.visit_expression(&op.lhs));
+    visit!(visitor.visit_expression(&op.rhs));
+}
+
+pub fn walk_array_expression<'ast, V: Visitor<'ast>>(
+    visitor: &mut V,
+    array: &'ast ArrayExpression,
+) {
+    visit_list!(visitor.visit_array_expression_element(&array.elements))
+}
+
+pub fn walk_parenthesized_expression<'ast, V: Visitor<'ast>>(
+    visitor: &mut V,
+    expr: &'ast ParenthesizedExpression,
+) {
+    visit!(visitor.visit_expression(&expr.expression))
+}
+
+pub fn walk_table_construction_expression<'ast, V: Visitor<'ast>>(
+    visitor: &mut V,
+    expr: &'ast ConstructionExpression,
+) {
+    visit!(visitor.visit_construction_expression(&expr));
+}
+
+pub fn walk_struct_construction_expression<'ast, V: Visitor<'ast>>(
+    visitor: &mut V,
+    expr: &'ast StructConstructionExpression,
+) {
+    visit!(visitor.visit_expression(&expr.target));
+    visit!(visitor.visit_construction_expression(&expr.construction));
+}
+
+pub fn walk_construction_expression<'ast, V: Visitor<'ast>>(
+    visitor: &mut V,
+    expr: &'ast ConstructionExpression,
+) {
+    visit_list!(visitor.visit_construction_field(&expr.fields))
+}
+
+pub fn walk_construction_field<'ast, V: Visitor<'ast>>(
+    visitor: &mut V,
+    field: &'ast ConstructionField,
+) {
+    match field {
+        ConstructionField::Expression(expr) => visit!(visitor.visit_expression(expr)),
+        ConstructionField::KeyValueArgument(kv) => visit!(visitor.visit_key_value_argument(kv)),
+        ConstructionField::Spread(spread) => visit!(visitor.visit_spread_argument(spread)),
+    }
+}
+
+pub fn walk_call_expression<'ast, V: Visitor<'ast>>(visitor: &mut V, call: &'ast CallExpression) {
+    visit!(visitor.visit_expression(&call.target));
+    visit_list!(visitor.visit_expression(&call.arguments));
+}
+
+pub fn walk_array_expression_element<'ast, V: Visitor<'ast>>(
+    visitor: &mut V,
+    element: &'ast ArrayExpressionElement,
+) {
+    match element {
+        ArrayExpressionElement::Expression(expr) => visit!(visitor.visit_expression(expr)),
+        ArrayExpressionElement::Spread(spread) => visit!(visitor.visit_spread_argument(spread)),
+    }
+}
+
 pub fn walk_binding_pattern<'ast, V: Visitor<'ast>>(
     visitor: &mut V,
     pattern: &'ast BindingPattern,
@@ -187,10 +333,23 @@ pub fn walk_binding_rest<'ast, V: Visitor<'ast>>(visitor: &mut V, rest: &'ast Bi
     };
 }
 
+pub fn walk_key_value_argument<'ast, V: Visitor<'ast>>(
+    visitor: &mut V,
+    kv: &'ast KeyValueArgument,
+) {
+    visit!(visitor.visit_identifier(&kv.key));
+    visit!(visitor.visit_expression(&kv.value));
+}
+
+pub fn walk_spread_argument<'ast, V: Visitor<'ast>>(visitor: &mut V, spread: &'ast SpreadArgument) {
+    visit!(visitor.visit_expression(&spread.element));
+}
+
 pub fn walk_type_annotation<'ast, V: Visitor<'ast>>(
     visitor: &mut V,
     annotation: &'ast TypeAnnotation,
 ) {
+    println!("not implemented.")
 }
 
 pub fn walk_template<'ast, V: Visitor<'ast>>(visitor: &mut V, expression: &'ast Expression) {}

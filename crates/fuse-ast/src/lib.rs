@@ -6,3 +6,4 @@ mod visit;
 pub use ast::*;
 pub use ast_factory::*;
 pub use precedence::*;
+pub use visit::*;

@@ -39,7 +39,13 @@ Some(Chunk(
                       start: 3,
                       end: 8,
                     ),
-                    atom: Atom("value"),
+                    identifier: Identifier(
+                      span: Span(
+                        start: 3,
+                        end: 8,
+                      ),
+                      name: Atom("value"),
+                    ),
                     mutable: false,
                   )),
                   type_annotation: None,

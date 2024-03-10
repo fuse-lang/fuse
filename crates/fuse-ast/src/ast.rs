@@ -82,7 +82,7 @@ pub enum BindingPatternKind {
 #[derive(Debug, PartialEq)]
 pub struct BindingIdentifier {
     pub span: Span,
-    pub atom: Atom,
+    pub identifier: Identifier,
     pub mutable: bool,
 }
 
@@ -100,7 +100,9 @@ pub struct Atom(pub Rc<str>);
 #[serializable]
 #[derive(Debug, PartialEq)]
 pub enum Expression {
-    Literal(Box<Literal>),
+    NumberLiteral(Box<NumberLiteral>),
+    StringLiteral(Box<StringLiteral>),
+    BooleanLiteral(Box<BooleanLiteral>),
     Identifier(Box<Identifier>),
     Function(Box<Function>),
     If(Box<If>),
@@ -112,14 +114,6 @@ pub enum Expression {
     CallExpression(Box<CallExpression>),
     TableConstructionExpression(Box<ConstructionExpression>),
     StructConstructionExpression(Box<StructConstructionExpression>),
-}
-
-#[serializable]
-#[derive(Debug, PartialEq)]
-pub enum Literal {
-    Number(NumberLiteral),
-    String(StringLiteral),
-    Boolean(BooleanLiteral),
 }
 
 #[serializable]

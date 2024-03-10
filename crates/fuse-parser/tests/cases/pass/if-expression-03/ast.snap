@@ -24,7 +24,7 @@ Some(Chunk(
         )),
         body: Block(
           statements: [
-            Expression(Literal(String(StringLiteral(
+            Expression(StringLiteral(StringLiteral(
               span: Span(
                 start: 15,
                 end: 25,
@@ -35,7 +35,7 @@ Some(Chunk(
                   end: 25,
                 ))),
               ],
-            )))),
+            ))),
           ],
         ),
         else: Some(If(If(
@@ -52,7 +52,7 @@ Some(Chunk(
           )),
           body: Block(
             statements: [
-              Expression(Literal(String(StringLiteral(
+              Expression(StringLiteral(StringLiteral(
                 span: Span(
                   start: 45,
                   end: 59,
@@ -63,12 +63,12 @@ Some(Chunk(
                     end: 59,
                   ))),
                 ],
-              )))),
+              ))),
             ],
           ),
           else: Some(Block(Block(
             statements: [
-              Expression(Literal(String(StringLiteral(
+              Expression(StringLiteral(StringLiteral(
                 span: Span(
                   start: 66,
                   end: 78,
@@ -79,7 +79,7 @@ Some(Chunk(
                     end: 78,
                   ))),
                 ],
-              )))),
+              ))),
             ],
           ))),
         ))),

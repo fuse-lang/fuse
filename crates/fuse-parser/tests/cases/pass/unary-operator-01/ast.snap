@@ -16,13 +16,13 @@ Some(Chunk(
           start: 0,
           end: 3,
         )),
-        expression: Literal(Boolean(BooleanLiteral(
+        expression: BooleanLiteral(BooleanLiteral(
           span: Span(
             start: 4,
             end: 8,
           ),
           value: true,
-        ))),
+        )),
       ))),
     ],
   ),

@@ -45,7 +45,13 @@ Some(Chunk(
                       start: 14,
                       end: 15,
                     ),
-                    atom: Atom("a"),
+                    identifier: Identifier(
+                      span: Span(
+                        start: 14,
+                        end: 15,
+                      ),
+                      name: Atom("a"),
+                    ),
                     mutable: false,
                   )),
                   type_annotation: None,
@@ -63,7 +69,13 @@ Some(Chunk(
                       start: 17,
                       end: 18,
                     ),
-                    atom: Atom("b"),
+                    identifier: Identifier(
+                      span: Span(
+                        start: 17,
+                        end: 18,
+                      ),
+                      name: Atom("b"),
+                    ),
                     mutable: false,
                   )),
                   type_annotation: None,
@@ -81,7 +93,13 @@ Some(Chunk(
                       start: 20,
                       end: 21,
                     ),
-                    atom: Atom("c"),
+                    identifier: Identifier(
+                      span: Span(
+                        start: 20,
+                        end: 21,
+                      ),
+                      name: Atom("c"),
+                    ),
                     mutable: false,
                   )),
                   type_annotation: None,

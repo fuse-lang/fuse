@@ -32,7 +32,7 @@ impl<'a> Parser<'a> {
             return Err(Self::unexpected_error(self.cur_token()));
         }
 
-        let identifier = self.parse_binding_identifier();
+        let identifier = self.parse_binding_identifier()?;
         let type_annotation = if self.consume_if(TokenKind::Colon).is_some() {
             Some(self.parse_type_annotation()?)
         } else {
@@ -44,16 +44,13 @@ impl<'a> Parser<'a> {
             .binding_identifier_pattern(identifier, type_annotation, false))
     }
 
-    pub(crate) fn parse_binding_identifier(&mut self) -> BindingIdentifier {
+    pub(crate) fn parse_binding_identifier(&mut self) -> ParserResult<BindingIdentifier> {
         let mut span = self.start_span();
         let mutable = self.consume_if(TokenKind::Mut).is_some();
-        let token = self.consume();
-        let name = self.view_token(*token);
+        let identifier = self.parse_identifier()?;
 
         span = self.end_span(span);
 
-        let atom = self.ast.atom(name);
-
-        self.ast.binding_identifier(span, atom, mutable)
+        Ok(self.ast.binding_identifier(span, identifier, mutable))
     }
 }

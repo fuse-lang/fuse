@@ -41,7 +41,7 @@ Some(Chunk(
               name: Atom("x"),
             )),
           )),
-          rhs: Literal(Number(NumberLiteral(
+          rhs: NumberLiteral(NumberLiteral(
             span: Span(
               start: 9,
               end: 10,
@@ -49,7 +49,7 @@ Some(Chunk(
             raw: Atom("2"),
             value: 2.0,
             kind: Decimal,
-          ))),
+          )),
         )),
       ))),
     ],

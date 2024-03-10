@@ -11,14 +11,14 @@ Some(Chunk(
   ),
   body: Block(
     statements: [
-      Expression(Literal(String(StringLiteral(
+      Expression(StringLiteral(StringLiteral(
         span: Span(
           start: 0,
           end: 26,
         ),
         segments: [
           Interpolated(InterpolatedStringSegment(
-            expression: Literal(String(StringLiteral(
+            expression: StringLiteral(StringLiteral(
               span: Span(
                 start: 10,
                 end: 17,
@@ -29,11 +29,11 @@ Some(Chunk(
                   end: 17,
                 ))),
               ],
-            ))),
+            )),
             format: Display,
           )),
         ],
-      )))),
+      ))),
     ],
   ),
 ))

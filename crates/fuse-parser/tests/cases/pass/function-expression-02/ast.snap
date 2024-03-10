@@ -34,7 +34,7 @@ Some(Chunk(
         ),
         body: Block(Block(
           statements: [
-            Expression(Literal(String(StringLiteral(
+            Expression(StringLiteral(StringLiteral(
               span: Span(
                 start: 6,
                 end: 19,
@@ -45,7 +45,7 @@ Some(Chunk(
                   end: 19,
                 ))),
               ],
-            )))),
+            ))),
           ],
         )),
       ))),

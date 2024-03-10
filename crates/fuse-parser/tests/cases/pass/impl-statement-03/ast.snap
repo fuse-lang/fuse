@@ -96,7 +96,13 @@ Some(Chunk(
                             start: 37,
                             end: 40,
                           ),
-                          atom: Atom("foo"),
+                          identifier: Identifier(
+                            span: Span(
+                              start: 37,
+                              end: 40,
+                            ),
+                            name: Atom("foo"),
+                          ),
                           mutable: false,
                         )),
                         type_annotation: Some(TypeAnnotation(
@@ -122,7 +128,13 @@ Some(Chunk(
                             start: 50,
                             end: 53,
                           ),
-                          atom: Atom("bar"),
+                          identifier: Identifier(
+                            span: Span(
+                              start: 50,
+                              end: 53,
+                            ),
+                            name: Atom("bar"),
+                          ),
                           mutable: false,
                         )),
                         type_annotation: Some(TypeAnnotation(

@@ -11,24 +11,24 @@ Some(Chunk(
   ),
   body: Block(
     statements: [
-      Expression(Literal(String(StringLiteral(
+      Expression(StringLiteral(StringLiteral(
         span: Span(
           start: 0,
           end: 24,
         ),
         segments: [
           Interpolated(InterpolatedStringSegment(
-            expression: Literal(Boolean(BooleanLiteral(
+            expression: BooleanLiteral(BooleanLiteral(
               span: Span(
                 start: 10,
                 end: 14,
               ),
               value: true,
-            ))),
+            )),
             format: Display,
           )),
         ],
-      )))),
+      ))),
     ],
   ),
 ))

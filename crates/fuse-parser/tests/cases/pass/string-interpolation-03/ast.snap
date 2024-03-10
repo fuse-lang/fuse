@@ -11,7 +11,7 @@ Some(Chunk(
   ),
   body: Block(
     statements: [
-      Expression(Literal(String(StringLiteral(
+      Expression(StringLiteral(StringLiteral(
         span: Span(
           start: 0,
           end: 18,
@@ -28,7 +28,7 @@ Some(Chunk(
             format: Display,
           )),
         ],
-      )))),
+      ))),
     ],
   ),
 ))

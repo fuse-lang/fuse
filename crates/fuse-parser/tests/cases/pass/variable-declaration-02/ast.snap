@@ -23,13 +23,19 @@ Some(Chunk(
               start: 4,
               end: 6,
             ),
-            atom: Atom("id"),
+            identifier: Identifier(
+              span: Span(
+                start: 4,
+                end: 6,
+              ),
+              name: Atom("id"),
+            ),
             mutable: false,
           )),
           type_annotation: None,
           optional: false,
         ),
-        expression: Some(Literal(String(StringLiteral(
+        expression: Some(StringLiteral(StringLiteral(
           span: Span(
             start: 9,
             end: 16,
@@ -40,7 +46,7 @@ Some(Chunk(
               end: 16,
             ))),
           ],
-        )))),
+        ))),
       )),
     ],
   ),

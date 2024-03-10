@@ -16,7 +16,7 @@ Some(Chunk(
           start: 7,
           end: 9,
         )),
-        lhs: Literal(Number(NumberLiteral(
+        lhs: NumberLiteral(NumberLiteral(
           span: Span(
             start: 0,
             end: 6,
@@ -24,8 +24,8 @@ Some(Chunk(
           raw: Atom("0b0101"),
           value: 5.0,
           kind: Binary,
-        ))),
-        rhs: Literal(Number(NumberLiteral(
+        )),
+        rhs: NumberLiteral(NumberLiteral(
           span: Span(
             start: 10,
             end: 11,
@@ -33,7 +33,7 @@ Some(Chunk(
           raw: Atom("1"),
           value: 1.0,
           kind: Decimal,
-        ))),
+        )),
       ))),
     ],
   ),

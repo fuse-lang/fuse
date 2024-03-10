@@ -17,7 +17,7 @@ Some(Chunk(
           end: 15,
         ),
         elements: [
-          Expression(Literal(Number(NumberLiteral(
+          Expression(NumberLiteral(NumberLiteral(
             span: Span(
               start: 1,
               end: 2,
@@ -25,8 +25,8 @@ Some(Chunk(
             raw: Atom("1"),
             value: 1.0,
             kind: Decimal,
-          )))),
-          Expression(Literal(Number(NumberLiteral(
+          ))),
+          Expression(NumberLiteral(NumberLiteral(
             span: Span(
               start: 4,
               end: 5,
@@ -34,8 +34,8 @@ Some(Chunk(
             raw: Atom("2"),
             value: 2.0,
             kind: Decimal,
-          )))),
-          Expression(Literal(Number(NumberLiteral(
+          ))),
+          Expression(NumberLiteral(NumberLiteral(
             span: Span(
               start: 7,
               end: 8,
@@ -43,8 +43,8 @@ Some(Chunk(
             raw: Atom("3"),
             value: 3.0,
             kind: Decimal,
-          )))),
-          Expression(Literal(Number(NumberLiteral(
+          ))),
+          Expression(NumberLiteral(NumberLiteral(
             span: Span(
               start: 10,
               end: 11,
@@ -52,8 +52,8 @@ Some(Chunk(
             raw: Atom("4"),
             value: 4.0,
             kind: Decimal,
-          )))),
-          Expression(Literal(Number(NumberLiteral(
+          ))),
+          Expression(NumberLiteral(NumberLiteral(
             span: Span(
               start: 13,
               end: 14,
@@ -61,7 +61,7 @@ Some(Chunk(
             raw: Atom("5"),
             value: 5.0,
             kind: Decimal,
-          )))),
+          ))),
         ],
       ))),
     ],

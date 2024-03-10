@@ -16,7 +16,7 @@ Some(Chunk(
           start: 0,
           end: 9,
         ),
-        expression: Literal(String(StringLiteral(
+        expression: StringLiteral(StringLiteral(
           span: Span(
             start: 1,
             end: 8,
@@ -27,7 +27,7 @@ Some(Chunk(
               end: 8,
             ))),
           ],
-        ))),
+        )),
       ))),
     ],
   ),

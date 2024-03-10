@@ -23,13 +23,19 @@ Some(Chunk(
               start: 6,
               end: 8,
             ),
-            atom: Atom("PI"),
+            identifier: Identifier(
+              span: Span(
+                start: 6,
+                end: 8,
+              ),
+              name: Atom("PI"),
+            ),
             mutable: false,
           )),
           type_annotation: None,
           optional: false,
         ),
-        expression: Some(Literal(Number(NumberLiteral(
+        expression: Some(NumberLiteral(NumberLiteral(
           span: Span(
             start: 11,
             end: 15,
@@ -37,7 +43,7 @@ Some(Chunk(
           raw: Atom("3.14"),
           value: 3.14,
           kind: Float,
-        )))),
+        ))),
       )),
     ],
   ),

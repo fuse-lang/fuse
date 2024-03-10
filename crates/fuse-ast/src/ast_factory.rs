@@ -85,10 +85,15 @@ impl AstFactory {
         }
     }
 
-    pub fn binding_identifier(&self, span: Span, atom: Atom, mutable: bool) -> BindingIdentifier {
+    pub fn binding_identifier(
+        &self,
+        span: Span,
+        identifier: Identifier,
+        mutable: bool,
+    ) -> BindingIdentifier {
         BindingIdentifier {
             span,
-            atom,
+            identifier,
             mutable,
         }
     }
@@ -113,15 +118,15 @@ impl AstFactory {
     }
 
     pub fn boolean_literal_expression(&self, literal: BooleanLiteral) -> Expression {
-        Expression::Literal(Box::from(Literal::Boolean(literal)))
+        Expression::BooleanLiteral(Box::from(literal))
     }
 
     pub fn number_literal_expression(&self, literal: NumberLiteral) -> Expression {
-        Expression::Literal(Box::from(Literal::Number(literal)))
+        Expression::NumberLiteral(Box::from(literal))
     }
 
     pub fn string_literal_expression(&self, literal: StringLiteral) -> Expression {
-        Expression::Literal(Box::from(Literal::String(literal)))
+        Expression::StringLiteral(Box::from(literal))
     }
 
     pub fn identifier_expression(&self, ident: Identifier) -> Expression {

@@ -37,7 +37,7 @@ Some(Chunk(
                 ),
                 name: Atom("first"),
               ),
-              value: Literal(String(StringLiteral(
+              value: StringLiteral(StringLiteral(
                 span: Span(
                   start: 14,
                   end: 21,
@@ -48,7 +48,7 @@ Some(Chunk(
                     end: 21,
                   ))),
                 ],
-              ))),
+              )),
             )),
             Expression(Identifier(Identifier(
               span: Span(

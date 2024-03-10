@@ -37,7 +37,7 @@ Some(Chunk(
                 ),
                 name: Atom("first"),
               ),
-              value: Literal(Number(NumberLiteral(
+              value: NumberLiteral(NumberLiteral(
                 span: Span(
                   start: 18,
                   end: 21,
@@ -45,7 +45,7 @@ Some(Chunk(
                 raw: Atom("123"),
                 value: 123.0,
                 kind: Decimal,
-              ))),
+              )),
             )),
             KeyValueArgument(KeyValueArgument(
               span: Span(
@@ -59,7 +59,7 @@ Some(Chunk(
                 ),
                 name: Atom("second"),
               ),
-              value: Literal(Number(NumberLiteral(
+              value: NumberLiteral(NumberLiteral(
                 span: Span(
                   start: 31,
                   end: 34,
@@ -67,7 +67,7 @@ Some(Chunk(
                 raw: Atom("456"),
                 value: 456.0,
                 kind: Decimal,
-              ))),
+              )),
             )),
           ],
         ),

@@ -172,12 +172,12 @@ impl AstFactory {
     pub fn call_expression(
         &self,
         span: Span,
-        target: Expression,
+        callee: Expression,
         arguments: Vec<Expression>,
     ) -> Expression {
         Expression::CallExpression(Box::from(CallExpression {
             span,
-            target,
+            callee,
             arguments,
         }))
     }

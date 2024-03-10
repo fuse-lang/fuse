@@ -392,7 +392,7 @@ pub struct ParenthesizedExpression {
 #[derive(Debug, PartialEq)]
 pub struct CallExpression {
     pub span: Span,
-    pub target: Expression,
+    pub callee: Expression,
     pub arguments: Vec<Expression>,
 }
 

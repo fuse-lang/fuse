@@ -33,7 +33,7 @@ Some(Chunk(
               start: 7,
               end: 9,
             ),
-            target: Identifier(Identifier(
+            callee: Identifier(Identifier(
               span: Span(
                 start: 4,
                 end: 7,
@@ -47,7 +47,7 @@ Some(Chunk(
               start: 13,
               end: 15,
             ),
-            target: Identifier(Identifier(
+            callee: Identifier(Identifier(
               span: Span(
                 start: 10,
                 end: 13,

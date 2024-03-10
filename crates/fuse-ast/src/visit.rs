@@ -348,7 +348,7 @@ pub fn walk_construction_field<'ast, V: Visitor<'ast>>(
 }
 
 pub fn walk_call_expression<'ast, V: Visitor<'ast>>(visitor: &mut V, call: &'ast CallExpression) {
-    visit!(visitor.visit_expression(&call.target));
+    visit!(visitor.visit_expression(&call.callee));
     visit_list!(visitor.visit_expression(&call.arguments));
 }
 

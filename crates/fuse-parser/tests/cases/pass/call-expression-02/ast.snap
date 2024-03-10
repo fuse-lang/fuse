@@ -16,7 +16,7 @@ Some(Chunk(
           start: 4,
           end: 13,
         ),
-        target: Identifier(Identifier(
+        callee: Identifier(Identifier(
           span: Span(
             start: 0,
             end: 4,

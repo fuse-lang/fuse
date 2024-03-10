@@ -11,13 +11,13 @@ Some(Chunk(
   ),
   body: Block(
     statements: [
-      Expression(BooleanLiteral(BooleanLiteral(
+      Expression(Literal(Boolean(BooleanLiteral(
         span: Span(
           start: 0,
           end: 4,
         ),
         value: true,
-      ))),
+      )))),
     ],
   ),
 ))

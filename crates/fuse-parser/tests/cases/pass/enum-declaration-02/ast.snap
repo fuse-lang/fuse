@@ -32,7 +32,7 @@ Some(Chunk(
               ),
               name: Atom("Var1"),
             ),
-            value: Some(StringLiteral(StringLiteral(
+            value: Some(Literal(String(StringLiteral(
               span: Span(
                 start: 19,
                 end: 26,
@@ -43,7 +43,7 @@ Some(Chunk(
                   end: 26,
                 ))),
               ],
-            ))),
+            )))),
           ),
           EnumVariant(
             identifier: Identifier(
@@ -53,7 +53,7 @@ Some(Chunk(
               ),
               name: Atom("Var2"),
             ),
-            value: Some(StringLiteral(StringLiteral(
+            value: Some(Literal(String(StringLiteral(
               span: Span(
                 start: 35,
                 end: 42,
@@ -64,7 +64,7 @@ Some(Chunk(
                   end: 42,
                 ))),
               ],
-            ))),
+            )))),
           ),
         ],
       )),

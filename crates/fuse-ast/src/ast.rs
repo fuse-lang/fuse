@@ -100,9 +100,7 @@ pub struct Atom(pub Rc<str>);
 #[serializable]
 #[derive(Debug, PartialEq)]
 pub enum Expression {
-    NumberLiteral(Box<NumberLiteral>),
-    StringLiteral(Box<StringLiteral>),
-    BooleanLiteral(Box<BooleanLiteral>),
+    Literal(Box<Literal>),
     Identifier(Box<Identifier>),
     Function(Box<Function>),
     If(Box<If>),
@@ -114,6 +112,14 @@ pub enum Expression {
     CallExpression(Box<CallExpression>),
     TableConstructionExpression(Box<ConstructionExpression>),
     StructConstructionExpression(Box<StructConstructionExpression>),
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub enum Literal {
+    Number(NumberLiteral),
+    String(StringLiteral),
+    Boolean(BooleanLiteral),
 }
 
 #[serializable]

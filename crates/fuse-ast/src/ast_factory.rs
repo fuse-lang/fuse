@@ -112,16 +112,16 @@ impl AstFactory {
         }
     }
 
-    pub fn boolean_expression(&self, literal: BooleanLiteral) -> Expression {
-        Expression::BooleanLiteral(Box::from(literal))
+    pub fn boolean_literal_expression(&self, literal: BooleanLiteral) -> Expression {
+        Expression::Literal(Box::from(Literal::Boolean(literal)))
     }
 
-    pub fn number_expression(&self, literal: NumberLiteral) -> Expression {
-        Expression::NumberLiteral(Box::from(literal))
+    pub fn number_literal_expression(&self, literal: NumberLiteral) -> Expression {
+        Expression::Literal(Box::from(Literal::Number(literal)))
     }
 
-    pub fn string_expression(&self, literal: StringLiteral) -> Expression {
-        Expression::StringLiteral(Box::from(literal))
+    pub fn string_literal_expression(&self, literal: StringLiteral) -> Expression {
+        Expression::Literal(Box::from(Literal::String(literal)))
     }
 
     pub fn identifier_expression(&self, ident: Identifier) -> Expression {

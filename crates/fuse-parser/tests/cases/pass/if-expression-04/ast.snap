@@ -50,7 +50,7 @@ Some(Chunk(
         )),
         body: Block(
           statements: [
-            Expression(NumberLiteral(NumberLiteral(
+            Expression(Literal(Number(NumberLiteral(
               span: Span(
                 start: 23,
                 end: 26,
@@ -58,7 +58,7 @@ Some(Chunk(
               raw: Atom("123"),
               value: 123.0,
               kind: Decimal,
-            ))),
+            )))),
           ],
         ),
         else: Some(If(If(
@@ -101,7 +101,7 @@ Some(Chunk(
           )),
           body: Block(
             statements: [
-              Expression(NumberLiteral(NumberLiteral(
+              Expression(Literal(Number(NumberLiteral(
                 span: Span(
                   start: 54,
                   end: 57,
@@ -109,12 +109,12 @@ Some(Chunk(
                 raw: Atom("321"),
                 value: 321.0,
                 kind: Decimal,
-              ))),
+              )))),
             ],
           ),
           else: Some(Block(Block(
             statements: [
-              Expression(NumberLiteral(NumberLiteral(
+              Expression(Literal(Number(NumberLiteral(
                 span: Span(
                   start: 65,
                   end: 66,
@@ -122,7 +122,7 @@ Some(Chunk(
                 raw: Atom("0"),
                 value: 0.0,
                 kind: Decimal,
-              ))),
+              )))),
             ],
           ))),
         ))),

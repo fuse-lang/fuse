@@ -24,24 +24,24 @@ impl<'a> Parser<'a> {
         let expr = match self.cur_kind() {
             True => {
                 let token = self.consume();
-                Ok(self.ast.boolean_expression(BooleanLiteral {
+                Ok(self.ast.boolean_literal_expression(BooleanLiteral {
                     span: token.span(),
                     value: true,
                 }))
             }
             False => {
                 let token = self.consume();
-                Ok(self.ast.boolean_expression(BooleanLiteral {
+                Ok(self.ast.boolean_literal_expression(BooleanLiteral {
                     span: token.span(),
                     value: false,
                 }))
             }
             NumberLiteral => self
                 .parse_number_literal()
-                .map(|expr| self.ast.number_expression(expr)),
+                .map(|expr| self.ast.number_literal_expression(expr)),
             StringLiteral | InterpolatedStringHead => self
                 .parse_string_literal()
-                .map(|expr| self.ast.string_expression(expr)),
+                .map(|expr| self.ast.string_literal_expression(expr)),
             Identifier => self
                 .parse_identifier()
                 .map(|id| self.ast.identifier_expression(id)),

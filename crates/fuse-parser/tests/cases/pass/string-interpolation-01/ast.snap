@@ -11,14 +11,14 @@ Some(Chunk(
   ),
   body: Block(
     statements: [
-      Expression(StringLiteral(StringLiteral(
+      Expression(Literal(String(StringLiteral(
         span: Span(
           start: 0,
           end: 15,
         ),
         segments: [
           Interpolated(InterpolatedStringSegment(
-            expression: NumberLiteral(NumberLiteral(
+            expression: Literal(Number(NumberLiteral(
               span: Span(
                 start: 9,
                 end: 12,
@@ -26,11 +26,11 @@ Some(Chunk(
               raw: Atom("123"),
               value: 123.0,
               kind: Decimal,
-            )),
+            ))),
             format: Display,
           )),
         ],
-      ))),
+      )))),
     ],
   ),
 ))

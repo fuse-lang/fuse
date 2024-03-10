@@ -29,7 +29,7 @@ Some(Chunk(
           type_annotation: None,
           optional: false,
         ),
-        expression: Some(StringLiteral(StringLiteral(
+        expression: Some(Literal(String(StringLiteral(
           span: Span(
             start: 9,
             end: 16,
@@ -40,7 +40,7 @@ Some(Chunk(
               end: 16,
             ))),
           ],
-        ))),
+        )))),
       )),
     ],
   ),

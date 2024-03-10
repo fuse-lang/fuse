@@ -33,7 +33,7 @@ Some(Chunk(
               start: 6,
               end: 7,
             )),
-            lhs: NumberLiteral(NumberLiteral(
+            lhs: Literal(Number(NumberLiteral(
               span: Span(
                 start: 4,
                 end: 5,
@@ -41,8 +41,8 @@ Some(Chunk(
               raw: Atom("1"),
               value: 1.0,
               kind: Decimal,
-            )),
-            rhs: NumberLiteral(NumberLiteral(
+            ))),
+            rhs: Literal(Number(NumberLiteral(
               span: Span(
                 start: 8,
                 end: 9,
@@ -50,14 +50,14 @@ Some(Chunk(
               raw: Atom("2"),
               value: 2.0,
               kind: Decimal,
-            )),
+            ))),
           )),
           rhs: BinaryOperator(BinaryOperator(
             kind: Plus(Span(
               start: 14,
               end: 15,
             )),
-            lhs: NumberLiteral(NumberLiteral(
+            lhs: Literal(Number(NumberLiteral(
               span: Span(
                 start: 12,
                 end: 13,
@@ -65,13 +65,13 @@ Some(Chunk(
               raw: Atom("3"),
               value: 3.0,
               kind: Decimal,
-            )),
+            ))),
             rhs: BinaryOperator(BinaryOperator(
               kind: FloorDivision(Span(
                 start: 18,
                 end: 20,
               )),
-              lhs: NumberLiteral(NumberLiteral(
+              lhs: Literal(Number(NumberLiteral(
                 span: Span(
                   start: 16,
                   end: 17,
@@ -79,8 +79,8 @@ Some(Chunk(
                 raw: Atom("4"),
                 value: 4.0,
                 kind: Decimal,
-              )),
-              rhs: NumberLiteral(NumberLiteral(
+              ))),
+              rhs: Literal(Number(NumberLiteral(
                 span: Span(
                   start: 21,
                   end: 22,
@@ -88,7 +88,7 @@ Some(Chunk(
                 raw: Atom("5"),
                 value: 5.0,
                 kind: Decimal,
-              )),
+              ))),
             )),
           )),
         )),

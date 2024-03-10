@@ -29,7 +29,7 @@ Some(Chunk(
           type_annotation: None,
           optional: false,
         ),
-        expression: Some(NumberLiteral(NumberLiteral(
+        expression: Some(Literal(Number(NumberLiteral(
           span: Span(
             start: 13,
             end: 16,
@@ -37,7 +37,7 @@ Some(Chunk(
           raw: Atom("123"),
           value: 123.0,
           kind: Decimal,
-        ))),
+        )))),
       )),
     ],
   ),

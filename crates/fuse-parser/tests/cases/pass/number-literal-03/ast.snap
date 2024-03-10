@@ -11,7 +11,7 @@ Some(Chunk(
   ),
   body: Block(
     statements: [
-      Expression(NumberLiteral(NumberLiteral(
+      Expression(Literal(Number(NumberLiteral(
         span: Span(
           start: 0,
           end: 5,
@@ -19,7 +19,7 @@ Some(Chunk(
         raw: Atom("1.2e3"),
         value: 1200.0,
         kind: Float,
-      ))),
+      )))),
     ],
   ),
 ))

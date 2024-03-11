@@ -3,6 +3,8 @@
 
 use crate::ast::*;
 
+/// Placeholder macro for visiting, It is used instead of calling visitor methods directly.
+/// Would be useful if we need some operation to happen for every visit.
 macro_rules! visit {
     ($expr:expr) => {
         $expr

@@ -1,6 +1,8 @@
+mod scope_visitor;
 mod visitor;
 mod visitor_mut;
 
+pub use scope_visitor::*;
 pub use visitor::*;
 pub use visitor_mut::*;
 
@@ -30,4 +32,3 @@ macro_rules! visit_scope {
         $visitor.leave_scope();
     };
 }
-

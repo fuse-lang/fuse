@@ -2,13 +2,9 @@
 // and https://github.com/rust-lang/rust/blob/5bc7b9ac8ace5312e1d2cdc2722715cf58d4f926/compiler/rustc_ast_ir/src/visit.rs
 
 use fuse_ast::ast::*;
-use crate::{visit, visit_scope, visit_list};
+use crate::{visit, visit_list, visit_scope, ScopeVisitor};
 
-pub trait Visitor<'ast>: Sized {
-    fn enter_scope(&mut self) {}
-
-    fn leave_scope(&mut self) {}
-
+pub trait Visitor<'ast>: ScopeVisitor + Sized {
     fn visit_chunk(&mut self, chunk: &'ast Chunk) {
         walk_block(self, &chunk.body)
     }

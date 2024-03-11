@@ -1,11 +1,7 @@
-use crate::{visit, visit_list, visit_scope};
+use crate::{visit, visit_list, visit_scope, ScopeVisitor};
 use fuse_ast::ast::*;
 
-pub trait VisitorMut<'ast>: Sized {
-    fn enter_scope(&mut self) {}
-
-    fn leave_scope(&mut self) {}
-
+pub trait VisitorMut<'ast>: ScopeVisitor + Sized {
     fn visit_chunk_mut(&mut self, chunk: &'ast mut Chunk) {
         walk_block_mut(self, &mut chunk.body)
     }

@@ -2,7 +2,9 @@ use std::collections::HashMap;
 
 use fuse_ast::{Atom, BindingPattern, BindingPatternKind, Chunk, Identifier, VariableDeclaration};
 use fuse_common::ReferenceType;
-use fuse_visitor::{walk_binding_pattern, walk_function, walk_variable_declaration, Visitor};
+use fuse_visitor::{
+    walk_binding_pattern, walk_function, walk_variable_declaration, ScopeVisitor, Visitor,
+};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 struct ScopeId(ReferenceType);
@@ -158,14 +160,6 @@ impl<'ast> Semantic<'ast> {
 }
 
 impl<'ast> Visitor<'ast> for Semantic<'ast> {
-    fn enter_scope(&mut self) {
-        self.scope.push_stack();
-    }
-
-    fn leave_scope(&mut self) {
-        self.scope.pop_stack();
-    }
-
     fn visit_identifier(&mut self, ident: &Identifier) {
         let refer = unsafe { ident.reference.as_ptr().as_ref() };
         if refer.is_none() {
@@ -190,5 +184,15 @@ impl<'ast> Visitor<'ast> for Semantic<'ast> {
             .expect("All function declarations need an identifier.");
         self.declare_identifier(identifier);
         walk_function(self, decl)
+    }
+}
+
+impl<'ast> ScopeVisitor for Semantic<'ast> {
+    fn enter_scope(&mut self) {
+        self.scope.push_stack();
+    }
+
+    fn leave_scope(&mut self) {
+        self.scope.pop_stack();
     }
 }

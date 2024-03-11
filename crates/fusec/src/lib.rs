@@ -5,7 +5,7 @@ fn compile_chunk(source: &str) {
     let parsed = Parser::new(source).parse();
     let chunk = parsed.chunk.unwrap();
     let semantic = Semantic::new(source, &chunk).build();
-    // panic!("{:?}", chunk)
+    // panic!("{:#?}", chunk)
 }
 
 #[test]
@@ -17,5 +17,7 @@ fn manual_test() {
         fn x()
             let x = y
         end
+
+        x()
         "#)
 }

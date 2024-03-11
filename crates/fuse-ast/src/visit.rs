@@ -19,7 +19,19 @@ macro_rules! visit_list {
     };
 }
 
+macro_rules! visit_scope {
+    ($visitor:ident => $block:block) => {
+        $visitor.enter_scope();
+        $block
+        $visitor.leave_scope();
+    };
+}
+
 pub trait Visitor<'ast>: Sized {
+    fn enter_scope(&mut self) {}
+
+    fn leave_scope(&mut self) {}
+
     fn visit_chunk(&mut self, chunk: &'ast Chunk) {
         walk_block(self, &chunk.body)
     }
@@ -164,7 +176,9 @@ pub trait Visitor<'ast>: Sized {
 }
 
 pub fn walk_block<'ast, V: Visitor<'ast>>(visitor: &mut V, block: &'ast Block) {
-    visit_list!(visitor.visit_statement(&block.statements))
+    visit_scope!(visitor => {
+        visit_list!(visitor.visit_statement(&block.statements));
+    });
 }
 
 pub fn walk_statement<'ast, V: Visitor<'ast>>(visitor: &mut V, statement: &'ast Statement) {
@@ -216,8 +230,10 @@ pub fn walk_expression<'ast, V: Visitor<'ast>>(visitor: &mut V, expression: &'as
 }
 
 pub fn walk_function<'ast, V: Visitor<'ast>>(visitor: &mut V, func: &'ast Function) {
-    visit!(visitor.visit_function_signature(&func.signature));
-    visit!(visitor.visit_function_body(&func.body));
+    visit_scope!(visitor => {
+        visit!(visitor.visit_function_signature(&func.signature));
+        visit!(visitor.visit_function_body(&func.body));
+    });
 }
 
 pub fn walk_function_signature<'ast, V: Visitor<'ast>>(
@@ -260,8 +276,10 @@ pub fn walk_function_body<'ast, V: Visitor<'ast>>(visitor: &mut V, body: &'ast F
 }
 
 pub fn walk_enum_declaration<'ast, V: Visitor<'ast>>(visitor: &mut V, decl: &'ast EnumDeclaration) {
-    visit!(visitor.visit_identifier(&decl.identifier));
-    visit_list!(visitor.visit_enum_variant(&decl.variants));
+    visit_scope!(visitor => {
+        visit!(visitor.visit_identifier(&decl.identifier));
+        visit_list!(visitor.visit_enum_variant(&decl.variants));
+    });
 }
 
 pub fn walk_enum_variant<'ast, V: Visitor<'ast>>(visitor: &mut V, var: &'ast EnumVariant) {
@@ -275,8 +293,10 @@ pub fn walk_struct_declaration<'ast, V: Visitor<'ast>>(
     visitor: &mut V,
     decl: &'ast StructDeclaration,
 ) {
-    visit!(visitor.visit_identifier(&decl.identifier));
-    visit_list!(visitor.visit_struct_field(&decl.fields));
+    visit_scope!(visitor => {
+        visit!(visitor.visit_identifier(&decl.identifier));
+        visit_list!(visitor.visit_struct_field(&decl.fields));
+    });
 }
 
 pub fn walk_struct_field<'ast, V: Visitor<'ast>>(visitor: &mut V, decl: &'ast StructField) {
@@ -286,18 +306,22 @@ pub fn walk_struct_field<'ast, V: Visitor<'ast>>(visitor: &mut V, decl: &'ast St
 }
 
 pub fn walk_if<'ast, V: Visitor<'ast>>(visitor: &mut V, r#if: &'ast If) {
-    visit!(visitor.visit_expression(&r#if.cond));
-    visit!(visitor.visit_block(&r#if.body));
-    if let Some(r#else) = &r#if.r#else {
-        visit!(visitor.visit_else(r#else));
-    }
+    visit_scope!(visitor => {
+        visit!(visitor.visit_expression(&r#if.cond));
+        visit!(visitor.visit_block(&r#if.body));
+        if let Some(r#else) = &r#if.r#else {
+            visit!(visitor.visit_else(r#else));
+        }
+    });
 }
 
 pub fn walk_else<'ast, V: Visitor<'ast>>(visitor: &mut V, r#else: &'ast Else) {
-    match r#else {
-        Else::If(r#if) => visit!(visitor.visit_if(r#if)),
-        Else::Block(block) => visit!(visitor.visit_block(block)),
-    }
+    visit_scope!(visitor => {
+        match r#else {
+            Else::If(r#if) => visit!(visitor.visit_if(r#if)),
+            Else::Block(block) => visit!(visitor.visit_block(block)),
+        }
+    });
 }
 
 pub fn walk_unary_operator<'ast, V: Visitor<'ast>>(visitor: &mut V, op: &'ast UnaryOperator) {

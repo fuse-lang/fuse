@@ -1,4 +1,4 @@
-use fuse_common::Span;
+use fuse_common::{ReferenceId, Span};
 use fuse_common_proc::serializable;
 use std::{cell::Cell, rc::Rc};
 
@@ -94,7 +94,7 @@ pub struct TypeAnnotation {
 }
 
 #[serializable]
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Atom(pub Rc<str>);
 
 #[serializable]
@@ -187,10 +187,6 @@ pub struct Identifier {
     pub name: Atom,
     pub reference: Cell<Option<ReferenceId>>,
 }
-
-#[serializable]
-#[derive(Debug, PartialEq, Clone, Copy)]
-pub struct ReferenceId(u32);
 
 #[serializable]
 #[derive(Debug, PartialEq)]

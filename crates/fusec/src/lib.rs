@@ -3,7 +3,8 @@ use fuse_semantic::Semantic;
 
 fn compile_chunk(source: &str) {
     let parsed = Parser::new(source).parse();
-    let semantic = Semantic::new(source, parsed.chunk.unwrap());
+    let semantic = Semantic::new(source, &parsed.chunk.unwrap()).build();
+    // panic!()
 }
 
 #[test]

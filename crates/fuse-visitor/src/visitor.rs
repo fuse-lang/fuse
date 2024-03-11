@@ -1,31 +1,8 @@
 // based on https://rust-unofficial.github.io/patterns/patterns/behavioural/visitor.html
 // and https://github.com/rust-lang/rust/blob/5bc7b9ac8ace5312e1d2cdc2722715cf58d4f926/compiler/rustc_ast_ir/src/visit.rs
 
-use crate::ast::*;
-
-/// Placeholder macro for visiting, It is used instead of calling visitor methods directly.
-/// Would be useful if we need some operation to happen for every visit.
-macro_rules! visit {
-    ($expr:expr) => {
-        $expr
-    };
-}
-
-macro_rules! visit_list {
-    ($visitor:ident.$method:ident($list:expr $(, $($extra_args:expr), *)?)) => {
-        for elem in $list {
-            visit!($visitor.$method(elem $(, $($extra_args),*)?))
-        }
-    };
-}
-
-macro_rules! visit_scope {
-    ($visitor:ident => $block:block) => {
-        $visitor.enter_scope();
-        $block
-        $visitor.leave_scope();
-    };
-}
+use fuse_ast::ast::*;
+use crate::{visit, visit_scope, visit_list};
 
 pub trait Visitor<'ast>: Sized {
     fn enter_scope(&mut self) {}
@@ -41,37 +18,37 @@ pub trait Visitor<'ast>: Sized {
     }
 
     fn visit_statement(&mut self, statement: &'ast Statement) {
-        walk_statement(self, &statement)
+        walk_statement(self, statement)
     }
 
     fn visit_variable_declaration(&mut self, decl: &'ast VariableDeclaration) {
-        walk_variable_declaration(self, &decl)
+        walk_variable_declaration(self, decl)
     }
 
     fn visit_function_declaration(&mut self, decl: &'ast Function) {
-        walk_function(self, &decl)
+        walk_function(self, decl)
     }
 
     fn visit_enum_declaration(&mut self, decl: &'ast EnumDeclaration) {
-        walk_enum_declaration(self, &decl)
+        walk_enum_declaration(self, decl)
     }
 
     fn visit_enum_variant(&mut self, var: &'ast EnumVariant) {
-        walk_enum_variant(self, &var)
+        walk_enum_variant(self, var)
     }
 
     fn visit_struct_declaration(&mut self, decl: &'ast StructDeclaration) {
-        walk_struct_declaration(self, &decl)
+        walk_struct_declaration(self, decl)
     }
 
     fn visit_struct_field(&mut self, field: &'ast StructField) {
-        walk_struct_field(self, &field)
+        walk_struct_field(self, field)
     }
 
     fn visit_visibility_modifier(&mut self, _: &'ast VisibilityModifier) {}
 
     fn visit_expression(&mut self, expression: &'ast Expression) {
-        walk_expression(self, &expression)
+        walk_expression(self, expression)
     }
 
     fn visit_number_literal(&mut self, _: &'ast NumberLiteral) {}
@@ -83,31 +60,31 @@ pub trait Visitor<'ast>: Sized {
     fn visit_identifier(&mut self, _: &'ast Identifier) {}
 
     fn visit_function(&mut self, func: &'ast Function) {
-        walk_function(self, &func)
+        walk_function(self, func)
     }
 
     fn visit_function_signature(&mut self, sign: &'ast FunctionSignature) {
-        walk_function_signature(self, &sign)
+        walk_function_signature(self, sign)
     }
 
     fn visit_function_parameters(&mut self, params: &'ast FunctionParameters) {
-        walk_function_parameters(self, &params)
+        walk_function_parameters(self, params)
     }
 
     fn visit_function_parameter(&mut self, param: &'ast FunctionParameter) {
-        walk_function_parameter(self, &param)
+        walk_function_parameter(self, param)
     }
 
     fn visit_function_body(&mut self, body: &'ast FunctionBody) {
-        walk_function_body(self, &body)
+        walk_function_body(self, body)
     }
 
     fn visit_if(&mut self, r#if: &'ast If) {
-        walk_if(self, &r#if)
+        walk_if(self, r#if)
     }
 
     fn visit_else(&mut self, r#else: &'ast Else) {
-        walk_else(self, &r#else)
+        walk_else(self, r#else)
     }
 
     fn visit_unary_operator(&mut self, op: &'ast UnaryOperator) {
@@ -151,27 +128,27 @@ pub trait Visitor<'ast>: Sized {
     }
 
     fn visit_binding_pattern(&mut self, pattern: &'ast BindingPattern) {
-        walk_binding_pattern(self, &pattern)
+        walk_binding_pattern(self, pattern)
     }
 
     fn visit_binding_identifier(&mut self, pattern: &'ast BindingIdentifier) {
-        walk_binding_identifier(self, &pattern)
+        walk_binding_identifier(self, pattern)
     }
 
     fn visit_binding_rest(&mut self, arg: &'ast BindingRest) {
-        walk_binding_rest(self, &arg)
+        walk_binding_rest(self, arg)
     }
 
     fn visit_key_value_argument(&mut self, arg: &'ast KeyValueArgument) {
-        walk_key_value_argument(self, &arg)
+        walk_key_value_argument(self, arg)
     }
 
     fn visit_spread_argument(&mut self, arg: &'ast SpreadArgument) {
-        walk_spread_argument(self, &arg)
+        walk_spread_argument(self, arg)
     }
 
     fn visit_type_annotation(&mut self, annotation: &'ast TypeAnnotation) {
-        walk_type_annotation(self, &annotation)
+        walk_type_annotation(self, annotation)
     }
 }
 

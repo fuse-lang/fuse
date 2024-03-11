@@ -1,4 +1,4 @@
-use fuse_common::{ReferenceId, Span};
+use fuse_common::{ReferenceType, Span};
 use fuse_common_proc::serializable;
 use std::{cell::Cell, rc::Rc};
 
@@ -185,7 +185,7 @@ pub enum InterpolationFormat {
 pub struct Identifier {
     pub span: Span,
     pub name: Atom,
-    pub reference: Cell<Option<ReferenceId>>,
+    pub reference: Cell<Option<ReferenceType>>,
 }
 
 #[serializable]

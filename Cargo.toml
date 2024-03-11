@@ -18,6 +18,7 @@ fuse_common = { version = "0.0.0", path = "crates/fuse-common" }
 fuse_common_proc = { version = "0.0.0", path = "crates/fuse-common-proc" }
 fuse_parser = { version = "0.0.0", path = "crates/fuse-parser" }
 fuse_semantic = { version = "0.0.0", path = "crates/fuse-semantic" }
+fuse_visitor = { version = "0.0.0", path = "crates/fuse-visitor" }
 fusec = { version = "0.0.0", path = "crates/fusec" }
 
 thiserror = { version = "1.0" }

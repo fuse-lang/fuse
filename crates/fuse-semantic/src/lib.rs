@@ -1,17 +1,15 @@
 use std::collections::HashMap;
 
-use fuse_ast::{
-    walk_binding_pattern, walk_function, walk_variable_declaration, Atom, BindingPattern,
-    BindingPatternKind, Chunk, Identifier, VariableDeclaration, Visitor,
-};
-use fuse_common::ReferenceId;
+use fuse_ast::{Atom, BindingPattern, BindingPatternKind, Chunk, Identifier, VariableDeclaration};
+use fuse_common::ReferenceType;
+use fuse_visitor::{walk_binding_pattern, walk_function, walk_variable_declaration, Visitor};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
-struct ScopeId(ReferenceId);
+struct ScopeId(ReferenceType);
 
 impl ScopeId {
     #[inline(always)]
-    const fn as_index(self) -> ReferenceId {
+    const fn as_index(self) -> ReferenceType {
         self.0
     }
 
@@ -21,24 +19,24 @@ impl ScopeId {
     }
 }
 
-impl PartialEq<ReferenceId> for ScopeId {
-    fn eq(&self, other: &ReferenceId) -> bool {
+impl PartialEq<ReferenceType> for ScopeId {
+    fn eq(&self, other: &ReferenceType) -> bool {
         self.0 == *other
     }
 }
 
-struct IdentifierMap(HashMap<Atom, ReferenceId>);
+struct IdentifierMap(HashMap<Atom, ReferenceType>);
 
 impl IdentifierMap {
     fn new() -> Self {
         Self(HashMap::new())
     }
 
-    fn insert(&mut self, atom: Atom, ref_id: ReferenceId) -> Option<ReferenceId> {
+    fn insert(&mut self, atom: Atom, ref_id: ReferenceType) -> Option<ReferenceType> {
         self.0.insert(atom, ref_id)
     }
 
-    fn get(&self, atom: &Atom) -> Option<ReferenceId> {
+    fn get(&self, atom: &Atom) -> Option<ReferenceType> {
         self.0.get(atom).map(|r| r.clone())
     }
 }
@@ -80,7 +78,7 @@ impl ScopeTree {
 
     /// Get an identifier reference from current scope or its parents.
     /// This function is implemented using loops instead of recursion.
-    fn identifier_reference(&mut self, atom: &Atom) -> Option<ReferenceId> {
+    fn identifier_reference(&mut self, atom: &Atom) -> Option<ReferenceType> {
         let mut scope_id = self.current;
         let mut reference;
         loop {
@@ -95,9 +93,13 @@ impl ScopeTree {
         reference
     }
 
-    /// Set a `ReferenceId` for the given identifier's `Atom` in the current scope.
-    /// Would return the last `ReferenceId` if we are shadowing it.
-    fn set_identifier_reference(&mut self, atom: Atom, ref_id: ReferenceId) -> Option<ReferenceId> {
+    /// Set a `ReferenceType` for the given identifier's `Atom` in the current scope.
+    /// Would return the last `ReferenceType` if we are shadowing it.
+    fn set_identifier_reference(
+        &mut self,
+        atom: Atom,
+        ref_id: ReferenceType,
+    ) -> Option<ReferenceType> {
         self.identifier_maps[self.current.as_index()].insert(atom, ref_id)
     }
 
@@ -122,7 +124,7 @@ pub struct Semantic<'ast> {
     source: &'ast str,
     chunk: &'ast Chunk,
     scope: ScopeTree,
-    last_reference: ReferenceId,
+    last_reference: ReferenceType,
 }
 
 impl<'ast> Semantic<'ast> {
@@ -165,7 +167,10 @@ impl<'ast> Visitor<'ast> for Semantic<'ast> {
     }
 
     fn visit_identifier(&mut self, ident: &Identifier) {
-        self.reference_identifier(ident);
+        let refer = unsafe { ident.reference.as_ptr().as_ref() };
+        if refer.is_none() {
+            self.reference_identifier(ident);
+        }
     }
 
     fn visit_variable_declaration(&mut self, decl: &'ast VariableDeclaration) {

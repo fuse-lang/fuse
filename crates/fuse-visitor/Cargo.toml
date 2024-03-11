@@ -1,7 +1,6 @@
 [package]
-name = "fuse_semantic"
+name = "fuse_visitor"
 version = "0.0.0"
-description.workspace = true
 authors.workspace = true
 license.workspace = true
 repository.workspace = true
@@ -9,5 +8,3 @@ edition.workspace = true
 
 [dependencies]
 fuse_ast = { workspace = true }
-fuse_common = { workspace = true }
-fuse_visitor = { workspace = true }

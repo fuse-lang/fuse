@@ -1,10 +1,8 @@
 use std::collections::HashMap;
 
-use fuse_ast::{Atom, BindingPattern, BindingPatternKind, Chunk, Identifier, VariableDeclaration};
+use fuse_ast::{Atom, BindingPatternKind, Chunk, Function, Identifier, VariableDeclaration};
 use fuse_common::ReferenceType;
-use fuse_visitor::{
-    walk_binding_pattern, walk_function, walk_variable_declaration, ScopeVisitor, Visitor,
-};
+use fuse_visitor::{walk_function_mut, walk_variable_declaration_mut, ScopeVisitor, VisitorMut};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 struct ScopeId(ReferenceType);
@@ -124,23 +122,21 @@ impl ScopeTree {
 
 pub struct Semantic<'ast> {
     source: &'ast str,
-    chunk: &'ast Chunk,
     scope: ScopeTree,
     last_reference: ReferenceType,
 }
 
 impl<'ast> Semantic<'ast> {
-    pub fn new(source: &'ast str, chunk: &'ast Chunk) -> Self {
+    pub fn new(source: &'ast str) -> Self {
         Self {
             source,
-            chunk,
             scope: ScopeTree::root_scope(),
             last_reference: 0,
         }
     }
 
-    pub fn build(mut self) {
-        self.visit_chunk(&self.chunk)
+    pub fn build(&mut self, chunk: &'ast mut Chunk) {
+        self.visit_chunk_mut(chunk)
     }
 
     fn declare_identifier(&mut self, ident: &Identifier) {
@@ -159,31 +155,30 @@ impl<'ast> Semantic<'ast> {
     }
 }
 
-impl<'ast> Visitor<'ast> for Semantic<'ast> {
-    fn visit_identifier(&mut self, ident: &Identifier) {
-        let refer = unsafe { ident.reference.as_ptr().as_ref() };
-        if refer.is_none() {
+impl<'ast> VisitorMut<'ast> for Semantic<'ast> {
+    fn visit_identifier_mut(&mut self, ident: &'ast mut Identifier) {
+        if ident.reference.get_mut().is_none() {
             self.reference_identifier(ident);
         }
     }
 
-    fn visit_variable_declaration(&mut self, decl: &'ast VariableDeclaration) {
+    fn visit_variable_declaration_mut(&mut self, decl: &'ast mut VariableDeclaration) {
         match &decl.binding.kind {
             BindingPatternKind::Identifier(bind) => self.declare_identifier(&bind.identifier),
             _ => todo!(),
         }
 
-        walk_variable_declaration(self, decl)
+        walk_variable_declaration_mut(self, decl)
     }
 
-    fn visit_function_declaration(&mut self, decl: &'ast fuse_ast::Function) {
+    fn visit_function_declaration_mut(&mut self, decl: &'ast mut Function) {
         let identifier = decl
             .signature
             .identifier
             .as_ref()
             .expect("All function declarations need an identifier.");
         self.declare_identifier(identifier);
-        walk_function(self, decl)
+        walk_function_mut(self, decl)
     }
 }
 

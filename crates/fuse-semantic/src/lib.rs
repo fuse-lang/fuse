@@ -1,12 +1,31 @@
 use std::collections::HashMap;
 
 use fuse_ast::{
-    walk_binding_pattern, walk_variable_declaration, Atom, BindingPattern, BindingPatternKind,
-    Chunk, Identifier, VariableDeclaration, Visitor,
+    walk_binding_pattern, walk_function, walk_variable_declaration, Atom, BindingPattern,
+    BindingPatternKind, Chunk, Identifier, VariableDeclaration, Visitor,
 };
 use fuse_common::ReferenceId;
 
-type ScopeId = ReferenceId;
+#[derive(Debug, PartialEq, Clone, Copy)]
+struct ScopeId(ReferenceId);
+
+impl ScopeId {
+    #[inline(always)]
+    const fn as_index(self) -> ReferenceId {
+        self.0
+    }
+
+    #[inline(always)]
+    const fn is_root(&self) -> bool {
+        self.0 == 0
+    }
+}
+
+impl PartialEq<ReferenceId> for ScopeId {
+    fn eq(&self, other: &ReferenceId) -> bool {
+        self.0 == *other
+    }
+}
 
 struct IdentifierMap(HashMap<Atom, ReferenceId>);
 
@@ -15,9 +34,12 @@ impl IdentifierMap {
         Self(HashMap::new())
     }
 
-    fn insert(&mut self, atom: Atom, ref_id: ReferenceId) {
-        debug_assert!(!self.0.contains_key(&atom));
-        self.0.insert(atom, ref_id);
+    fn insert(&mut self, atom: Atom, ref_id: ReferenceId) -> Option<ReferenceId> {
+        self.0.insert(atom, ref_id)
+    }
+
+    fn get(&self, atom: &Atom) -> Option<ReferenceId> {
+        self.0.get(atom).map(|r| r.clone())
     }
 }
 
@@ -30,8 +52,8 @@ struct ScopeTree {
 impl ScopeTree {
     fn root_scope() -> Self {
         Self {
-            current: 0,
-            parent_ids: vec![0],
+            current: ScopeId(0),
+            parent_ids: vec![ScopeId(0)],
             identifier_maps: vec![IdentifierMap::new()],
         }
     }
@@ -40,12 +62,11 @@ impl ScopeTree {
         self.identifier_maps.push(IdentifierMap::new());
         self.parent_ids.push(self.current);
 
-        let scope_id = self.identifier_maps.len() - 1;
-
         // length of all arrays should be same.
         debug_assert!(self.identifier_maps.len() == self.parent_ids.len());
-        self.current = scope_id;
-        scope_id
+
+        self.current = ScopeId(self.identifier_maps.len() - 1);
+        self.current
     }
 
     fn pop_stack(&mut self) {
@@ -57,8 +78,27 @@ impl ScopeTree {
         self.current = self.parent();
     }
 
-    fn push_identifier(&mut self, atom: Atom, ref_id: ReferenceId) {
-        self.identifier_maps[self.current].insert(atom, ref_id);
+    /// Get an identifier reference from current scope or its parents.
+    /// This function is implemented using loops instead of recursion.
+    fn identifier_reference(&mut self, atom: &Atom) -> Option<ReferenceId> {
+        let mut scope_id = self.current;
+        let mut reference;
+        loop {
+            reference = self.identifier_maps[scope_id.as_index()].get(atom);
+
+            if reference.is_some() || scope_id.is_root() {
+                break;
+            } else {
+                scope_id = self.parent_of(scope_id);
+            }
+        }
+        reference
+    }
+
+    /// Set a `ReferenceId` for the given identifier's `Atom` in the current scope.
+    /// Would return the last `ReferenceId` if we are shadowing it.
+    fn set_identifier_reference(&mut self, atom: Atom, ref_id: ReferenceId) -> Option<ReferenceId> {
+        self.identifier_maps[self.current.as_index()].insert(atom, ref_id)
     }
 
     fn parent(&self) -> ScopeId {
@@ -66,7 +106,15 @@ impl ScopeTree {
             self.current, 0,
             "Attempt to access the root scope's parent."
         );
-        self.parent_ids[self.current]
+        self.parent_ids[self.current.as_index()]
+    }
+
+    fn parent_of(&self, children_id: ScopeId) -> ScopeId {
+        assert_ne!(
+            self.current, 0,
+            "Attempt to access the root scope's parent."
+        );
+        self.parent_ids[children_id.as_index()]
     }
 }
 
@@ -91,45 +139,51 @@ impl<'ast> Semantic<'ast> {
         self.visit_chunk(&self.chunk)
     }
 
-    fn reference_identifier(&mut self, ident: &Identifier) {
+    fn declare_identifier(&mut self, ident: &Identifier) {
         self.last_reference += 1;
         self.scope
-            .push_identifier(ident.name.clone(), self.last_reference);
+            .set_identifier_reference(ident.name.clone(), self.last_reference);
         ident.reference.set(Some(self.last_reference))
+    }
+
+    fn reference_identifier(&mut self, ident: &Identifier) {
+        let reference = self
+            .scope
+            .identifier_reference(&ident.name)
+            .expect("Reference to undefined identifier.");
+        ident.reference.set(Some(reference))
     }
 }
 
 impl<'ast> Visitor<'ast> for Semantic<'ast> {
     fn enter_scope(&mut self) {
-        println!("IN");
         self.scope.push_stack();
     }
 
     fn leave_scope(&mut self) {
-        println!("OUT");
         self.scope.pop_stack();
     }
 
     fn visit_identifier(&mut self, ident: &Identifier) {
-        println!("{ident:?}")
+        self.reference_identifier(ident);
     }
 
     fn visit_variable_declaration(&mut self, decl: &'ast VariableDeclaration) {
         match &decl.binding.kind {
-            BindingPatternKind::Identifier(bind) => self.reference_identifier(&bind.identifier),
+            BindingPatternKind::Identifier(bind) => self.declare_identifier(&bind.identifier),
             _ => todo!(),
         }
 
         walk_variable_declaration(self, decl)
     }
 
-    fn visit_binding_pattern(&mut self, pattern: &'ast BindingPattern) {
-        match &pattern.kind {
-            BindingPatternKind::Identifier(ident) => {
-                println!("{ident:?}")
-            }
-            _ => {}
-        }
-        walk_binding_pattern(self, pattern)
+    fn visit_function_declaration(&mut self, decl: &'ast fuse_ast::Function) {
+        let identifier = decl
+            .signature
+            .identifier
+            .as_ref()
+            .expect("All function declarations need an identifier.");
+        self.declare_identifier(identifier);
+        walk_function(self, decl)
     }
 }

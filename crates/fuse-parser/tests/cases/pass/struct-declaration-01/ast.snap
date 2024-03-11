@@ -22,6 +22,7 @@ Some(Chunk(
             end: 15,
           ),
           name: Atom("MyStruct"),
+          reference: None,
         ),
         fields: [
           StructField(
@@ -32,6 +33,7 @@ Some(Chunk(
                 end: 23,
               ),
               name: Atom("field1"),
+              reference: None,
             ),
             type_annotation: TypeAnnotation(
               identifier: Identifier(
@@ -40,6 +42,7 @@ Some(Chunk(
                   end: 31,
                 ),
                 name: Atom("number"),
+                reference: None,
               ),
             ),
           ),
@@ -51,6 +54,7 @@ Some(Chunk(
                 end: 39,
               ),
               name: Atom("field2"),
+              reference: None,
             ),
             type_annotation: TypeAnnotation(
               identifier: Identifier(
@@ -59,6 +63,7 @@ Some(Chunk(
                   end: 47,
                 ),
                 name: Atom("string"),
+                reference: None,
               ),
             ),
           ),
@@ -70,6 +75,7 @@ Some(Chunk(
                 end: 55,
               ),
               name: Atom("field3"),
+              reference: None,
             ),
             type_annotation: TypeAnnotation(
               identifier: Identifier(
@@ -78,6 +84,7 @@ Some(Chunk(
                   end: 64,
                 ),
                 name: Atom("boolean"),
+                reference: None,
               ),
             ),
           ),

@@ -22,6 +22,7 @@ Some(Chunk(
             end: 10,
           ),
           name: Atom("Ident"),
+          reference: None,
         ),
         variants: [
           EnumVariant(
@@ -31,6 +32,7 @@ Some(Chunk(
                 end: 16,
               ),
               name: Atom("Var1"),
+              reference: None,
             ),
             value: Some(StringLiteral(StringLiteral(
               span: Span(
@@ -52,6 +54,7 @@ Some(Chunk(
                 end: 32,
               ),
               name: Atom("Var2"),
+              reference: None,
             ),
             value: Some(StringLiteral(StringLiteral(
               span: Span(

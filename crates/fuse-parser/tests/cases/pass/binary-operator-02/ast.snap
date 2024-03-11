@@ -22,6 +22,7 @@ Some(Chunk(
             end: 1,
           ),
           name: Atom("x"),
+          reference: None,
         )),
         rhs: BinaryOperator(BinaryOperator(
           kind: LogicalAnd(Span(
@@ -39,6 +40,7 @@ Some(Chunk(
                 end: 5,
               ),
               name: Atom("a"),
+              reference: None,
             )),
             rhs: Identifier(Identifier(
               span: Span(
@@ -46,6 +48,7 @@ Some(Chunk(
                 end: 11,
               ),
               name: Atom("b"),
+              reference: None,
             )),
           )),
           rhs: Identifier(Identifier(
@@ -54,6 +57,7 @@ Some(Chunk(
               end: 17,
             ),
             name: Atom("c"),
+            reference: None,
           )),
         )),
       ))),

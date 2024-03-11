@@ -18,6 +18,7 @@ Some(Chunk(
             end: 4,
           ),
           name: Atom("Test"),
+          reference: None,
         )),
         construction: ConstructionExpression(
           span: Span(
@@ -36,6 +37,7 @@ Some(Chunk(
                   end: 12,
                 ),
                 name: Atom("first"),
+                reference: None,
               ),
               value: StringLiteral(StringLiteral(
                 span: Span(
@@ -56,6 +58,7 @@ Some(Chunk(
                 end: 29,
               ),
               name: Atom("second"),
+              reference: None,
             ))),
             Spread(SpreadArgument(
               span: Span(
@@ -68,6 +71,7 @@ Some(Chunk(
                   end: 39,
                 ),
                 name: Atom("third"),
+                reference: None,
               )),
             )),
           ],

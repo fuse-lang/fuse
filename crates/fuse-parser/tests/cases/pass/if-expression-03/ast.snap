@@ -21,6 +21,7 @@ Some(Chunk(
             end: 8,
           ),
           name: Atom("cond1"),
+          reference: None,
         )),
         body: Block(
           statements: [
@@ -49,6 +50,7 @@ Some(Chunk(
               end: 38,
             ),
             name: Atom("cond2"),
+            reference: None,
           )),
           body: Block(
             statements: [

@@ -22,6 +22,7 @@ Some(Chunk(
             end: 13,
           ),
           name: Atom("EnumName"),
+          reference: None,
         ),
         variants: [
           EnumVariant(
@@ -31,6 +32,7 @@ Some(Chunk(
                 end: 23,
               ),
               name: Atom("VariantA"),
+              reference: None,
             ),
             value: None,
           ),
@@ -41,6 +43,7 @@ Some(Chunk(
                 end: 33,
               ),
               name: Atom("VariantB"),
+              reference: None,
             ),
             value: None,
           ),

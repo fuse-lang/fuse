@@ -24,6 +24,7 @@ Some(Chunk(
                 end: 15,
               ),
               name: Atom("world"),
+              reference: None,
             )),
             format: Display,
           )),

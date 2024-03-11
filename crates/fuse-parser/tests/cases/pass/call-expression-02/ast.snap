@@ -22,6 +22,7 @@ Some(Chunk(
             end: 4,
           ),
           name: Atom("test"),
+          reference: None,
         )),
         arguments: [
           Identifier(Identifier(
@@ -30,6 +31,7 @@ Some(Chunk(
               end: 6,
             ),
             name: Atom("a"),
+            reference: None,
           )),
           Identifier(Identifier(
             span: Span(
@@ -37,6 +39,7 @@ Some(Chunk(
               end: 9,
             ),
             name: Atom("b"),
+            reference: None,
           )),
           Identifier(Identifier(
             span: Span(
@@ -44,6 +47,7 @@ Some(Chunk(
               end: 12,
             ),
             name: Atom("c"),
+            reference: None,
           )),
         ],
       ))),

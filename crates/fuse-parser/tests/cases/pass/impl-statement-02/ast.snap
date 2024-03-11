@@ -22,6 +22,7 @@ Some(Chunk(
               end: 19,
             ),
             name: Atom("Test"),
+            reference: None,
           ),
         ),
         trait: TypeAnnotation(
@@ -31,6 +32,7 @@ Some(Chunk(
               end: 10,
             ),
             name: Atom("Trait"),
+            reference: None,
           ),
         ),
         methods: [
@@ -52,6 +54,7 @@ Some(Chunk(
                     end: 28,
                   ),
                   name: Atom("test"),
+                  reference: None,
                 )),
                 params: FunctionParameters(
                   span: Span(
@@ -86,6 +89,7 @@ Some(Chunk(
                     end: 46,
                   ),
                   name: Atom("test2"),
+                  reference: None,
                 )),
                 params: FunctionParameters(
                   span: Span(
@@ -110,6 +114,7 @@ Some(Chunk(
                               end: 50,
                             ),
                             name: Atom("foo"),
+                            reference: None,
                           ),
                           mutable: false,
                         )),
@@ -120,6 +125,7 @@ Some(Chunk(
                               end: 58,
                             ),
                             name: Atom("number"),
+                            reference: None,
                           ),
                         )),
                         optional: false,
@@ -142,6 +148,7 @@ Some(Chunk(
                               end: 63,
                             ),
                             name: Atom("bar"),
+                            reference: None,
                           ),
                           mutable: false,
                         )),
@@ -152,6 +159,7 @@ Some(Chunk(
                               end: 71,
                             ),
                             name: Atom("number"),
+                            reference: None,
                           ),
                         )),
                         optional: false,
@@ -167,6 +175,7 @@ Some(Chunk(
                       end: 80,
                     ),
                     name: Atom("Type"),
+                    reference: None,
                   ),
                 )),
               ),

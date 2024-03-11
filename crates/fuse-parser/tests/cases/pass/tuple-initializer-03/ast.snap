@@ -23,6 +23,7 @@ Some(Chunk(
               end: 6,
             ),
             name: Atom("first"),
+            reference: None,
           ))),
         ],
       ))),

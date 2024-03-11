@@ -18,6 +18,7 @@ Some(Chunk(
             end: 8,
           ),
           name: Atom("MyStruct"),
+          reference: None,
         )),
         construction: ConstructionExpression(
           span: Span(
@@ -36,6 +37,7 @@ Some(Chunk(
                   end: 16,
                 ),
                 name: Atom("first"),
+                reference: None,
               ),
               value: NumberLiteral(NumberLiteral(
                 span: Span(
@@ -58,6 +60,7 @@ Some(Chunk(
                   end: 29,
                 ),
                 name: Atom("second"),
+                reference: None,
               ),
               value: NumberLiteral(NumberLiteral(
                 span: Span(

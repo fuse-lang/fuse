@@ -1,6 +1,6 @@
 use fuse_common::Span;
 use fuse_common_proc::serializable;
-use std::rc::Rc;
+use std::{cell::Cell, rc::Rc};
 
 #[serializable]
 #[derive(Debug)]
@@ -185,7 +185,12 @@ pub enum InterpolationFormat {
 pub struct Identifier {
     pub span: Span,
     pub name: Atom,
+    pub reference: Cell<Option<ReferenceId>>,
 }
+
+#[serializable]
+#[derive(Debug, PartialEq, Clone, Copy)]
+pub struct ReferenceId(u32);
 
 #[serializable]
 #[derive(Debug, PartialEq)]

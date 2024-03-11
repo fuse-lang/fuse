@@ -65,6 +65,7 @@ Some(Chunk(
                 end: 27,
               ),
               name: Atom("other"),
+              reference: None,
             )),
           )),
         )),

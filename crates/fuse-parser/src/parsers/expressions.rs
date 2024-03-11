@@ -1,3 +1,5 @@
+use std::cell::Cell;
+
 use crate::{lexer::TokenKind, Parser, ParserResult};
 use fuse_ast::{
     ArrayExpressionElement, BinaryOperator, BooleanLiteral, ConstructionExpression,
@@ -71,6 +73,7 @@ impl<'a> Parser<'a> {
         Ok(Identifier {
             span: token.span(),
             name: self.ast.atom(view),
+            reference: Cell::default(),
         })
     }
 

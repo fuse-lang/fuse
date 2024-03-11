@@ -17,6 +17,7 @@ Some(Chunk(
           end: 10,
         ),
         name: Atom("ident_name"),
+        reference: None,
       ))),
     ],
   ),

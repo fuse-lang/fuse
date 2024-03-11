@@ -27,6 +27,7 @@ Some(Chunk(
               end: 13,
             ),
             name: Atom("test"),
+            reference: None,
           )),
           params: FunctionParameters(
             span: Span(

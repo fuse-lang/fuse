@@ -29,6 +29,7 @@ Some(Chunk(
                 end: 10,
               ),
               name: Atom("name"),
+              reference: None,
             ),
             mutable: false,
           )),

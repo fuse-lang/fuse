@@ -23,6 +23,7 @@ Some(Chunk(
               end: 19,
             ),
             name: Atom("Test"),
+            reference: None,
           ),
         ),
         trait: TypeAnnotation(
@@ -32,6 +33,7 @@ Some(Chunk(
               end: 10,
             ),
             name: Atom("Trait"),
+            reference: None,
           ),
         ),
         methods: [],

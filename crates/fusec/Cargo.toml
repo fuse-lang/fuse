@@ -9,4 +9,4 @@ edition.workspace = true
 
 [dependencies]
 fuse_parser = { workspace = true }
-fuse_semantic = { workspace = true }
+fuse_inference = { workspace = true }

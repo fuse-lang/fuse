@@ -1,8 +1,13 @@
 use std::collections::HashMap;
 
-use fuse_ast::{Atom, BindingPatternKind, Chunk, Function, Identifier, VariableDeclaration};
+use fuse_ast::{
+    Atom, BindingPatternKind, CallExpression, Chunk, Function, Identifier, VariableDeclaration,
+};
 use fuse_common::ReferenceType;
-use fuse_visitor::{walk_function_mut, walk_variable_declaration_mut, ScopeVisitor, VisitorMut};
+use fuse_visitor::{
+    walk_call_expression_mut, walk_function_mut, walk_variable_declaration_mut, ScopeVisitor,
+    VisitorMut,
+};
 
 #[derive(Debug, PartialEq, Clone, Copy)]
 struct ScopeId(ReferenceType);
@@ -120,13 +125,13 @@ impl ScopeTree {
     }
 }
 
-pub struct Semantic<'ast> {
+pub struct Inference<'ast> {
     source: &'ast str,
     scope: ScopeTree,
     last_reference: ReferenceType,
 }
 
-impl<'ast> Semantic<'ast> {
+impl<'ast> Inference<'ast> {
     pub fn new(source: &'ast str) -> Self {
         Self {
             source,
@@ -135,8 +140,11 @@ impl<'ast> Semantic<'ast> {
         }
     }
 
-    pub fn build(&mut self, chunk: &'ast mut Chunk) {
-        self.visit_chunk_mut(chunk)
+    pub fn resolve(&mut self, chunk: &'ast mut Chunk) -> InferenceResult {
+        self.visit_chunk_mut(chunk);
+        InferenceResult {
+            errors: Vec::default(),
+        }
     }
 
     fn declare_identifier(&mut self, ident: &Identifier) {
@@ -147,15 +155,12 @@ impl<'ast> Semantic<'ast> {
     }
 
     fn reference_identifier(&mut self, ident: &Identifier) {
-        let reference = self
-            .scope
-            .identifier_reference(&ident.name)
-            .expect("Reference to undefined identifier.");
-        ident.reference.set(Some(reference))
+        let reference = self.scope.identifier_reference(&ident.name);
+        ident.reference.set(reference)
     }
 }
 
-impl<'ast> VisitorMut<'ast> for Semantic<'ast> {
+impl<'ast> VisitorMut<'ast> for Inference<'ast> {
     fn visit_identifier_mut(&mut self, ident: &'ast mut Identifier) {
         if ident.reference.get_mut().is_none() {
             self.reference_identifier(ident);
@@ -182,7 +187,7 @@ impl<'ast> VisitorMut<'ast> for Semantic<'ast> {
     }
 }
 
-impl<'ast> ScopeVisitor for Semantic<'ast> {
+impl<'ast> ScopeVisitor for Inference<'ast> {
     fn enter_scope(&mut self) {
         self.scope.push_stack();
     }
@@ -191,3 +196,9 @@ impl<'ast> ScopeVisitor for Semantic<'ast> {
         self.scope.pop_stack();
     }
 }
+
+pub struct InferenceResult {
+    pub errors: Vec<InferenceError>,
+}
+
+pub struct InferenceError {}

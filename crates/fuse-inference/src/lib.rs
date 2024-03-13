@@ -1,12 +1,13 @@
 use std::collections::HashMap;
 
 use fuse_ast::{
-    Atom, BindingPatternKind, CallExpression, Chunk, Function, Identifier, VariableDeclaration,
+    Atom, BinaryOperator, BinaryOperatorKind, BindingPatternKind, CallExpression, Chunk, Function,
+    Identifier, VariableDeclaration,
 };
 use fuse_common::ReferenceType;
 use fuse_visitor::{
-    walk_call_expression_mut, walk_function_mut, walk_variable_declaration_mut, ScopeVisitor,
-    VisitorMut,
+    walk_binary_operator_mut, walk_call_expression_mut, walk_function_mut,
+    walk_variable_declaration_mut, ScopeVisitor, VisitorMut,
 };
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -30,19 +31,21 @@ impl PartialEq<ReferenceType> for ScopeId {
     }
 }
 
-struct IdentifierMap(HashMap<Atom, ReferenceType>);
+struct IdentifierMap {
+    map: HashMap<Atom, ReferenceType>,
+}
 
 impl IdentifierMap {
     fn new() -> Self {
-        Self(HashMap::new())
+        Self{ map: HashMap::new() }
     }
 
     fn insert(&mut self, atom: Atom, ref_id: ReferenceType) -> Option<ReferenceType> {
-        self.0.insert(atom, ref_id)
+        self.map.insert(atom, ref_id)
     }
 
     fn get(&self, atom: &Atom) -> Option<ReferenceType> {
-        self.0.get(atom).map(|r| r.clone())
+        self.map.get(atom).map(|r| r.clone())
     }
 }
 
@@ -184,6 +187,14 @@ impl<'ast> VisitorMut<'ast> for Inference<'ast> {
             .expect("All function declarations need an identifier.");
         self.declare_identifier(identifier);
         walk_function_mut(self, decl)
+    }
+
+    fn visit_binary_operator_mut(&mut self, op: &'ast mut BinaryOperator) {
+        match &op.kind {
+            BinaryOperatorKind::Member(_) => {}
+            _ => {}
+        }
+        walk_binary_operator_mut(self, op)
     }
 }
 

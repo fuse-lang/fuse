@@ -17,7 +17,7 @@ fuse_codegen = { version = "0.0.0", path = "crates/fuse-codegen" }
 fuse_common = { version = "0.0.0", path = "crates/fuse-common" }
 fuse_common_proc = { version = "0.0.0", path = "crates/fuse-common-proc" }
 fuse_parser = { version = "0.0.0", path = "crates/fuse-parser" }
-fuse_inference = { version = "0.0.0", path = "crates/fuse-inference" }
+fuse_resolve = { version = "0.0.0", path = "crates/fuse-resolve" }
 fuse_visitor = { version = "0.0.0", path = "crates/fuse-visitor" }
 fusec = { version = "0.0.0", path = "crates/fusec" }
 

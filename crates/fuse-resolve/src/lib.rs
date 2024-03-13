@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
 use fuse_ast::{
-    Atom, BinaryOperator, BinaryOperatorKind, BindingPatternKind, CallExpression, Chunk, Function,
-    Identifier, VariableDeclaration,
+    Atom, BinaryOperator, BinaryOperatorKind, BindingPatternKind, CallExpression, Chunk,
+    Expression, Function, Identifier, VariableDeclaration,
 };
 use fuse_common::ReferenceType;
 use fuse_visitor::{
@@ -31,21 +31,19 @@ impl PartialEq<ReferenceType> for ScopeId {
     }
 }
 
-struct IdentifierMap {
-    map: HashMap<Atom, ReferenceType>,
-}
+struct IdentifierMap(HashMap<Atom, ReferenceType>);
 
 impl IdentifierMap {
     fn new() -> Self {
-        Self{ map: HashMap::new() }
+        Self(HashMap::new())
     }
 
     fn insert(&mut self, atom: Atom, ref_id: ReferenceType) -> Option<ReferenceType> {
-        self.map.insert(atom, ref_id)
+        self.0.insert(atom, ref_id)
     }
 
     fn get(&self, atom: &Atom) -> Option<ReferenceType> {
-        self.map.get(atom).map(|r| r.clone())
+        self.0.get(atom).map(|r| r.clone())
     }
 }
 
@@ -128,13 +126,13 @@ impl ScopeTree {
     }
 }
 
-pub struct Inference<'ast> {
+pub struct Resolver<'ast> {
     source: &'ast str,
     scope: ScopeTree,
     last_reference: ReferenceType,
 }
 
-impl<'ast> Inference<'ast> {
+impl<'ast> Resolver<'ast> {
     pub fn new(source: &'ast str) -> Self {
         Self {
             source,
@@ -143,9 +141,9 @@ impl<'ast> Inference<'ast> {
         }
     }
 
-    pub fn resolve(&mut self, chunk: &'ast mut Chunk) -> InferenceResult {
+    pub fn resolve(&mut self, chunk: &'ast mut Chunk) -> ResolverResult {
         self.visit_chunk_mut(chunk);
-        InferenceResult {
+        ResolverResult {
             errors: Vec::default(),
         }
     }
@@ -163,7 +161,7 @@ impl<'ast> Inference<'ast> {
     }
 }
 
-impl<'ast> VisitorMut<'ast> for Inference<'ast> {
+impl<'ast> VisitorMut<'ast> for Resolver<'ast> {
     fn visit_identifier_mut(&mut self, ident: &'ast mut Identifier) {
         if ident.reference.get_mut().is_none() {
             self.reference_identifier(ident);
@@ -191,14 +189,22 @@ impl<'ast> VisitorMut<'ast> for Inference<'ast> {
 
     fn visit_binary_operator_mut(&mut self, op: &'ast mut BinaryOperator) {
         match &op.kind {
-            BinaryOperatorKind::Member(_) => {}
+            BinaryOperatorKind::Member(_) => {
+                println!("{:?}", op);
+                // let rhs = match &op.rhs {
+                //     Expression::Identifier(rhs) => rhs,
+                //     Expression::BinaryOperator(op) => match op {
+                //     },
+                //     _ => panic!("Right hand side of a member(.) operator should be an identifier"),
+                // };
+            }
             _ => {}
         }
         walk_binary_operator_mut(self, op)
     }
 }
 
-impl<'ast> ScopeVisitor for Inference<'ast> {
+impl<'ast> ScopeVisitor for Resolver<'ast> {
     fn enter_scope(&mut self) {
         self.scope.push_stack();
     }
@@ -208,8 +214,8 @@ impl<'ast> ScopeVisitor for Inference<'ast> {
     }
 }
 
-pub struct InferenceResult {
-    pub errors: Vec<InferenceError>,
+pub struct ResolverResult {
+    pub errors: Vec<ResolverError>,
 }
 
-pub struct InferenceError {}
+pub struct ResolverError {}

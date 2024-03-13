@@ -1,5 +1,5 @@
 [package]
-name = "fuse_inference"
+name = "fuse_resolve"
 version = "0.0.0"
 description.workspace = true
 authors.workspace = true

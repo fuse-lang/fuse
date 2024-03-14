@@ -47,9 +47,16 @@ impl IdentifierMap {
     }
 }
 
+enum ReferenceKind {
+    Scope,
+    Member,
+}
+
 struct ScopeTree {
     current: ScopeId,
     identifier_maps: Vec<IdentifierMap>,
+    /// Maps between `ReferenceId` and `ReferenceKind`
+    reference_kinds: Vec<ReferenceKind>,
     parent_ids: Vec<ScopeId>,
 }
 
@@ -59,6 +66,7 @@ impl ScopeTree {
             current: ScopeId(0),
             parent_ids: vec![ScopeId(0)],
             identifier_maps: vec![IdentifierMap::new()],
+            reference_kinds: Vec::new(),
         }
     }
 
@@ -105,6 +113,7 @@ impl ScopeTree {
         &mut self,
         atom: Atom,
         ref_id: ReferenceType,
+        ref_kind: ReferenceKind,
     ) -> Option<ReferenceType> {
         self.identifier_maps[self.current.as_index()].insert(atom, ref_id)
     }
@@ -126,54 +135,118 @@ impl ScopeTree {
     }
 }
 
-pub struct Module {
+pub struct Semantic<'ast> {
+    source: &'ast str,
     scope: ScopeTree,
     last_reference: ReferenceType,
 }
 
-impl Module {
-    fn new() -> Self {
+impl<'ast> Semantic<'ast> {
+    pub fn new(source: &'ast str) -> Self {
         Self {
+            source,
             scope: ScopeTree::root_scope(),
             last_reference: 0,
         }
     }
 
-    fn declare_identifier(&mut self, ident: &Identifier) {
-        self.last_reference += 1;
-        self.scope
-            .set_identifier_reference(ident.name.clone(), self.last_reference);
-        ident.reference.set(Some(self.last_reference))
-    }
-
-    fn reference_identifier(&mut self, ident: &Identifier) {
-        let reference = self.scope.identifier_reference(&ident.name);
-        ident.reference.set(reference)
-    }
-}
-
-pub struct Resolver<'ast> {
-    source: &'ast str,
-    modules: HashMap<&'ast str, Module>,
-}
-
-impl<'ast> Resolver<'ast> {
-    pub fn new(source: &'ast str) -> Self {
-        Self {
-            source,
-            modules: HashMap::new(),
-        }
-    }
-
-    pub fn resolve(&mut self, chunk: &'ast mut Chunk) -> ResolverResult {
-        ResolverResult {
+    pub fn build(&mut self, chunk: &'ast mut Chunk) -> SemanticResult {
+        self.visit_chunk_mut(chunk);
+        SemanticResult {
             errors: Vec::default(),
         }
     }
+
+    fn declare_identifier(&mut self, ident: &Identifier) {
+        self.last_reference += 1;
+        self.scope.set_identifier_reference(
+            ident.name.clone(),
+            self.last_reference,
+            ReferenceKind::Scope,
+        );
+        ident.reference.set(Some(self.last_reference))
+    }
+
+    fn reference_scope_identifier(&mut self, ident: &Identifier) {
+        let reference = self.scope.identifier_reference(&ident.name);
+        ident.reference.set(reference)
+    }
+
+    fn reference_member_identifier(&mut self, ident: &Identifier, sup: Option<&Identifier>) {
+        let reference = self.scope.identifier_reference(&ident.name);
+        ident.reference.set(reference);
+        todo!()
+    }
 }
 
-pub struct ResolverResult {
-    pub errors: Vec<ResolverError>,
+impl<'ast> VisitorMut<'ast> for Semantic<'ast> {
+    fn visit_identifier_mut(&mut self, ident: &'ast mut Identifier) {
+        if ident.reference.get_mut().is_none() {
+            self.reference_scope_identifier(ident);
+        }
+    }
+
+    fn visit_variable_declaration_mut(&mut self, decl: &'ast mut VariableDeclaration) {
+        match &decl.binding.kind {
+            BindingPatternKind::Identifier(bind) => self.declare_identifier(&bind.identifier),
+            _ => todo!(),
+        }
+
+        walk_variable_declaration_mut(self, decl)
+    }
+
+    fn visit_function_declaration_mut(&mut self, decl: &'ast mut Function) {
+        let identifier = decl
+            .signature
+            .identifier
+            .as_ref()
+            .expect("All function declarations need an identifier.");
+        self.declare_identifier(identifier);
+        walk_function_mut(self, decl)
+    }
+
+    fn visit_binary_operator_mut(&mut self, op: &'ast mut BinaryOperator) {
+        match &op.kind {
+            BinaryOperatorKind::Member(_) => {
+                println!("{:?}", op);
+                let rhs = match &op.rhs {
+                    Expression::Identifier(rhs) => rhs,
+                    Expression::BinaryOperator(op) => match &**op {
+                        BinaryOperator {
+                            kind: BinaryOperatorKind::Member(..),
+                            lhs: Expression::Identifier(lhs),
+                            ..
+                        } => lhs,
+                        BinaryOperator {
+                            kind: BinaryOperatorKind::Member(..),
+                            lhs: Expression::ParenthesizedExpression(expr),
+                            ..
+                        } => todo!(),
+                        _ => {
+                            todo!()
+                        }
+                    },
+                    _ => panic!("Right hand side of a member(.) operator should be an identifier"),
+                };
+            }
+            _ => {}
+        }
+        walk_binary_operator_mut(self, op)
+    }
 }
 
-pub struct ResolverError {}
+impl<'ast> ScopeVisitor for Semantic<'ast> {
+    fn enter_scope(&mut self) {
+        self.scope.push_stack();
+    }
+
+    fn leave_scope(&mut self) {
+        self.scope.pop_stack();
+    }
+}
+
+pub struct SemanticResult {
+    pub errors: Vec<SemanticError>,
+}
+
+pub struct SemanticError {}

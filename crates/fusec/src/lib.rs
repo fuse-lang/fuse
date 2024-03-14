@@ -1,12 +1,12 @@
 use fuse_parser::Parser;
-use fuse_resolve::Resolver;
+use fuse_semantic::Semantic;
 
 fn compile_chunk(source: &str) {
     let parsed = Parser::new(source).parse();
     assert!(!parsed.paniced);
     assert!(parsed.errors.len() == 0);
     let mut chunk = parsed.chunk.unwrap();
-    let resolution = Resolver::new(source).resolve(&mut chunk);
+    let semantic = Semantic::new(source).build(&mut chunk);
     // panic!("{:#?}", chunk)
 }
 

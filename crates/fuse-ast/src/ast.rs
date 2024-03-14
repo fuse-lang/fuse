@@ -97,6 +97,12 @@ pub struct TypeAnnotation {
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Atom(pub Rc<str>);
 
+impl Atom {
+    pub fn as_str<'a>(&'a self) -> &'a str {
+        &self.0
+    }
+}
+
 #[serializable]
 #[derive(Debug, PartialEq)]
 pub enum Expression {

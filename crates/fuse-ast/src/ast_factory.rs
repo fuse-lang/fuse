@@ -182,6 +182,19 @@ impl AstFactory {
         }))
     }
 
+    pub fn member_expression(
+        &self,
+        span: Span,
+        lhs: MemberExpressionLHS,
+        rhs: MemberExpressionRHS,
+    ) -> Expression {
+        Expression::MemberExpression(Box::from(MemberExpression {
+            span,
+            lhs: Box::from(lhs),
+            rhs: Box::from(rhs),
+        }))
+    }
+
     pub fn struct_construction_expression(
         &self,
         target: Expression,

@@ -1,0 +1,80 @@
+---
+source: crates/fuse-parser/tests/cases/mod.rs
+description: "a.b().c.d()\n"
+expression: parsed.chunk
+input_file: crates/fuse-parser/tests/cases/pass/call-expression-04/case.fuse
+---
+Some(Chunk(
+  span: Span(
+    start: 0,
+    end: 12,
+  ),
+  body: Block(
+    statements: [
+      Expression(CallExpression(CallExpression(
+        span: Span(
+          start: 0,
+          end: 11,
+        ),
+        callee: MemberExpression(MemberExpression(
+          span: Span(
+            start: 0,
+            end: 9,
+          ),
+          lhs: Member(MemberExpression(
+            span: Span(
+              start: 0,
+              end: 7,
+            ),
+            lhs: Call(CallExpression(
+              span: Span(
+                start: 0,
+                end: 5,
+              ),
+              callee: MemberExpression(MemberExpression(
+                span: Span(
+                  start: 0,
+                  end: 3,
+                ),
+                lhs: Identifier(Identifier(
+                  span: Span(
+                    start: 0,
+                    end: 1,
+                  ),
+                  name: Atom("a"),
+                  reference: None,
+                )),
+                rhs: Identifier(Identifier(
+                  span: Span(
+                    start: 2,
+                    end: 3,
+                  ),
+                  name: Atom("b"),
+                  reference: None,
+                )),
+              )),
+              arguments: [],
+            )),
+            rhs: Identifier(Identifier(
+              span: Span(
+                start: 6,
+                end: 7,
+              ),
+              name: Atom("c"),
+              reference: None,
+            )),
+          )),
+          rhs: Identifier(Identifier(
+            span: Span(
+              start: 8,
+              end: 9,
+            ),
+            name: Atom("d"),
+            reference: None,
+          )),
+        )),
+        arguments: [],
+      ))),
+    ],
+  ),
+))

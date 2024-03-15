@@ -13,7 +13,7 @@ Some(Chunk(
     statements: [
       Expression(CallExpression(CallExpression(
         span: Span(
-          start: 4,
+          start: 0,
           end: 13,
         ),
         callee: Identifier(Identifier(

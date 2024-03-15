@@ -3,8 +3,8 @@ use std::cell::Cell;
 use crate::{lexer::TokenKind, Parser, ParserResult};
 use fuse_ast::{
     ArrayExpressionElement, BinaryOperator, BooleanLiteral, ConstructionExpression,
-    ConstructionField, Else, Expression, Identifier, If, KeyValueArgument, Precedence,
-    SpreadArgument, TupleExpressionElement,
+    ConstructionField, Else, Expression, Identifier, If, KeyValueArgument, MemberExpression,
+    MemberExpressionLHS, MemberExpressionRHS, Precedence, SpreadArgument, TupleExpressionElement,
 };
 
 impl<'a> Parser<'a> {
@@ -22,6 +22,11 @@ impl<'a> Parser<'a> {
     }
 
     pub(crate) fn try_parse_primary_expression(&mut self) -> Option<ParserResult<Expression>> {
+        let expr = self.try_parse_primary_expression_base()?;
+        Some(expr.and_then(|expr| self.parse_expression_with_suffix(expr)))
+    }
+
+    pub(crate) fn try_parse_primary_expression_base(&mut self) -> Option<ParserResult<Expression>> {
         use TokenKind::*;
         let expr = match self.cur_kind() {
             True => {
@@ -59,11 +64,7 @@ impl<'a> Parser<'a> {
             _ => return None,
         };
 
-        let Ok(expr) = expr else {
-            return Some(expr);
-        };
-
-        Some(self.parse_expression_with_suffix(expr))
+        Some(expr)
     }
 
     pub(crate) fn parse_identifier(&mut self) -> ParserResult<Identifier> {
@@ -250,6 +251,7 @@ impl<'a> Parser<'a> {
         match self.cur_kind() {
             TokenKind::LCurly => self.parse_struct_construction_expression(expr),
             TokenKind::LParen => self.parse_call_expression(expr),
+            TokenKind::Dot => self.parse_member_chain_expression_recursive(expr),
             _ => Ok(expr),
         }
     }
@@ -320,7 +322,7 @@ impl<'a> Parser<'a> {
     }
 
     fn parse_call_expression(&mut self, expr: Expression) -> ParserResult<Expression> {
-        let start = self.start_span();
+        let start = expr.span();
         // consume the open parentheses
         self.consume();
 
@@ -339,6 +341,42 @@ impl<'a> Parser<'a> {
         Ok(self
             .ast
             .call_expression(self.end_span(start), expr, arguments))
+    }
+
+    fn parse_member_chain_expression_recursive(
+        &mut self,
+        expr: Expression,
+    ) -> ParserResult<Expression> {
+        let start = expr.span();
+        if self.consume_if(TokenKind::Dot).is_none() {
+            return Ok(expr);
+        }
+
+        let lhs = {
+            match expr {
+                Expression::Identifier(lhs) => MemberExpressionLHS::Identifier(*lhs),
+                Expression::CallExpression(call) => MemberExpressionLHS::Call(*call),
+                Expression::MemberExpression(member) => MemberExpressionLHS::Member(*member),
+                _ => MemberExpressionLHS::Expression(expr),
+            }
+        };
+
+        // TODO: better error messages here, no panic, we should recover.
+        let rhs = match self.try_parse_primary_expression_base().expect("Expected a primary expression")? {
+            Expression::Identifier(ident) => MemberExpressionRHS::Identifier(*ident),
+            Expression::NumberLiteral(num) => MemberExpressionRHS::Number(*num),
+            Expression::CallExpression(call) => MemberExpressionRHS::Call(*call),
+            Expression::MemberExpression(member) => MemberExpressionRHS::Member(*member),
+            rhs => panic!("write error, member rhs should be identifier or number(only for tuple types). {rhs:?}"),
+        };
+
+        let expr = self.ast.member_expression(self.end_span(start), lhs, rhs);
+        let expr = match self.cur_kind() {
+            TokenKind::LParen => self.parse_call_expression(expr)?,
+            _ => expr,
+        };
+
+        self.parse_member_chain_expression_recursive(expr)
     }
 
     fn parse_expression_with_precedence(

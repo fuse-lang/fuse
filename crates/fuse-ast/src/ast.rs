@@ -2,6 +2,8 @@ use fuse_common::{ReferenceType, Span};
 use fuse_common_proc::serializable;
 use std::{cell::Cell, rc::Rc};
 
+use crate::GetSpan;
+
 #[serializable]
 #[derive(Debug)]
 pub struct Chunk {
@@ -117,9 +119,33 @@ pub enum Expression {
     ArrayExpression(Box<ArrayExpression>),
     TupleExpression(Box<TupleExpression>),
     ParenthesizedExpression(Box<ParenthesizedExpression>),
+    MemberExpression(Box<MemberExpression>),
     CallExpression(Box<CallExpression>),
     TableConstructionExpression(Box<ConstructionExpression>),
     StructConstructionExpression(Box<StructConstructionExpression>),
+}
+
+impl Expression {
+    pub fn span(&self) -> Span {
+        use Expression::*;
+        match self {
+            NumberLiteral(expr) => expr.span,
+            StringLiteral(expr) => expr.span,
+            BooleanLiteral(expr) => expr.span,
+            Identifier(expr) => expr.span,
+            Function(expr) => expr.span,
+            If(expr) => expr.span,
+            UnaryOperator(expr) => expr.span(),
+            BinaryOperator(expr) => expr.span(),
+            ArrayExpression(expr) => expr.span,
+            TupleExpression(expr) => expr.span,
+            ParenthesizedExpression(expr) => expr.span,
+            MemberExpression(expr) => expr.span,
+            CallExpression(expr) => expr.span,
+            TableConstructionExpression(expr) => expr.span,
+            StructConstructionExpression(expr) => expr.span(),
+        }
+    }
 }
 
 #[serializable]
@@ -264,12 +290,29 @@ pub struct UnaryOperator {
     pub expression: Expression,
 }
 
+impl GetSpan for UnaryOperator {
+    #[inline]
+    fn span(&self) -> Span {
+        Span::with_spans(vec![self.kind.span(), self.expression.span()])
+    }
+}
+
 #[serializable]
 #[derive(Debug, PartialEq)]
 pub enum UnaryOperatorKind {
     Not(Span),
-    Minus(Span),
     Plus(Span),
+    Minus(Span),
+}
+
+impl GetSpan for UnaryOperatorKind {
+    fn span(&self) -> Span {
+        match self {
+            Self::Not(span) => *span,
+            Self::Plus(span) => *span,
+            Self::Minus(span) => *span,
+        }
+    }
 }
 
 #[serializable]
@@ -278,6 +321,12 @@ pub struct BinaryOperator {
     pub kind: BinaryOperatorKind,
     pub lhs: Expression,
     pub rhs: Expression,
+}
+
+impl GetSpan for BinaryOperator {
+    fn span(&self) -> Span {
+        Span::with_spans(vec![self.kind.span(), self.lhs.span(), self.rhs.span()])
+    }
 }
 
 #[serializable]
@@ -305,6 +354,36 @@ pub enum BinaryOperatorKind {
     ShiftLeft(Span),
     ShiftRight(Span),
     Member(Span),
+}
+
+impl GetSpan for BinaryOperatorKind {
+    fn span(&self) -> Span {
+        let span = match self {
+            Self::Assignment(span) => span,
+            Self::LogicalOr(span) => span,
+            Self::LogicalAnd(span) => span,
+            Self::BitwiseOr(span) => span,
+            Self::BitwiseXor(span) => span,
+            Self::BitwiseAnd(span) => span,
+            Self::Equality(span) => span,
+            Self::NonEquality(span) => span,
+            Self::LessThanEqual(span) => span,
+            Self::LessThan(span) => span,
+            Self::GreaterThanEqual(span) => span,
+            Self::GreaterThan(span) => span,
+            Self::Plus(span) => span,
+            Self::Minus(span) => span,
+            Self::Multiply(span) => span,
+            Self::Exponential(span) => span,
+            Self::Division(span) => span,
+            Self::FloorDivision(span) => span,
+            Self::Modulo(span) => span,
+            Self::ShiftLeft(span) => span,
+            Self::ShiftRight(span) => span,
+            Self::Member(span) => span,
+        };
+        *span
+    }
 }
 
 #[serializable]
@@ -405,9 +484,54 @@ pub struct CallExpression {
 
 #[serializable]
 #[derive(Debug, PartialEq)]
+pub struct MemberExpression {
+    pub span: Span,
+    pub lhs: Box<MemberExpressionLHS>,
+    pub rhs: Box<MemberExpressionRHS>,
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub enum MemberExpressionLHS {
+    Identifier(Identifier),
+    Expression(Expression),
+    Member(MemberExpression),
+    Call(CallExpression),
+}
+
+impl From<MemberExpressionRHS> for MemberExpressionLHS {
+    fn from(value: MemberExpressionRHS) -> Self {
+        match value {
+            MemberExpressionRHS::Number(num) => {
+                Self::Expression(Expression::NumberLiteral(Box::from(num)))
+            }
+            MemberExpressionRHS::Identifier(ident) => Self::Identifier(ident),
+            MemberExpressionRHS::Member(member) => Self::Member(member),
+            MemberExpressionRHS::Call(call) => Self::Call(call),
+        }
+    }
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
+pub enum MemberExpressionRHS {
+    Identifier(Identifier),
+    Number(NumberLiteral),
+    Member(MemberExpression),
+    Call(CallExpression),
+}
+
+#[serializable]
+#[derive(Debug, PartialEq)]
 pub struct StructConstructionExpression {
     pub target: Expression,
     pub construction: ConstructionExpression,
+}
+
+impl GetSpan for StructConstructionExpression {
+    fn span(&self) -> Span {
+        Span::with_spans(vec![self.target.span(), self.construction.span])
+    }
 }
 
 #[serializable]

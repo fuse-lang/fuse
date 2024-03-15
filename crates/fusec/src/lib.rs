@@ -16,7 +16,7 @@ fn manual_test() {
         r#"
         let a = 0
         let c = 1
-        let d = a.b.c
+        let d = a.b.c()
         "#,
     )
 }

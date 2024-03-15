@@ -11,55 +11,55 @@ Some(Chunk(
   ),
   body: Block(
     statements: [
-      Expression(BinaryOperator(BinaryOperator(
-        kind: Member(Span(
-          start: 3,
-          end: 4,
-        )),
-        lhs: Identifier(Identifier(
+      Expression(CallExpression(CallExpression(
+        span: Span(
+          start: 0,
+          end: 15,
+        ),
+        callee: MemberExpression(MemberExpression(
           span: Span(
             start: 0,
-            end: 3,
+            end: 13,
           ),
-          name: Atom("foo"),
-          reference: None,
-        )),
-        rhs: BinaryOperator(BinaryOperator(
-          kind: Member(Span(
-            start: 9,
-            end: 10,
-          )),
-          lhs: CallExpression(CallExpression(
+          lhs: Call(CallExpression(
             span: Span(
-              start: 7,
+              start: 0,
               end: 9,
             ),
-            callee: Identifier(Identifier(
+            callee: MemberExpression(MemberExpression(
               span: Span(
-                start: 4,
+                start: 0,
                 end: 7,
               ),
-              name: Atom("bar"),
-              reference: None,
+              lhs: Identifier(Identifier(
+                span: Span(
+                  start: 0,
+                  end: 3,
+                ),
+                name: Atom("foo"),
+                reference: None,
+              )),
+              rhs: Identifier(Identifier(
+                span: Span(
+                  start: 4,
+                  end: 7,
+                ),
+                name: Atom("bar"),
+                reference: None,
+              )),
             )),
             arguments: [],
           )),
-          rhs: CallExpression(CallExpression(
+          rhs: Identifier(Identifier(
             span: Span(
-              start: 13,
-              end: 15,
+              start: 10,
+              end: 13,
             ),
-            callee: Identifier(Identifier(
-              span: Span(
-                start: 10,
-                end: 13,
-              ),
-              name: Atom("baz"),
-              reference: None,
-            )),
-            arguments: [],
+            name: Atom("baz"),
+            reference: None,
           )),
         )),
+        arguments: [],
       ))),
     ],
   ),

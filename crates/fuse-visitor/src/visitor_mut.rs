@@ -107,6 +107,18 @@ pub trait VisitorMut<'ast>: ScopeVisitor + Sized {
         walk_struct_construction_expression_mut(self, expr)
     }
 
+    fn visit_member_expression_mut(&mut self, expr: &'ast mut MemberExpression) {
+        walk_member_expression_mut(self, expr)
+    }
+
+    fn visit_member_expression_lhs_mut(&mut self, lhs: &'ast mut MemberExpressionLHS) {
+        walk_member_expression_lhs_mut(self, lhs)
+    }
+
+    fn visit_member_expression_rhs_mut(&mut self, rhs: &'ast mut MemberExpressionRHS) {
+        walk_member_expression_rhs_mut(self, rhs)
+    }
+
     fn visit_construction_expression_mut(&mut self, expr: &'ast mut ConstructionExpression) {
         walk_construction_expression_mut(self, expr)
     }
@@ -208,6 +220,9 @@ pub fn walk_expression_mut<'ast, V: VisitorMut<'ast>>(
         }
         Expression::StructConstructionExpression(expr) => {
             visit!(visitor.visit_struct_construction_expression_mut(expr))
+        }
+        Expression::MemberExpression(expr) => {
+            visit!(visitor.visit_member_expression_mut(expr))
         }
     }
 }
@@ -354,6 +369,38 @@ pub fn walk_struct_construction_expression_mut<'ast, V: VisitorMut<'ast>>(
 ) {
     visit!(visitor.visit_expression_mut(&mut expr.target));
     visit!(visitor.visit_construction_expression_mut(&mut expr.construction));
+}
+
+pub fn walk_member_expression_mut<'ast, V: VisitorMut<'ast>>(
+    visitor: &mut V,
+    expr: &'ast mut MemberExpression,
+) {
+    visit!(visitor.visit_member_expression_lhs_mut(&mut expr.lhs));
+    visit!(visitor.visit_member_expression_rhs_mut(&mut expr.rhs));
+}
+
+pub fn walk_member_expression_lhs_mut<'ast, V: VisitorMut<'ast>>(
+    visitor: &mut V,
+    lhs: &'ast mut MemberExpressionLHS,
+) {
+    match lhs {
+        MemberExpressionLHS::Identifier(ident) => visit!(visitor.visit_identifier_mut(ident)),
+        MemberExpressionLHS::Expression(expr) => visit!(visitor.visit_expression_mut(expr)),
+        MemberExpressionLHS::Member(member) => visit!(visitor.visit_member_expression_mut(member)),
+        MemberExpressionLHS::Call(call) => visit!(visitor.visit_call_expression_mut(call)),
+    }
+}
+
+pub fn walk_member_expression_rhs_mut<'ast, V: VisitorMut<'ast>>(
+    visitor: &mut V,
+    rhs: &'ast mut MemberExpressionRHS,
+) {
+    match rhs {
+        MemberExpressionRHS::Identifier(ident) => visit!(visitor.visit_identifier_mut(ident)),
+        MemberExpressionRHS::Call(call) => visit!(visitor.visit_call_expression_mut(call)),
+        MemberExpressionRHS::Number(_) => todo!("support for numeric access to tuple fields."),
+        MemberExpressionRHS::Member(member) => visit!(visitor.visit_member_expression_mut(member)),
+    }
 }
 
 pub fn walk_construction_expression_mut<'ast, V: VisitorMut<'ast>>(

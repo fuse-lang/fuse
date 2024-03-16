@@ -353,7 +353,6 @@ pub enum BinaryOperatorKind {
     Modulo(Span),
     ShiftLeft(Span),
     ShiftRight(Span),
-    Member(Span),
 }
 
 impl GetSpan for BinaryOperatorKind {
@@ -380,7 +379,6 @@ impl GetSpan for BinaryOperatorKind {
             Self::Modulo(span) => span,
             Self::ShiftLeft(span) => span,
             Self::ShiftRight(span) => span,
-            Self::Member(span) => span,
         };
         *span
     }

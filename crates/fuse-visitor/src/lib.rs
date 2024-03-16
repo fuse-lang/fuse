@@ -1,7 +1,9 @@
+mod node_visitor;
 mod scope_visitor;
 mod visitor;
 mod visitor_mut;
 
+pub use node_visitor::*;
 pub use scope_visitor::*;
 pub use visitor::*;
 pub use visitor_mut::*;
@@ -26,9 +28,9 @@ macro_rules! visit_list {
 
 #[macro_export]
 macro_rules! visit_scope {
-    ($visitor:ident => $block:block) => {
+    ($visitor:ident => $block:expr) => {
         $visitor.enter_scope();
-        $block
+        $block;
         $visitor.leave_scope();
     };
 }

@@ -1,16 +1,26 @@
 // based on https://rust-unofficial.github.io/patterns/patterns/behavioural/visitor.html
 // and https://github.com/rust-lang/rust/blob/5bc7b9ac8ace5312e1d2cdc2722715cf58d4f926/compiler/rustc_ast_ir/src/visit.rs
 
-use crate::{visit, visit_list, visit_scope, ScopeVisitor};
-use fuse_ast::ast::*;
+use crate::{visit, visit_list, visit_scope, NodeVisitor, ScopeVisitor};
+use fuse_ast::{ast::*, AstNode};
 
-pub trait Visitor<'ast>: ScopeVisitor + Sized {
+pub trait Visitor<'ast>: ScopeVisitor + NodeVisitor + Sized {
     fn visit_chunk(&mut self, chunk: &'ast Chunk) {
-        walk_block(self, &chunk.body)
+        visit_scope!(self => {
+            let node = AstNode::Chunk(chunk);
+            self.enter_node(node);
+            walk_chunk(self, chunk);
+            self.leave_node(node);
+        });
     }
 
     fn visit_block(&mut self, block: &'ast Block) {
-        walk_block(self, block)
+        visit_scope!(self => {
+            let node = AstNode::Block(block);
+            self.enter_node(node);
+            walk_block(self, block) ;
+            self.leave_node(node);
+        });
     }
 
     fn visit_statement(&mut self, statement: &'ast Statement) {
@@ -18,93 +28,182 @@ pub trait Visitor<'ast>: ScopeVisitor + Sized {
     }
 
     fn visit_variable_declaration(&mut self, decl: &'ast VariableDeclaration) {
-        walk_variable_declaration(self, decl)
+        let node = AstNode::VariableDeclaration(decl);
+        self.enter_node(node);
+        walk_variable_declaration(self, decl);
+        self.leave_node(node);
     }
 
     fn visit_function_declaration(&mut self, decl: &'ast Function) {
-        walk_function(self, decl)
+        visit_scope!(self => {
+            let node = AstNode::FunctionDeclaration(decl);
+            self.enter_node(node);
+            walk_function(self, decl);
+            self.leave_node(node);
+        });
     }
 
     fn visit_enum_declaration(&mut self, decl: &'ast EnumDeclaration) {
-        walk_enum_declaration(self, decl)
+        visit_scope!(self => {
+            let node = AstNode::EnumDeclaration(decl);
+            self.enter_node(node);
+            walk_enum_declaration(self, decl);
+            self.leave_node(node);
+        });
     }
 
     fn visit_enum_variant(&mut self, var: &'ast EnumVariant) {
-        walk_enum_variant(self, var)
+        let node = AstNode::EnumVariant(var);
+        self.enter_node(node);
+        walk_enum_variant(self, var);
+        self.leave_node(node);
     }
 
     fn visit_struct_declaration(&mut self, decl: &'ast StructDeclaration) {
-        walk_struct_declaration(self, decl)
+        visit_scope!(self => {
+            let node = AstNode::StructDeclaration(decl);
+            self.enter_node(node);
+            walk_struct_declaration(self, decl);
+            self.leave_node(node);
+        });
     }
 
     fn visit_struct_field(&mut self, field: &'ast StructField) {
-        walk_struct_field(self, field)
+        let node = AstNode::StructField(field);
+        self.enter_node(node);
+        walk_struct_field(self, field);
+        self.leave_node(node);
     }
 
-    fn visit_visibility_modifier(&mut self, _: &'ast VisibilityModifier) {}
+    fn visit_visibility_modifier(&mut self, vis: &'ast VisibilityModifier) {
+        let node = AstNode::VisibilityModifier(vis);
+        self.enter_node(node);
+        self.leave_node(node);
+    }
 
     fn visit_expression(&mut self, expression: &'ast Expression) {
         walk_expression(self, expression)
     }
 
-    fn visit_number_literal(&mut self, _: &'ast NumberLiteral) {}
+    fn visit_number_literal(&mut self, lit: &'ast NumberLiteral) {
+        let node = AstNode::NumberLiteral(lit);
+        self.enter_node(node);
+        self.leave_node(node);
+    }
 
-    fn visit_string_literal(&mut self, _: &'ast StringLiteral) {}
+    fn visit_string_literal(&mut self, lit: &'ast StringLiteral) {
+        let node = AstNode::StringLiteral(lit);
+        self.enter_node(node);
+        self.leave_node(node);
+    }
 
-    fn visit_boolean_literal(&mut self, _: &'ast BooleanLiteral) {}
+    fn visit_boolean_literal(&mut self, lit: &'ast BooleanLiteral) {
+        let node = AstNode::BooleanLiteral(lit);
+        self.enter_node(node);
+        self.leave_node(node);
+    }
 
-    fn visit_identifier(&mut self, _: &'ast Identifier) {}
+    fn visit_identifier(&mut self, ident: &'ast Identifier) {
+        let node = AstNode::Identifier(ident);
+        self.enter_node(node);
+        self.leave_node(node);
+    }
 
-    fn visit_function(&mut self, func: &'ast Function) {
-        walk_function(self, func)
+    fn visit_function_expression(&mut self, func: &'ast Function) {
+        visit_scope!(self => {
+            let node = AstNode::FunctionExpression(func);
+            self.enter_node(node);
+            walk_function(self, func);
+            self.leave_node(node);
+        });
     }
 
     fn visit_function_signature(&mut self, sign: &'ast FunctionSignature) {
-        walk_function_signature(self, sign)
+        let node = AstNode::FunctionSignature(sign);
+        self.enter_node(node);
+        walk_function_signature(self, sign);
+        self.leave_node(node);
     }
 
     fn visit_function_parameters(&mut self, params: &'ast FunctionParameters) {
-        walk_function_parameters(self, params)
+        let node = AstNode::FunctionParameters(params);
+        self.enter_node(node);
+        walk_function_parameters(self, params);
+        self.leave_node(node);
     }
 
     fn visit_function_parameter(&mut self, param: &'ast FunctionParameter) {
-        walk_function_parameter(self, param)
+        let node = AstNode::FunctionParameter(param);
+        self.enter_node(node);
+        walk_function_parameter(self, param);
+        self.leave_node(node);
     }
 
     fn visit_function_body(&mut self, body: &'ast FunctionBody) {
-        walk_function_body(self, body)
+        let node = AstNode::FunctionBody(body);
+        self.enter_node(node);
+        walk_function_body(self, body);
+        self.leave_node(node);
     }
 
     fn visit_if(&mut self, r#if: &'ast If) {
-        walk_if(self, r#if)
+        visit_scope!(self => {
+            let node = AstNode::If(r#if);
+            self.enter_node(node);
+            walk_if(self, r#if);
+            self.leave_node(node);
+        });
     }
 
     fn visit_else(&mut self, r#else: &'ast Else) {
-        walk_else(self, r#else)
+        visit_scope!(self => {
+            let node = AstNode::Else(r#else);
+            self.enter_node(node);
+            walk_else(self, r#else);
+            self.leave_node(node);
+        });
     }
 
     fn visit_unary_operator(&mut self, op: &'ast UnaryOperator) {
-        walk_unary_operator(self, op)
+        let node = AstNode::UnaryOperator(op);
+        self.enter_node(node);
+        walk_unary_operator(self, op);
+        self.leave_node(node);
     }
 
     fn visit_binary_operator(&mut self, op: &'ast BinaryOperator) {
-        walk_binary_operator(self, op)
+        let node = AstNode::BinaryOperator(op);
+        self.enter_node(node);
+        walk_binary_operator(self, op);
+        self.leave_node(node);
     }
 
     fn visit_array_expression(&mut self, array: &'ast ArrayExpression) {
-        walk_array_expression(self, array)
+        let node = AstNode::ArrayExpression(array);
+        self.enter_node(node);
+        walk_array_expression(self, array);
+        self.leave_node(node);
     }
 
     fn visit_parenthesized_expression(&mut self, expr: &'ast ParenthesizedExpression) {
-        walk_parenthesized_expression(self, expr)
+        let node = AstNode::ParenthesizedExpression(expr);
+        self.enter_node(node);
+        walk_parenthesized_expression(self, expr);
+        self.leave_node(node);
     }
 
     fn visit_table_construction_expression(&mut self, expr: &'ast ConstructionExpression) {
-        walk_construction_expression(self, expr)
+        let node = AstNode::ConstructionExpression(expr);
+        self.enter_node(node);
+        walk_construction_expression(self, expr);
+        self.leave_node(node);
     }
 
     fn visit_struct_construction_expression(&mut self, expr: &'ast StructConstructionExpression) {
-        walk_struct_construction_expression(self, expr)
+        let node = AstNode::StructConstructionExpression(expr);
+        self.enter_node(node);
+        walk_struct_construction_expression(self, expr);
+        self.leave_node(node);
     }
 
     fn visit_member_expression(&mut self, expr: &'ast MemberExpression) {
@@ -160,10 +259,12 @@ pub trait Visitor<'ast>: ScopeVisitor + Sized {
     }
 }
 
+pub fn walk_chunk<'ast, V: Visitor<'ast>>(visitor: &mut V, chunk: &'ast Chunk) {
+    walk_block(visitor, &chunk.body);
+}
+
 pub fn walk_block<'ast, V: Visitor<'ast>>(visitor: &mut V, block: &'ast Block) {
-    visit_scope!(visitor => {
-        visit_list!(visitor.visit_statement(&block.statements));
-    });
+    visit_list!(visitor.visit_statement(&block.statements));
 }
 
 pub fn walk_statement<'ast, V: Visitor<'ast>>(visitor: &mut V, statement: &'ast Statement) {
@@ -195,7 +296,7 @@ pub fn walk_expression<'ast, V: Visitor<'ast>>(visitor: &mut V, expression: &'as
         Expression::StringLiteral(expr) => visit!(visitor.visit_string_literal(expr)),
         Expression::BooleanLiteral(expr) => visit!(visitor.visit_boolean_literal(expr)),
         Expression::Identifier(expr) => visit!(visitor.visit_identifier(expr)),
-        Expression::Function(expr) => visit!(visitor.visit_function(expr)),
+        Expression::Function(expr) => visit!(visitor.visit_function_expression(expr)),
         Expression::If(expr) => visit!(visitor.visit_if(expr)),
         Expression::UnaryOperator(expr) => visit!(visitor.visit_unary_operator(expr)),
         Expression::BinaryOperator(expr) => visit!(visitor.visit_binary_operator(expr)),
@@ -218,10 +319,8 @@ pub fn walk_expression<'ast, V: Visitor<'ast>>(visitor: &mut V, expression: &'as
 }
 
 pub fn walk_function<'ast, V: Visitor<'ast>>(visitor: &mut V, func: &'ast Function) {
-    visit_scope!(visitor => {
-        visit!(visitor.visit_function_signature(&func.signature));
-        visit!(visitor.visit_function_body(&func.body));
-    });
+    visit!(visitor.visit_function_signature(&func.signature));
+    visit!(visitor.visit_function_body(&func.body));
 }
 
 pub fn walk_function_signature<'ast, V: Visitor<'ast>>(
@@ -253,21 +352,19 @@ pub fn walk_function_parameter<'ast, V: Visitor<'ast>>(
     visitor: &mut V,
     param: &'ast FunctionParameter,
 ) {
-    visit!(visitor.visit_binding_pattern(&param.pattern))
+    visit!(visitor.visit_binding_pattern(&param.pattern));
 }
 
 pub fn walk_function_body<'ast, V: Visitor<'ast>>(visitor: &mut V, body: &'ast FunctionBody) {
     match body {
-        FunctionBody::Block(block) => visit!(visitor.visit_block(block)),
+        FunctionBody::Block(block) => walk_block(visitor, block),
         FunctionBody::Expression(expr) => visit!(visitor.visit_expression(expr)),
     }
 }
 
 pub fn walk_enum_declaration<'ast, V: Visitor<'ast>>(visitor: &mut V, decl: &'ast EnumDeclaration) {
-    visit_scope!(visitor => {
-        visit!(visitor.visit_identifier(&decl.identifier));
-        visit_list!(visitor.visit_enum_variant(&decl.variants));
-    });
+    visit!(visitor.visit_identifier(&decl.identifier));
+    visit_list!(visitor.visit_enum_variant(&decl.variants));
 }
 
 pub fn walk_enum_variant<'ast, V: Visitor<'ast>>(visitor: &mut V, var: &'ast EnumVariant) {
@@ -281,10 +378,8 @@ pub fn walk_struct_declaration<'ast, V: Visitor<'ast>>(
     visitor: &mut V,
     decl: &'ast StructDeclaration,
 ) {
-    visit_scope!(visitor => {
-        visit!(visitor.visit_identifier(&decl.identifier));
-        visit_list!(visitor.visit_struct_field(&decl.fields));
-    });
+    visit!(visitor.visit_identifier(&decl.identifier));
+    visit_list!(visitor.visit_struct_field(&decl.fields));
 }
 
 pub fn walk_struct_field<'ast, V: Visitor<'ast>>(visitor: &mut V, decl: &'ast StructField) {
@@ -294,22 +389,18 @@ pub fn walk_struct_field<'ast, V: Visitor<'ast>>(visitor: &mut V, decl: &'ast St
 }
 
 pub fn walk_if<'ast, V: Visitor<'ast>>(visitor: &mut V, r#if: &'ast If) {
-    visit_scope!(visitor => {
-        visit!(visitor.visit_expression(&r#if.cond));
-        visit!(visitor.visit_block(&r#if.body));
-        if let Some(r#else) = &r#if.r#else {
-            visit!(visitor.visit_else(r#else));
-        }
-    });
+    visit!(visitor.visit_expression(&r#if.cond));
+    visit!(visitor.visit_block(&r#if.body));
+    if let Some(r#else) = &r#if.r#else {
+        visit!(visitor.visit_else(r#else));
+    }
 }
 
 pub fn walk_else<'ast, V: Visitor<'ast>>(visitor: &mut V, r#else: &'ast Else) {
-    visit_scope!(visitor => {
-        match r#else {
-            Else::If(r#if) => visit!(visitor.visit_if(r#if)),
-            Else::Block(block) => visit!(visitor.visit_block(block)),
-        }
-    });
+    match r#else {
+        Else::If(r#if) => visit!(visitor.visit_if(r#if)),
+        Else::Block(block) => visit!(visitor.visit_block(block)),
+    }
 }
 
 pub fn walk_unary_operator<'ast, V: Visitor<'ast>>(visitor: &mut V, op: &'ast UnaryOperator) {

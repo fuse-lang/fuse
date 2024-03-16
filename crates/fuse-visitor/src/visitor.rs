@@ -193,7 +193,7 @@ pub trait Visitor<'ast>: ScopeVisitor + NodeVisitor + Sized {
     }
 
     fn visit_table_construction_expression(&mut self, expr: &'ast ConstructionExpression) {
-        let node = AstNode::ConstructionExpression(expr);
+        let node = AstNode::TableConstructionExpression(expr);
         self.enter_node(node);
         walk_construction_expression(self, expr);
         self.leave_node(node);
@@ -207,55 +207,94 @@ pub trait Visitor<'ast>: ScopeVisitor + NodeVisitor + Sized {
     }
 
     fn visit_member_expression(&mut self, expr: &'ast MemberExpression) {
-        walk_member_expression(self, expr)
+        let node = AstNode::MemberExpression(expr);
+        self.enter_node(node);
+        walk_member_expression(self, expr);
+        self.leave_node(node);
     }
 
     fn visit_member_expression_lhs(&mut self, lhs: &'ast MemberExpressionLHS) {
-        walk_member_expression_lhs(self, lhs)
+        let node = AstNode::MemberExpressionLHS(lhs);
+        self.enter_node(node);
+        walk_member_expression_lhs(self, lhs);
+        self.leave_node(node);
     }
 
     fn visit_member_expression_rhs(&mut self, rhs: &'ast MemberExpressionRHS) {
-        walk_member_expression_rhs(self, rhs)
+        let node = AstNode::MemberExpressionRHS(rhs);
+        self.enter_node(node);
+        walk_member_expression_rhs(self, rhs);
+        self.leave_node(node);
     }
 
     fn visit_construction_expression(&mut self, expr: &'ast ConstructionExpression) {
-        walk_construction_expression(self, expr)
+        let node = AstNode::ConstructionExpression(expr);
+        self.enter_node(node);
+        walk_construction_expression(self, expr);
+        self.leave_node(node);
     }
 
     fn visit_construction_field(&mut self, field: &'ast ConstructionField) {
-        walk_construction_field(self, field)
+        let node = AstNode::ConstructionField(field);
+        self.enter_node(node);
+        walk_construction_field(self, field);
+        self.leave_node(node);
     }
 
     fn visit_call_expression(&mut self, call: &'ast CallExpression) {
-        walk_call_expression(self, call)
+        let node = AstNode::CallExpression(call);
+        self.enter_node(node);
+        walk_call_expression(self, call);
+        self.leave_node(node);
     }
 
     fn visit_array_expression_element(&mut self, element: &'ast ArrayExpressionElement) {
-        walk_array_expression_element(self, element)
+        let node = AstNode::ArrayExpressionElement(element);
+        self.enter_node(node);
+        walk_array_expression_element(self, element);
+        self.leave_node(node);
     }
 
     fn visit_binding_pattern(&mut self, pattern: &'ast BindingPattern) {
-        walk_binding_pattern(self, pattern)
+        let node = AstNode::BindingPattern(pattern);
+        self.enter_node(node);
+        walk_binding_pattern(self, pattern);
+        self.leave_node(node);
     }
 
-    fn visit_binding_identifier(&mut self, pattern: &'ast BindingIdentifier) {
-        walk_binding_identifier(self, pattern)
+    fn visit_binding_identifier(&mut self, binding: &'ast BindingIdentifier) {
+        let node = AstNode::BindingIdentifier(binding);
+        self.enter_node(node);
+        walk_binding_identifier(self, binding);
+        self.leave_node(node);
     }
 
     fn visit_binding_rest(&mut self, arg: &'ast BindingRest) {
-        walk_binding_rest(self, arg)
+        let node = AstNode::BindingRest(arg);
+        self.enter_node(node);
+        walk_binding_rest(self, arg);
+        self.leave_node(node);
     }
 
     fn visit_key_value_argument(&mut self, arg: &'ast KeyValueArgument) {
-        walk_key_value_argument(self, arg)
+        let node = AstNode::KeyValueArgument(arg);
+        self.enter_node(node);
+        walk_key_value_argument(self, arg);
+        self.leave_node(node);
     }
 
     fn visit_spread_argument(&mut self, arg: &'ast SpreadArgument) {
-        walk_spread_argument(self, arg)
+        let node = AstNode::SpreadArgument(arg);
+        self.enter_node(node);
+        walk_spread_argument(self, arg);
+        self.leave_node(node);
     }
 
     fn visit_type_annotation(&mut self, annotation: &'ast TypeAnnotation) {
-        walk_type_annotation(self, annotation)
+        let node = AstNode::TypeAnnotation(annotation);
+        self.enter_node(node);
+        walk_type_annotation(self, annotation);
+        self.leave_node(node);
     }
 }
 
@@ -513,9 +552,9 @@ pub fn walk_binding_pattern<'ast, V: Visitor<'ast>>(
 
 pub fn walk_binding_identifier<'ast, V: Visitor<'ast>>(
     visitor: &mut V,
-    pattern: &'ast BindingIdentifier,
+    binding: &'ast BindingIdentifier,
 ) {
-    visit!(visitor.visit_identifier(&pattern.identifier))
+    visit!(visitor.visit_identifier(&binding.identifier))
 }
 
 pub fn walk_binding_rest<'ast, V: Visitor<'ast>>(visitor: &mut V, rest: &'ast BindingRest) {

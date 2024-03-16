@@ -16,9 +16,11 @@ pub enum AstNode<'a> {
 
     // expression related
     FunctionExpression(&'a Function),
+    CallExpression(&'a CallExpression),
     ArrayExpression(&'a ArrayExpression),
     ParenthesizedExpression(&'a ParenthesizedExpression),
     ConstructionExpression(&'a ConstructionExpression),
+    TableConstructionExpression(&'a ConstructionExpression),
     StructConstructionExpression(&'a StructConstructionExpression),
     If(&'a If),
     Else(&'a Else),
@@ -29,9 +31,11 @@ pub enum AstNode<'a> {
     FunctionParameter(&'a FunctionParameter),
     FunctionBody(&'a FunctionBody),
 
+    // Misc
     EnumVariant(&'a EnumVariant),
-
     StructField(&'a StructField),
+    ConstructionField(&'a ConstructionField),
+    ArrayExpressionElement(&'a ArrayExpressionElement),
 
     VisibilityModifier(&'a VisibilityModifier),
 
@@ -41,7 +45,18 @@ pub enum AstNode<'a> {
     BooleanLiteral(&'a BooleanLiteral),
 
     Identifier(&'a Identifier),
+    BindingPattern(&'a BindingPattern),
+    BindingIdentifier(&'a BindingIdentifier),
+    BindingRest(&'a BindingRest),
+    KeyValueArgument(&'a KeyValueArgument),
+    SpreadArgument(&'a SpreadArgument),
 
     UnaryOperator(&'a UnaryOperator),
     BinaryOperator(&'a BinaryOperator),
+
+    MemberExpression(&'a MemberExpression),
+    MemberExpressionLHS(&'a MemberExpressionLHS),
+    MemberExpressionRHS(&'a MemberExpressionRHS),
+
+    TypeAnnotation(&'a TypeAnnotation),
 }
